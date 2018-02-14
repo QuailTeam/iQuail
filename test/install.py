@@ -8,13 +8,15 @@ import os.path
 
 def install(binary):
     config = configparser.ConfigParser()
+    config.optionxform=str
     config['Desktop Entry'] = {
         'Name': 'testapp',
-        'Exec': '.',
-        'Icon': '.',
+        'Exec': '/home/mou/perso/Quail/test/install.py',
+        'Icon': '/home/mou/perso/Quail/test/icon.jpeg',
         'Terminal': 'true',
         'Type': 'Application'
         }
+    
     path = os.path.join(pathlib.Path.home(),
                         ".local", "share", "applications",
                         "%s.desktop" % (binary))
