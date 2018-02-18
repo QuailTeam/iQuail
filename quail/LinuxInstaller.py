@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 
 import configparser
 import pathlib
@@ -17,9 +16,9 @@ Files /opt
 '''
 
 class LinuxInstaller:
-    def __init__(self, app_name, solution_path, binary, icon, console=False):
+    def __init__(self, name, solution_path, binary, icon, console=False):
         self.solution_path = solution_path
-        self.name = app_name
+        self.name = name
         self.icon = icon
         self.binary = binary
         self.console = console
@@ -44,19 +43,13 @@ class LinuxInstaller:
         }
         path = os.path.join(pathlib.Path.home(),
                         ".local", "share", "applications",
-                        "%s.desktop" % (name))
+                        "%s.desktop" % (self.name))
 
         with open(path, "w") as f:
             config.write(f)
 
-    def user_install(self):
+    def install(self):
         dst = self._copy_files()
         self._register_app(dst)
 
-if (__name__ == '__main__'):
-    solution_path = '/home/mou/perso/quail/test/test_solution/'
-    name = 'Lolallum1'
-    icon = 'icon.jpeg'
-    binary = 'allum1'
-    installer = LinuxInstaller(name, solution_path, binary, icon, console=True)
-    installer.user_install()
+
