@@ -2,6 +2,11 @@
 __pycache__/
 *~
 *#
+dist/
+build/
+*.spec
+
+
 *.py[cod]
 *$py.class
 
