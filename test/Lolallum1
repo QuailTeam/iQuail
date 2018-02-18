@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name = Lolallum1
+Path = /home/mou/.quail/Lolallum1
+Exec = /home/mou/.quail/Lolallum1/allum1
+Icon = /home/mou/.quail/Lolallum1/icon.jpeg
+Terminal = true
+Type = Application
+
