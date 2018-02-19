@@ -47,4 +47,6 @@ class LinuxInstaller(AInstaller):
         self._copy_files()
         self._register_app()
 
-
+    def uninstall(self):
+        shutil.rmtree(self.install_path)
+        os.remove(self.desktop_path)
