@@ -22,6 +22,7 @@ class LinuxInstaller(AInstaller):
         self.desktop_path = os.path.join(pathlib.Path.home(),
                                          ".local", "share", "applications",
                                          "%s.desktop" % (self.get_name()))
+        
         self.install_path = os.path.join(pathlib.Path.home(), '.quail', self.get_name())
 
     def _copy_files(self):
