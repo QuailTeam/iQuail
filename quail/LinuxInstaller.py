@@ -3,6 +3,7 @@ import configparser
 import pathlib
 import os.path
 import shutil
+from .AInstaller import AInstaller
 # poc install linux
 
 '''
@@ -15,41 +16,35 @@ Files /opt
 
 '''
 
-class LinuxInstaller:
-    def __init__(self, name, solution_path, binary, icon, console=False):
-        self.solution_path = solution_path
-        self.name = name
-        self.icon = icon
-        self.binary = binary
-        self.console = console
+class LinuxInstaller(AInstaller):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.desktop_path = os.path.join(pathlib.Path.home(),
+                                         ".local", "share", "applications",
+                                         "%s.desktop" % (self.get_name()))
+        self.install_path = os.path.join(pathlib.Path.home(), '.quail', self.get_name())
 
     def _copy_files(self):
-        dst = os.path.join(pathlib.Path.home(), '.quail', self.name)
-        if os.path.exists(dst):
-            shutil.rmtree(dst)
-        shutil.copytree(self.solution_path, dst)
-        return dst
+        if os.path.exists(self.install_path):
+            shutil.rmtree(self.install_path)
+        shutil.copytree(self.get_solution_path(), self.install_path)
 
-    def _register_app(self, path):
+    def _register_app(self):
         config = configparser.ConfigParser()
         config.optionxform=str
         config['Desktop Entry'] = {
-            'Name': self.name,
-            'Path': path,
-            'Exec': os.path.join(path, self.binary),
-            'Icon': os.path.join(path, self.icon),
-            'Terminal': 'true' if self.console else 'false',
+            'Name': self.get_name(),
+            'Path': self.install_path,
+            'Exec': os.path.join(self.install_path, self.get_binary()),
+            'Icon': os.path.join(self.install_path, self.get_icon()),
+            'Terminal': 'true' if self.get_console() else 'false',
             'Type': 'Application'
         }
-        path = os.path.join(pathlib.Path.home(),
-                        ".local", "share", "applications",
-                        "%s.desktop" % (self.name))
-
-        with open(path, "w") as f:
+        with open(self.desktop_path, "w") as f:
             config.write(f)
 
     def install(self):
-        dst = self._copy_files()
-        self._register_app(dst)
+        self._copy_files()
+        self._register_app()
 
 
