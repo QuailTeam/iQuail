@@ -36,13 +36,19 @@ class LinuxInstaller(AInstaller):
         config['Desktop Entry'] = {
             'Name': self.get_name(),
             'Path': self.install_path,
-            'Exec': os.path.join(self.install_path, self.get_binary()),
-            'Icon': os.path.join(self.install_path, self.get_icon()),
+            'Exec': self.get_file(self.get_binary()),
+            'Icon': self.get_file(self.get_icon()),
             'Terminal': 'true' if self.get_console() else 'false',
             'Type': 'Application'
         }
         with open(self.desktop_path, "w") as f:
             config.write(f)
+
+
+    def get_file(self, *args):
+        if not self.is_installed():
+            raise AssertionError("Not installed")
+        return os.path.join(self.install_path, *args)
 
     def install(self):
         self._copy_files()
@@ -51,3 +57,9 @@ class LinuxInstaller(AInstaller):
     def uninstall(self):
         shutil.rmtree(self.install_path)
         os.remove(self.desktop_path)
+
+    def is_installed(self):
+        if os.path.exists(self.install_path) and os.path.isfile(self.desktop_path):
+            return True
+        return False
+

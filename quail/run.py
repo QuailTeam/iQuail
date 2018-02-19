@@ -1,7 +1,7 @@
+import os
 import argparse
 import platform
 from .LinuxInstaller import LinuxInstaller
-
 
 def get_installer(config):
     # move this later
@@ -11,10 +11,13 @@ def get_installer(config):
 
 def run(config):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--uninstall", help="Uninstall program", action="store_true")
+    parser.add_argument("--uninstall", help="uninstall program", action="store_true")
     args = parser.parse_args()
     installer = get_installer(config)
     if args.uninstall:
         installer.uninstall()
     else:
-        installer.install()
+        if installer.is_installed():
+            os.system(installer.get_file(installer.get_binary()))
+        else:
+            installer.install()
