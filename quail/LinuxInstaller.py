@@ -20,12 +20,12 @@ Files /opt
 class LinuxInstaller(AInstaller):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.desktop = os.path.join(pathlib.Path.home(),
-                                         ".local", "share", "applications",
-                                         "%s.desktop" % (self.get_name()))
-        self.desktop_uninstall = os.path.join(pathlib.Path.home(),
-                                         ".local", "share", "applications",
-                                         "%s.uninstall.desktop" % (self.get_name()))
+        apps_path =  os.path.join(pathlib.Path.home(),
+                                     ".local", "share", "applications")
+        self.desktop = os.path.join(apps_path,
+                                    "%s.desktop" % (self.get_name()))
+        self.desktop_uninstall = os.path.join(apps_path,
+                                              "%s.uninstall.desktop" % (self.get_name()))
         self.install_path = os.path.join(pathlib.Path.home(), '.quail', self.get_name())
 
     def _copy_files(self):
