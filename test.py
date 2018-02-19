@@ -7,8 +7,6 @@ import quail
 
 solution_path = os.path.join(os.getcwd(), 'test_solution')
 
-print(solution_path)
-
 config = {
     'name': 'LolAllum1',
     'icon': 'icon.jpeg',
@@ -17,7 +15,6 @@ config = {
     'console': True
 }
 
-installer = quail.LinuxInstaller(**config)
+quail.run(config)
 
-installer.install()
 
