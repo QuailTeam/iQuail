@@ -4,6 +4,7 @@ import pathlib
 import os.path
 import shutil
 from .AInstaller import AInstaller
+from .tools import *
 # poc install linux
 
 '''
@@ -29,7 +30,11 @@ class LinuxInstaller(AInstaller):
         if os.path.exists(self.install_path):
             shutil.rmtree(self.install_path)
         shutil.copytree(self.get_solution_path(), self.install_path)
-        shutil.copy2(__file__, self.install_path) 
+        shutil.copy2(get_script(), self.install_path)
+        if (get_script().endswith(".py")):
+            # copy quail if its not run in standalone
+            shutil.copytree(os.path.join(get_script_path(), "quail"),
+                            os.path.join(self.install_path, "quail"))
 
     def _register_app(self):
         config = configparser.ConfigParser()
@@ -37,7 +42,7 @@ class LinuxInstaller(AInstaller):
         config['Desktop Entry'] = {
             'Name': self.get_name(),
             'Path': self.install_path,
-            'Exec': self.get_file(self.get_binary()),
+            'Exec': self.get_file(get_script_name()),
             'Icon': self.get_file(self.get_icon()),
             'Terminal': 'true' if self.get_console() else 'false',
             'Type': 'Application'
