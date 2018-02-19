@@ -29,6 +29,7 @@ class LinuxInstaller(AInstaller):
         if os.path.exists(self.install_path):
             shutil.rmtree(self.install_path)
         shutil.copytree(self.get_solution_path(), self.install_path)
+        shutil.copy2(__file__, self.install_path) 
 
     def _register_app(self):
         config = configparser.ConfigParser()
@@ -46,7 +47,7 @@ class LinuxInstaller(AInstaller):
 
 
     def get_file(self, *args):
-        if not self.is_installed():
+        if not os.path.exists(self.install_path):
             raise AssertionError("Not installed")
         return os.path.join(self.install_path, *args)
 

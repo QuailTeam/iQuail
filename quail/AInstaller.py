@@ -29,3 +29,9 @@ class AInstaller:
     def uninstall(self):
         raise NotImplementedError
 
+    def is_installed(self):
+        raise NotImplementedError
+
+    def get_file(self, *args):
+        raise NotImplementedError
+
