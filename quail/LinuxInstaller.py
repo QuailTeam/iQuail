@@ -20,10 +20,12 @@ Files /opt
 class LinuxInstaller(AInstaller):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.desktop_path = os.path.join(pathlib.Path.home(),
+        self.desktop = os.path.join(pathlib.Path.home(),
                                          ".local", "share", "applications",
                                          "%s.desktop" % (self.get_name()))
-        
+        self.desktop_uninstall = os.path.join(pathlib.Path.home(),
+                                         ".local", "share", "applications",
+                                         "%s.uninstall.desktop" % (self.get_name()))
         self.install_path = os.path.join(pathlib.Path.home(), '.quail', self.get_name())
 
     def _copy_files(self):
@@ -36,10 +38,16 @@ class LinuxInstaller(AInstaller):
             shutil.copytree(os.path.join(get_script_path(), "quail"),
                             os.path.join(self.install_path, "quail"))
 
-    def _register_app(self):
+    def _write_desktop(self, filename, app_config):
+        '''Write desktop entry'''
         config = configparser.ConfigParser()
         config.optionxform=str
-        config['Desktop Entry'] = {
+        config['Desktop Entry'] = app_config
+        with open(filename, "w") as f:
+            config.write(f)
+        
+    def _register_app(self):
+        app_config = {
             'Name': self.get_name(),
             'Path': self.install_path,
             'Exec': self.get_file(get_script_name()),
@@ -47,9 +55,10 @@ class LinuxInstaller(AInstaller):
             'Terminal': 'true' if self.get_console() else 'false',
             'Type': 'Application'
         }
-        with open(self.desktop_path, "w") as f:
-            config.write(f)
-
+        self._write_desktop(self.desktop, app_config)
+        app_config["Exec"] = app_config["Exec"] + " --uninstall"
+        app_config["Name"] = "Uninstall " + app_config["Name"]
+        self._write_desktop(self.desktop_uninstall, app_config)
 
     def get_file(self, *args):
         if not os.path.exists(self.install_path):
@@ -62,10 +71,11 @@ class LinuxInstaller(AInstaller):
 
     def uninstall(self):
         shutil.rmtree(self.install_path)
-        os.remove(self.desktop_path)
+        os.remove(self.desktop)
+        os.remove(self.desktop_uninstall)
 
     def is_installed(self):
-        if os.path.exists(self.install_path) and os.path.isfile(self.desktop_path):
+        if os.path.exists(self.install_path) and os.path.isfile(self.desktop):
             return True
         return False
 
