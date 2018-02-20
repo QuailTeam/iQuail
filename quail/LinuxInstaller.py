@@ -26,17 +26,6 @@ class LinuxInstaller(AInstaller):
                                     "%s.desktop" % (self.get_name()))
         self.desktop_uninstall = os.path.join(apps_path,
                                               "%s.uninstall.desktop" % (self.get_name()))
-        self.install_path = os.path.join(pathlib.Path.home(), '.quail', self.get_name())
-
-    def _copy_files(self):
-        if os.path.exists(self.install_path):
-            shutil.rmtree(self.install_path)
-        shutil.copytree(self.get_solution_path(), self.install_path)
-        shutil.copy2(get_script(), self.install_path)
-        if (get_script().endswith(".py")):
-            # copy quail if its not run in standalone
-            shutil.copytree(os.path.join(get_script_path(), "quail"),
-                            os.path.join(self.install_path, "quail"))
 
     def _write_desktop(self, filename, app_config):
         '''Write desktop entry'''
@@ -49,7 +38,7 @@ class LinuxInstaller(AInstaller):
     def _register_app(self):
         app_config = {
             'Name': self.get_name(),
-            'Path': self.install_path,
+            'Path': self.get_install_path(),
             'Exec': self.get_file(get_script_name()),
             'Icon': self.get_file(self.get_icon()),
             'Terminal': 'true' if self.get_console() else 'false',
@@ -60,22 +49,17 @@ class LinuxInstaller(AInstaller):
         app_config["Name"] = "Uninstall " + app_config["Name"]
         self._write_desktop(self.desktop_uninstall, app_config)
 
-    def get_file(self, *args):
-        if not os.path.exists(self.install_path):
-            raise AssertionError("Not installed")
-        return os.path.join(self.install_path, *args)
-
     def install(self):
-        self._copy_files()
+        super().install()
         self._register_app()
 
     def uninstall(self):
-        shutil.rmtree(self.install_path)
+        super().uninstall()
         os.remove(self.desktop)
         os.remove(self.desktop_uninstall)
 
     def is_installed(self):
-        if os.path.exists(self.install_path) and os.path.isfile(self.desktop):
+        if super().is_installed() and os.path.isfile(self.desktop):
             return True
         return False
 
