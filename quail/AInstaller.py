@@ -42,7 +42,7 @@ class AInstaller:
             shutil.rmtree(self._install_path)
         shutil.copytree(self.get_solution_path(), self._install_path)
         shutil.copy2(get_script(), self._install_path)
-        if (get_script().endswith(".py")):
+        if run_from_script():
             shutil.copytree(os.path.join(get_script_path(), "quail"),
                             os.path.join(self._install_path, "quail"))
 

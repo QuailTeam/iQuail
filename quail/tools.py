@@ -10,3 +10,6 @@ def get_script_name():
 def get_script_path():
     return os.path.dirname(get_script())
 
+def run_from_script():
+    '''check if being run from script and not builded in standalone binary'''
+    return get_script().endswith(".py")
