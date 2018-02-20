@@ -2,11 +2,14 @@ import os
 import argparse
 import platform
 from .LinuxInstaller import LinuxInstaller
+from .WindowsInstaller import WindowsInstaller
 
 def get_installer(config):
     # move this later
     if (platform.system() == 'Linux'):
         return LinuxInstaller(**config)
+    elif (platform.system() == 'Windows'):
+        return WindowsInstaller(**config)
     raise NotImplementedError
 
 def run(config):
