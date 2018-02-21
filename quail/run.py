@@ -29,8 +29,8 @@ def parse_args():
                         action="store_true")
     return parser.parse_args()
 
-
 def run(config, install=default_install, uninstall=default_uninstall):
+    '''run config'''
     args = parse_args()
     installer = Installer(**config)
     if args.quail_uninstall:
