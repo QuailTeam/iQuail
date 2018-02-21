@@ -1,3 +1,4 @@
+import sys
 import os
 import argparse
 import platform
@@ -32,8 +33,8 @@ def run(config, install=default_install, uninstall=default_uninstall):
     installer = Installer(**config)
     if args.quail_uninstall:
         uninstall(installer)
+        return
+    if installer.is_installed():
+        os.system(installer.get_install_path(installer.get_binary()) + " " +  " ".join(sys.argv))
     else:
-        if installer.is_installed():
-            os.system(installer.get_install_path(installer.get_binary()))
-        else:
-            install(installer)
+        install(installer)
