@@ -9,12 +9,14 @@ if (platform.system() == 'Linux'):
     Installer = LinuxInstaller
 elif (platform.system() == 'Windows'):
     from .WindowsInstaller import WindowsInstaller
-    Installer =	Installer
+    Installer = Installer
 else:
     raise NotImplementedError
 
+
 def default_install(installer):
     installer.install()
+
 
 def default_uninstall(installer):
     installer.uninstall()
@@ -35,6 +37,7 @@ def run(config, install=default_install, uninstall=default_uninstall):
         uninstall(installer)
         return
     if installer.is_installed():
-        os.system(installer.get_install_path(installer.get_binary()) + " " +  " ".join(sys.argv))
+        os.system(installer.get_install_path(
+            installer.get_binary()) + " " + " ".join(sys.argv))
     else:
         install(installer)

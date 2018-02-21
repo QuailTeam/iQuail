@@ -18,24 +18,28 @@ Files /opt
 
 '''
 
+
 class LinuxInstaller(AInstaller):
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        apps_path =  os.path.join(pathlib.Path.home(),
-                                     ".local", "share", "applications")
-        self.desktop = os.path.join(apps_path,
-                                    "%s.desktop" % (self.get_name()))
-        self.desktop_uninstall = os.path.join(apps_path,
-                                              "%s.uninstall.desktop" % (self.get_name()))
+        self.desktop = self._get_desktop_path(self.get_name())
+        self.desktop_uninstall = self._get_desktop_path("%s_uninstall" %
+                                                        (self.get_name()))
+
+    def _get_desktop_path(self, name):
+        return os.path.join(pathlib.Path.home(),
+                            ".local", "share", "applications",
+                            "%s.desktop" % (name))
 
     def _write_desktop(self, filename, app_config):
         '''Write desktop entry'''
         config = configparser.ConfigParser()
-        config.optionxform=str
+        config.optionxform = str
         config['Desktop Entry'] = app_config
         with open(filename, "w") as f:
             config.write(f)
-        
+
     def _register_app(self):
         app_config = {
             'Name': self.get_name(),
@@ -46,7 +50,8 @@ class LinuxInstaller(AInstaller):
             'Type': 'Application'
         }
         self._write_desktop(self.desktop, app_config)
-        app_config["Exec"] = app_config["Exec"] + " " + Constants.ARGUMENT_UNINSTALL
+        app_config["Exec"] = app_config["Exec"] + \
+            " " + Constants.ARGUMENT_UNINSTALL
         app_config["Name"] = "Uninstall " + app_config["Name"]
         self._write_desktop(self.desktop_uninstall, app_config)
 
@@ -63,4 +68,3 @@ class LinuxInstaller(AInstaller):
         if super().is_installed() and os.path.isfile(self.desktop):
             return True
         return False
-

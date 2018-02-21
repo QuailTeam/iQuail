@@ -23,9 +23,11 @@ configWindows = {
     'console': True
 }
 
+
 def install(installer):
     print("example custom install")
     installer.install()
+
 
 def uninstall(installer):
     print("uninstall")
@@ -36,4 +38,4 @@ config = configLinux if platform.system() == 'Linux' else configWindows
 quail.run(config,
           install=install,
           uninstall=uninstall
-)
+          )
