@@ -4,6 +4,7 @@ import pathlib
 import os.path
 import shutil
 from .AInstaller import AInstaller
+from .Constants import Constants
 from .tools import *
 # poc install linux
 
@@ -45,7 +46,7 @@ class LinuxInstaller(AInstaller):
             'Type': 'Application'
         }
         self._write_desktop(self.desktop, app_config)
-        app_config["Exec"] = app_config["Exec"] + " --uninstall"
+        app_config["Exec"] = app_config["Exec"] + " " + Constants.ARGUMENT_UNINSTALL
         app_config["Name"] = "Uninstall " + app_config["Name"]
         self._write_desktop(self.desktop_uninstall, app_config)
 

@@ -6,6 +6,7 @@ import pythoncom
 import shutil
 from win32com.shell import shell, shellcon
 from .AInstaller import AInstaller
+from .Constants import Constants
 from .tools import *
 
 class WindowsInstaller(AInstaller):
@@ -21,7 +22,7 @@ class WindowsInstaller(AInstaller):
         return sys.executable
 
     def _setRegUninstall(self):
-        uninstallPath = get_script() + ' --uninstall'
+        uninstallPath = get_script() + ' ' + Constants.ARGUMENT_UNINSTALL
         if run_from_script():
             uninstallPath = '\"' + self._getPythonPath() + '\" ' +  uninstallPath
         values = [
