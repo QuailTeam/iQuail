@@ -1,26 +1,24 @@
 import os
 import argparse
 import platform
-from .LinuxInstaller import LinuxInstaller
-from .WindowsInstaller import WindowsInstaller
-
-def get_installer(config):
-    # move this later
-    if (platform.system() == 'Linux'):
-        return LinuxInstaller(**config)
-    elif (platform.system() == 'Windows'):
-        return WindowsInstaller(**config)
+if (platform.system() == 'Linux'):
+    from .LinuxInstaller import LinuxInstaller
+    Installer = LinuxInstaller
+elif (platform.system() == 'Windows'):
+    from .WindowsInstaller import WindowsInstaller
+    Installer =	Installer
+else:
     raise NotImplementedError
 
 def run(config):
     parser = argparse.ArgumentParser()
     parser.add_argument("--uninstall", help="uninstall program", action="store_true")
     args = parser.parse_args()
-    installer = get_installer(config)
+    installer = Installer(**config)
     if args.uninstall:
         installer.uninstall()
     else:
         if installer.is_installed():
-            os.system(installer.get_file(installer.get_binary()))
+            os.system(installer.get_install_path(installer.get_binary()))
         else:
             installer.install()

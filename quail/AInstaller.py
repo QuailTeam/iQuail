@@ -11,22 +11,28 @@ class AInstaller:
         self._icon = icon
         self._binary = binary
         self._console = console
-        self._install_path = self.get_install_path()
+        self._install_path = self.build_install_path()
 
-    def get_install_path(self):
+    def build_install_path(self):
+        '''Build install path
+        This function can be overriden to install files to somewhere else
+        '''
         return os.path.join(pathlib.Path.home(), '.quail', self.get_name())
     
-    def get_file(self, *args):
-        '''Get installed path'''
-        if not os.path.exists(self._install_path):
-            raise AssertionError("Not installed")
+    def get_install_path(self, *args):
+        '''Get file from install path'''
         return os.path.join(self._install_path, *args)
-
+    
+    def get_solution_path(self, *args):
+        '''Get file from solution
+        get_solution_path should be used only before installation
+        '''
+        if self.is_installed():
+            raise AssertionError("Solution installed, use get_install_path instead")
+        return os.path.join(self._solution_path, *args)
+    
     def get_name(self):
         return self._name
-
-    def get_solution_path(self):
-        return self._solution_path
 
     def get_binary(self):
         return self._binary
@@ -38,17 +44,17 @@ class AInstaller:
         return self._console
     
     def install(self):
-        if os.path.exists(self._install_path):
-            shutil.rmtree(self._install_path)
-        shutil.copytree(self.get_solution_path(), self._install_path)
-        shutil.copy2(get_script(), self._install_path)
+        if os.path.exists(self.get_install_path()):
+            shutil.rmtree(self.get_install_path())
+        shutil.copytree(self.get_solution_path(), self.get_install_path())
+        shutil.copy2(get_script(), self.get_install_path())
         if run_from_script():
             shutil.copytree(os.path.join(get_script_path(), "quail"),
-                            os.path.join(self._install_path, "quail"))
+                            os.path.join(self.get_install_path(), "quail"))
 
     def uninstall(self):
-        shutil.rmtree(self._install_path)
+        shutil.rmtree(self.get_install_path())
 
     def is_installed(self):
-        return os.path.exists(self._install_path)
+        return os.path.exists(self.get_install_path())
 

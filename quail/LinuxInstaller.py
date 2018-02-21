@@ -39,8 +39,8 @@ class LinuxInstaller(AInstaller):
         app_config = {
             'Name': self.get_name(),
             'Path': self.get_install_path(),
-            'Exec': self.get_file(get_script_name()),
-            'Icon': self.get_file(self.get_icon()),
+            'Exec': self.get_install_path(get_script_name()),
+            'Icon': self.get_install_path(self.get_icon()),
             'Terminal': 'true' if self.get_console() else 'false',
             'Type': 'Application'
         }
