@@ -1,15 +1,17 @@
+
 import sys
 import os
 import argparse
 import platform
 from .Constants import Constants
+from .tools import *
 
 if (platform.system() == 'Linux'):
     from .LinuxInstaller import LinuxInstaller
     Installer = LinuxInstaller
 elif (platform.system() == 'Windows'):
     from .WindowsInstaller import WindowsInstaller
-    Installer = Installer
+    Installer = WindowsInstaller
 else:
     raise NotImplementedError
 
@@ -31,10 +33,15 @@ def parse_args():
 
 def run(config, install=default_install, uninstall=default_uninstall):
     '''run config'''
+    import sys
+    print(sys.argv)
     args = parse_args()
     installer = Installer(**config)
     if args.quail_uninstall:
-        uninstall(installer)
+        try:
+            uninstall(installer)
+        except PermissionError:
+            rerun_as_admin()
         return
     if installer.is_installed():
         os.system(installer.get_install_path(
