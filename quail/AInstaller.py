@@ -51,7 +51,7 @@ class AInstaller:
         shutil.copytree(self.get_solution_path(), self.get_install_path())
         shutil.copy2(get_script(), self.get_install_path())
         if run_from_script():
-            shutil.copytree(os.path.join(get_script_path(), "quail"),
+            shutil.copytree(get_module_path(),
                             os.path.join(self.get_install_path(), "quail"))
 
     def uninstall(self):

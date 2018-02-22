@@ -1,6 +1,8 @@
 import os
 import sys
 
+def get_module_path():
+    return os.path.dirname(os.path.realpath(__file__))
 
 def get_script():
     return os.path.realpath(sys.argv[0])
