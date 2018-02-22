@@ -38,10 +38,7 @@ def run(config, install=default_install, uninstall=default_uninstall):
     args = parse_args()
     installer = Installer(**config)
     if args.quail_uninstall:
-        try:
-            uninstall(installer)
-        except PermissionError:
-            rerun_as_admin()
+        uninstall(installer)
         return
     if installer.is_installed():
         os.system(installer.get_install_path(
