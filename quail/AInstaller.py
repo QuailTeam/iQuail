@@ -37,7 +37,7 @@ class AInstaller:
         return self._console
 
     def install(self):
-        if not _solution.access():
+        if not self._solution.access():
             raise AssertionError("Can't access solution")
         if os.path.exists(self.get_install_path()):
             shutil.rmtree(self.get_install_path())

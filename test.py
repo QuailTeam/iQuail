@@ -17,7 +17,7 @@ configWindows = {
     'name': 'OpenHardwareMonitor',
     'icon': 'OpenHardwareMonitor.exe',
     'binary': 'OpenHardwareMonitor.exe',
-    'solution_path': os.path.join(os.getcwd(), 'OpenHardwareMonitor'),
+    'solution': quail.LocalSolution('OpenHardwareMonitor'),
     'console': True
 }
 
