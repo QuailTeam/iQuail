@@ -2,6 +2,11 @@ import os
 import sys
 import ctypes
 
+def makedirs_ignore(*args, **kwargs):
+    try:
+        os.makedirs(*args, **kwargs)
+    except FileExistsError:
+        pass
 
 def get_module_path():
     return os.path.dirname(os.path.realpath(__file__))

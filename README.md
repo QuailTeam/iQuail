@@ -1,2 +1,5 @@
 # Quail
-quail eip
+
+WIP
+
+Easy to use cross-platform installer & updater

@@ -5,13 +5,11 @@ import os.path
 import quail
 import platform
 
-solution_path = os.path.join(os.getcwd(), 'test_solution')
-
 configLinux = {
     'name': 'LolAllum1',
     'icon': 'icon.jpeg',
     'binary': 'allum1',
-    'solution_path': solution_path,
+    'solution': quail.LocalSolution('test_solution'),
     'console': True
 }
 

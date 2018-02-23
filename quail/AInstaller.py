@@ -6,8 +6,8 @@ from .tools import *
 
 class AInstaller:
 
-    def __init__(self, name, solution_path, binary, icon, console=False):
-        self._solution_path = solution_path
+    def __init__(self, name, solution, binary, icon, console=False):
+        self._solution = solution
         self._name = name
         self._icon = icon
         self._binary = binary
@@ -24,15 +24,6 @@ class AInstaller:
         '''Get file from install path'''
         return os.path.join(self._install_path, *args)
 
-    def get_solution_path(self, *args):
-        '''Get file from solution
-        get_solution_path should be used only before installation
-        '''
-        if self.is_installed():
-            raise AssertionError(
-                "Solution installed, use get_install_path instead")
-        return os.path.join(self._solution_path, *args)
-
     def get_name(self):
         return self._name
 
@@ -46,9 +37,20 @@ class AInstaller:
         return self._console
 
     def install(self):
+        if not _solution.access():
+            raise AssertionError("Can't access solution")
         if os.path.exists(self.get_install_path()):
             shutil.rmtree(self.get_install_path())
-        shutil.copytree(self.get_solution_path(), self.get_install_path())
+        # shutil.copytree(self.get_solution_path(), self.get_install_path())
+        makedirs_ignore(self.get_install_path())
+        self._solution.open()
+        for root, dirs, files in self._solution.walk():
+            for sdir in dirs:
+                makedirs_ignore(self.get_install_path(root, sdir))
+            for sfile in files:
+                shutil.copy2(self._solution.get_file(os.path.join(root, sfile)),
+                             self.get_install_path(root))
+        self._solution.close()
         shutil.copy2(get_script(), self.get_install_path())
         if run_from_script():
             shutil.copytree(get_module_path(),
