@@ -80,6 +80,7 @@ class FtpSolution(ISolutionResolver):
         return open(path, 'wb')
 
     def get_file(self, relative_path):
+        print("Downloading %s" % (relative_path))
         real_path = self._files[os.path.dirname(relative_path)][0]
         name = os.path.basename(relative_path)
         old_directory = self._ftp.pwd()
