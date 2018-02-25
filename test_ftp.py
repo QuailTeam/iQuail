@@ -5,12 +5,24 @@ import os.path
 import quail
 import platform
 
-config = {
+configLinux = {
+    'name': 'LolAllum1',
+    'icon': 'icon.jpeg',
+    'binary': 'allum1',
+    'solution': quail.FtpSolution('mafreebox.freebox.fr',
+                                  ['Disque dur','autres', 'test_solution']),
+    'console': True
+}
+
+configWindows = {
     'name': 'OpenHardwareMonitor',
     'icon': 'OpenHardwareMonitor.exe',
     'binary': 'OpenHardwareMonitor.exe',
-    'solution': quail.FtpSolution('mafreebox.freebox.fr', 21, 'Disque dur','autres', 'OpenHardwareMonitor'),
+    'solution': quail.FtpSolution('mafreebox.freebox.fr',
+                                  ['Disque dur','autres', 'OpenHardwareMonitor']),
     'console': True
 }
+
+config = configLinux if platform.system() == 'Linux' else configWindows
 
 quail.run(config)

@@ -45,7 +45,9 @@ class FtpWalk:
 
 
 class FtpSolution(ISolutionResolver):
-    def __init__(self, host, port=21, *path):
+    def __init__(self, host, path, port=21):
+        if not isinstance(path, list):
+            raise AssertionError("Expected list as ftp path")
         self._path = path
         self._host = host
         self._port = port
