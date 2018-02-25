@@ -6,11 +6,12 @@ from .tools import *
 
 class AInstaller:
 
-    def __init__(self, name, solution, binary, icon, console=False):
+    def __init__(self, name, solution, binary, icon, publisher, console=False):
         self._solution = solution
         self._name = name
         self._icon = icon
         self._binary = binary
+        self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path()
 
@@ -29,6 +30,9 @@ class AInstaller:
 
     def get_binary(self):
         return self._binary
+
+    def get_publisher(self):
+        return self._publisher
 
     def get_icon(self):
         return self._icon

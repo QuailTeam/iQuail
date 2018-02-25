@@ -9,6 +9,7 @@ configLinux = {
     'name': 'LolAllum1',
     'icon': 'icon.jpeg',
     'binary': 'allum1',
+    'publisher': 'A Nice Publisher',
     'solution': quail.LocalSolution('test_solution'),
     'console': True
 }
@@ -17,6 +18,7 @@ configWindows = {
     'name': 'OpenHardwareMonitor',
     'icon': 'OpenHardwareMonitor.exe',
     'binary': 'OpenHardwareMonitor.exe',
+    'publisher': 'A Nice Publisher',
     'solution': quail.LocalSolution('OpenHardwareMonitor'),
     'console': True
 }
@@ -30,6 +32,7 @@ def install(installer):
 def uninstall(installer):
     print("uninstall")
     installer.uninstall()
+
 
 config = configLinux if platform.system() == 'Linux' else configWindows
 
