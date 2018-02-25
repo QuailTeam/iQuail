@@ -4,7 +4,9 @@ from .ISolutionResolver import ISolutionResolver
 
 class LocalSolution(ISolutionResolver):
     def __init__(self, path):
-        self._path = os.path.abspath(path)
+        if not isinstance(path, list):
+            raise AssertionError("Expected list as solution path")
+        self._path = os.path.abspath(os.path.join(*path))
 
     def access(self):
         return os.path.exists(self._path)

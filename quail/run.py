@@ -1,4 +1,5 @@
 
+import stat
 import sys
 import os
 import argparse
@@ -41,6 +42,9 @@ def run(config, install=default_install, uninstall=default_uninstall):
         uninstall(installer)
         return
     if installer.is_installed():
+        binary = installer.get_install_path(installer.get_binary())
+        if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
+            os.chmod(binary, 0o755)
         os.system(installer.get_install_path(
             installer.get_binary()) + " " + " ".join(sys.argv))
     else:
