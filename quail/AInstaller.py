@@ -6,7 +6,7 @@ from .tools import *
 
 class AInstaller:
 
-    def __init__(self, name, solution, binary, icon, publisher, console=False):
+    def __init__(self, name, solution, binary, icon, publisher='Quail', console=False):
         self._solution = solution
         self._name = name
         self._icon = icon

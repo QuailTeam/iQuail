@@ -9,7 +9,6 @@ configLinux = {
     'name': 'LolAllum1',
     'icon': 'icon.jpeg',
     'binary': 'allum1',
-    'publisher': 'A Nice Publisher',
     'solution': quail.LocalSolution(['test_local', 'Allum1']),
     'console': True
 }
@@ -18,7 +17,6 @@ configWindows = {
     'name': 'OpenHardwareMonitor',
     'icon': 'OpenHardwareMonitor.exe',
     'binary': 'OpenHardwareMonitor.exe',
-    'publisher': 'A Nice Publisher',
     'solution': quail.LocalSolution(['test_local', 'OpenHardwareMonitor']),
     'console': True
 }
