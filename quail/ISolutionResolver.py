@@ -8,15 +8,10 @@ class ISolutionResolver:
     - over network
     '''
 
-    def access(self):
-        '''Check if solution can be accessed
-        returns boolean
-        '''
-        raise NotImplementedError
-    
     def open(self):
         '''Open solution if needed
         (planned for unzipping, connecting to network, etc)
+        return False if failed to open
         '''
         raise NotImplementedError
 
@@ -30,7 +25,7 @@ class ISolutionResolver:
         same output as os.walk
         '''
         raise NotImplementedError
-    
+
     def get_file(self, relative_path):
         '''Load file if needed, from solution relative path
         returns file real path'''

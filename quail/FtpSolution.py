@@ -52,18 +52,20 @@ class FtpSolution(ISolutionResolver):
         self._host = host
         self._port = port
 
-    def access(self):
-        return True
-
     def open(self):
         self._tmpdir = tempfile.mkdtemp()
         self._ftp = FTP()
-        self._ftp.connect(self._host, self._port)
-        self._ftp.login()
+        try:
+            self._ftp.connect(self._host, self._port)
+            self._ftp.login()
+        except TimeoutError:
+            self.close()
+            return False
         self._walk = FtpWalk(self._ftp, *self._path)
         self._files = {}
         for w in self._walk.walk():
             self._files[os.path.relpath(w[0], self._walk.cwd())] = w
+        return True
 
     def close(self):
         self._ftp.close()
@@ -92,4 +94,3 @@ class FtpSolution(ISolutionResolver):
         f.close()
         self._ftp.cwd(old_directory)
         return self._get_tmp_path(relative_path)
-

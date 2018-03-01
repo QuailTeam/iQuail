@@ -8,11 +8,8 @@ class LocalSolution(ISolutionResolver):
             raise AssertionError("Expected list as solution path")
         self._path = os.path.abspath(os.path.join(*path))
 
-    def access(self):
-        return os.path.exists(self._path)
-    
     def open(self):
-        pass
+        return os.path.exists(self._path)
 
     def close(self):
         pass

@@ -41,13 +41,12 @@ class AInstaller:
         return self._console
 
     def install(self):
-        if not self._solution.access():
+        if not self._solution.open():
             raise AssertionError("Can't access solution")
         if os.path.exists(self.get_install_path()):
             shutil.rmtree(self.get_install_path())
         # shutil.copytree(self.get_solution_path(), self.get_install_path())
         makedirs_ignore(self.get_install_path())
-        self._solution.open()
         for root, dirs, files in self._solution.walk():
             for sdir in dirs:
                 makedirs_ignore(self.get_install_path(root, sdir))
