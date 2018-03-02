@@ -29,7 +29,7 @@ class WindowsInstaller(AInstaller):
 
     def _set_reg_uninstall(self):
         uninstallPath = Helper.get_script() + ' ' + Constants.ARGUMENT_UNINSTALL
-        if Helper.run_from_script():
+        if Helper.running_from_script():
             uninstallPath = '\"' + self._get_python_path() + '\" ' + uninstallPath
         values = [
             ('DisplayName', winreg.REG_SZ, self.get_name()),

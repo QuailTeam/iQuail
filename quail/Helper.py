@@ -28,9 +28,11 @@ class Helper:
         return os.path.dirname(Helper.get_script())
 
     @staticmethod
-    def run_from_script():
+    def running_from_script():
         '''check if being run from script and not builded in standalone binary'''
-        return Helper.get_script().endswith(".py")
+        if getattr(sys, 'frozen', False):
+            return False
+        return True
 
     @staticmethod
     def rerun_as_admin():

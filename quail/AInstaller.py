@@ -55,7 +55,7 @@ class AInstaller:
                              self.get_install_path(root))
         self._solution.close()
         shutil.copy2(Helper.get_script(), self.get_install_path())
-        if Helper.run_from_script():
+        if Helper.running_from_script():
             shutil.copytree(Helper.get_module_path(),
                             os.path.join(self.get_install_path(), "quail"))
 
