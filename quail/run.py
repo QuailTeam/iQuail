@@ -34,8 +34,6 @@ def parse_args():
 
 def run(config, install=default_install, uninstall=default_uninstall):
     '''run config'''
-    import sys
-    print(sys.argv)
     args = parse_args()
     installer = Installer(**config)
     if args.quail_uninstall:
