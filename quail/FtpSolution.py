@@ -3,7 +3,7 @@ import os
 import tempfile
 import shutil
 from .ISolutionResolver import ISolutionResolver
-from .tools import *
+from .Helper import *
 
 class FtpWalk:
     def __init__(self, ftp, *path):
@@ -80,7 +80,7 @@ class FtpSolution(ISolutionResolver):
 
     def _open_tmp_file(self, relative_path):
         path = self._get_tmp_path(relative_path)
-        makedirs_ignore(os.path.dirname(path))
+        Helper.makedirs_ignore(os.path.dirname(path))
         return open(path, 'wb')
 
     def get_file(self, relative_path):

@@ -1,7 +1,7 @@
 import os.path
 import pathlib
 import shutil
-from .tools import *
+from .Helper import *
 
 
 class AInstaller:
@@ -46,17 +46,17 @@ class AInstaller:
         if os.path.exists(self.get_install_path()):
             shutil.rmtree(self.get_install_path())
         # shutil.copytree(self.get_solution_path(), self.get_install_path())
-        makedirs_ignore(self.get_install_path())
+        Helper.makedirs_ignore(self.get_install_path())
         for root, dirs, files in self._solution.walk():
             for sdir in dirs:
-                makedirs_ignore(self.get_install_path(root, sdir))
+                Helper.makedirs_ignore(self.get_install_path(root, sdir))
             for sfile in files:
                 shutil.copy2(self._solution.get_file(os.path.join(root, sfile)),
                              self.get_install_path(root))
         self._solution.close()
-        shutil.copy2(get_script(), self.get_install_path())
-        if run_from_script():
-            shutil.copytree(get_module_path(),
+        shutil.copy2(Helper.get_script(), self.get_install_path())
+        if Helper.run_from_script():
+            shutil.copytree(Helper.get_module_path(),
                             os.path.join(self.get_install_path(), "quail"))
 
     def uninstall(self):

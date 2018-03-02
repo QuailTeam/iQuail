@@ -5,7 +5,7 @@ import os
 import argparse
 import platform
 from .Constants import Constants
-from .tools import *
+from .Helper import *
 
 if (platform.system() == 'Linux'):
     from .LinuxInstaller import LinuxInstaller

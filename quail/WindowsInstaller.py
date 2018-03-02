@@ -7,7 +7,7 @@ from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
 from .AInstaller import AInstaller
 from .Constants import Constants
-from .tools import *
+from .Helper import *
 
 
 class WindowsInstaller(AInstaller):
@@ -28,8 +28,8 @@ class WindowsInstaller(AInstaller):
         return sys.executable
 
     def _set_reg_uninstall(self):
-        uninstallPath = get_script() + ' ' + Constants.ARGUMENT_UNINSTALL
-        if run_from_script():
+        uninstallPath = Helper.get_script() + ' ' + Constants.ARGUMENT_UNINSTALL
+        if Helper.run_from_script():
             uninstallPath = '\"' + self._get_python_path() + '\" ' + uninstallPath
         values = [
             ('DisplayName', winreg.REG_SZ, self.get_name()),

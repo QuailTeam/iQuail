@@ -5,7 +5,7 @@ import os.path
 import shutil
 from .AInstaller import AInstaller
 from .Constants import Constants
-from .tools import *
+from .helper import *
 # poc install linux
 
 '''
@@ -44,7 +44,7 @@ class LinuxInstaller(AInstaller):
         app_config = {
             'Name': self.get_name(),
             'Path': self.get_install_path(),
-            'Exec': self.get_install_path(get_script_name()),
+            'Exec': self.get_install_path(Helper.get_script_name()),
             'Icon': self.get_install_path(self.get_icon()),
             'Terminal': 'true' if self.get_console() else 'false',
             'Type': 'Application'
