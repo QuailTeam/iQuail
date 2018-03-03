@@ -3,14 +3,13 @@ import stat
 import sys
 import os
 import argparse
-import platform
 from .Constants import Constants
 from .Helper import *
 
-if (platform.system() == 'Linux'):
+if Helper.OS_LINUX:
     from .LinuxInstaller import LinuxInstaller
     Installer = LinuxInstaller
-elif (platform.system() == 'Windows'):
+elif Helper.OS_WINDOWS:
     from .WindowsInstaller import WindowsInstaller
     Installer = WindowsInstaller
 else:

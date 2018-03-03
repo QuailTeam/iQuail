@@ -1,9 +1,12 @@
 import os
 import sys
 import ctypes
-
+import platform
 
 class Helper:
+    OS_LINUX = platform.system() == 'Linux'
+    OS_WINDOWS = platform.system() == 'Windows'
+
     @staticmethod
     def makedirs_ignore(*args, **kwargs):
         try:
@@ -36,10 +39,10 @@ class Helper:
 
     @staticmethod
     def rerun_as_admin():
-        if (platform.system() == 'Linux'):
+        if Helper.OS_LINUX:
             # os.system('pkexec %s %s' % (Helper.get_script_path(), ' '.join(sys.argv[1:])))
             raise NotImplementedError
-        elif (platform.system() == 'Windows'):
+        elif Helper.OS_WINDOWS:
             if not ctypes.windll.shell32.IsUserAnAdmin():
                 ctypes.windll.shell32.ShellExecuteW(None,
                                                     'runas',

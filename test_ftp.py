@@ -23,6 +23,6 @@ configWindows = {
     'console': True
 }
 
-config = configLinux if platform.system() == 'Linux' else configWindows
+config = configLinux if quail.Helper.OS_LINUX else configWindows
 
 quail.run(config)
