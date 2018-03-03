@@ -5,7 +5,7 @@ import os.path
 import shutil
 from .AInstaller import AInstaller
 from .Constants import Constants
-from .helper import *
+from .Helper import *
 # poc install linux
 
 '''
