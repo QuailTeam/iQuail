@@ -7,6 +7,7 @@ from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
 from .AInstaller import AInstaller
 from .Constants import Constants
+from contextlib import suppress
 from .Helper import *
 
 
@@ -61,8 +62,10 @@ class WindowsInstaller(AInstaller):
         self._create_shortcut(self._startupBarShortcut)
 
     def _delete_shortcuts(self):
-        os.remove(self._desktopShortcut)
-        shutil.rmtree(self._startupBarShortcutPath)
+        with suppress(FileNotFoundError):
+            os.remove(self._desktopShortcut)
+        with suppress(FileNotFoundError):
+            shutil.rmtree(self._startupBarShortcutPath)
 
     def install(self):
         super().install()
