@@ -23,9 +23,9 @@ class LinuxInstaller(AInstaller):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.desktop = self._get_desktop_path(self.config.name
+        self.desktop = self._get_desktop_path(self.config.name)
         self.desktop_uninstall = self._get_desktop_path("%s_uninstall" %
-                                                        (self.config.name)
+                                                        (self.config.name))
 
     def _get_desktop_path(self, name):
         return os.path.join(pathlib.Path.home(),
@@ -45,7 +45,7 @@ class LinuxInstaller(AInstaller):
             'Name': self.config.name,
             'Path': self.get_install_path(),
             'Exec': self.get_install_path(Helper.get_script_name()),
-            'Icon': self.get_install_path(self.config.icon)
+            'Icon': self.get_install_path(self.config.icon),
             'Terminal': 'true' if self.config.console else 'false',
             'Type': 'Application'
         }

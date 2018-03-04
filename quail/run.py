@@ -40,7 +40,7 @@ def run(config_dict):
         installer.uninstall()
         sys.exit(0)
     if installer.is_installed():
-        binary = installer.get_install_path(installer.get_binary())
+        binary = installer.get_install_path(installer.config.binary)
         if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
             os.chmod(binary, 0o755)
         os.system(binary + " " + " ".join(sys.argv))
