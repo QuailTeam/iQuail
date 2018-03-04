@@ -21,11 +21,11 @@ Files /opt
 
 class LinuxInstaller(AInstaller):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.desktop = self._get_desktop_path(self.get_name())
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.desktop = self._get_desktop_path(self.config.name
         self.desktop_uninstall = self._get_desktop_path("%s_uninstall" %
-                                                        (self.get_name()))
+                                                        (self.config.name)
 
     def _get_desktop_path(self, name):
         return os.path.join(pathlib.Path.home(),
@@ -42,11 +42,11 @@ class LinuxInstaller(AInstaller):
 
     def _register_app(self):
         app_config = {
-            'Name': self.get_name(),
+            'Name': self.config.name,
             'Path': self.get_install_path(),
             'Exec': self.get_install_path(Helper.get_script_name()),
-            'Icon': self.get_install_path(self.get_icon()),
-            'Terminal': 'true' if self.get_console() else 'false',
+            'Icon': self.get_install_path(self.config.icon)
+            'Terminal': 'true' if self.config.console else 'false',
             'Type': 'Application'
         }
         self._write_desktop(self.desktop, app_config)

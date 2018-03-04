@@ -13,15 +13,15 @@ from .Helper import *
 
 class WindowsInstaller(AInstaller):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._uninstallRegKey = os.path.join(
-            'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\', self.get_name())
-        shortcutName = self.get_name() + '.lnk'
+            'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\', self.config.name)
+        shortcutName = self.config.name + '.lnk'
         self._desktopShortcut = os.path.join(shell.SHGetFolderPath(
             0, shellcon.CSIDL_DESKTOP, 0, 0), shortcutName)
         self._startupBarShortcutPath = os.path.join(os.getenv(
-            'APPDATA'), 'Microsoft\\Windows\\Start Menu\\Programs', self.get_name())
+            'APPDATA'), 'Microsoft\\Windows\\Start Menu\\Programs', self.config.name)
         self._startupBarShortcut = os.path.join(
             self._startupBarShortcutPath, shortcutName)
 
@@ -33,10 +33,10 @@ class WindowsInstaller(AInstaller):
         if Helper.running_from_script():
             uninstallPath = '\"' + self._get_python_path() + '\" ' + uninstallPath
         values = [
-            ('DisplayName', winreg.REG_SZ, self.get_name()),
+            ('DisplayName', winreg.REG_SZ, self.config.name),
             ('InstallLocation', winreg.REG_SZ, self.get_install_path()),
-            ('DisplayIcon', winreg.REG_SZ, self.get_install_path(self.get_icon())),
-            ('Publisher', winreg.REG_SZ, self.get_publisher()),
+            ('DisplayIcon', winreg.REG_SZ, self.get_install_path(self.config.icon)),
+            ('Publisher', winreg.REG_SZ, self.config.publisher),
             ('UninstallString', winreg.REG_SZ, uninstallPath),
             ('NoRepair', winreg.REG_DWORD, 1),
             ('NoModify', winreg.REG_DWORD, 1)]
@@ -49,11 +49,11 @@ class WindowsInstaller(AInstaller):
         winreg.DeleteKey(winreg.HKEY_CURRENT_USER, self._uninstallRegKey)
 
     def _create_shortcut(self, destPath):
-        shellScript = Dispatch('WScript.Shell')
-        shortcut = shellScript.CreateShortCut(destPath)
-        shortcut.Targetpath = self.get_install_path(self.get_binary())
-        shortcut.WorkingDirectory = self.get_install_path()
-        shortcut.IconLocation = self.get_install_path(self.get_icon())
+        shellScript=Dispatch('WScript.Shell')
+        shortcut=shellScript.CreateShortCut(destPath)
+        shortcut.Targetpath=self.get_install_path(self.config.binary)
+        shortcut.WorkingDirectory=self.get_install_path()
+        shortcut.IconLocation=self.get_install_path(self.config.icon)
         shortcut.save()
 
     def _create_shortcuts(self):

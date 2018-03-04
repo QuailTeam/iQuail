@@ -4,7 +4,8 @@ import sys
 import os
 import argparse
 from .Constants import Constants
-from .Helper import *
+from .Helper import Helper
+from .Config import Config
 
 if Helper.OS_LINUX:
     from .LinuxInstaller import LinuxInstaller
@@ -21,13 +22,20 @@ def parse_args():
     parser.add_argument(Constants.ARGUMENT_UNINSTALL,
                         help="uninstall program",
                         action="store_true")
+    parser.add_argument(Constants.ARGUMENT_BUILD,
+                        help="build executable",
+                        action="store_true")
     return parser.parse_args()
 
 
-def run(config):
+def run(config_dict):
     '''run config'''
     args = parse_args()
-    installer = Installer(**config)
+    config = Config(**config_dict)
+    if (args.quail_build):
+        #builder = Builder(config)
+        sys.exit(0)
+    installer = Installer(config)
     if args.quail_uninstall:
         installer.uninstall()
         sys.exit(0)

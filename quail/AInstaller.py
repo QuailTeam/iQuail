@@ -2,58 +2,45 @@ import os.path
 import pathlib
 import shutil
 from .Helper import *
-
+from .Config import Config
 
 class AInstaller:
 
-    def __init__(self, name, solution, binary, icon, publisher='Quail', console=False):
-        self._solution = solution
-        self._name = name
-        self._icon = icon
-        self._binary = binary
-        self._publisher = publisher
-        self._console = console
+    def __init__(self, config):
+        if not isinstance(config, Config):
+            raise AssertionError("Expecting quail.Config()")
+        self._config = config
         self._install_path = self.build_install_path()
+
+    @property
+    def config(self):
+        return self._config
 
     def build_install_path(self):
         '''Build install path
         This function can be overriden to install files to somewhere else
         '''
-        return os.path.join(pathlib.Path.home(), '.quail', self.get_name())
+        return os.path.join(pathlib.Path.home(), '.quail', self.config.name)
 
     def get_install_path(self, *args):
         '''Get file from install path'''
         return os.path.join(self._install_path, *args)
 
-    def get_name(self):
-        return self._name
-
-    def get_binary(self):
-        return self._binary
-
-    def get_publisher(self):
-        return self._publisher
-
-    def get_icon(self):
-        return self._icon
-
-    def get_console(self):
-        return self._console
-
     def install(self):
-        if not self._solution.open():
+        solution = self.config.solution
+        if not solution.open():
             raise AssertionError("Can't access solution")
         if os.path.exists(self.get_install_path()):
             shutil.rmtree(self.get_install_path())
         # shutil.copytree(self.get_solution_path(), self.get_install_path())
         Helper.makedirs_ignore(self.get_install_path())
-        for root, dirs, files in self._solution.walk():
+        for root, dirs, files in solution.walk():
             for sdir in dirs:
                 Helper.makedirs_ignore(self.get_install_path(root, sdir))
             for sfile in files:
-                shutil.copy2(self._solution.get_file(os.path.join(root, sfile)),
+                shutil.copy2(solution.get_file(os.path.join(root, sfile)),
                              self.get_install_path(root))
-        self._solution.close()
+        solution.close()
         shutil.copy2(Helper.get_script(), self.get_install_path())
         if Helper.running_from_script():
             shutil.copytree(Helper.get_module_path(),
