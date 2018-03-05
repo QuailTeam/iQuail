@@ -5,13 +5,13 @@ import winreg
 import shutil
 from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
-from .BaseInstaller import BaseInstaller
-from .Constants import Constants
 from contextlib import suppress
-from .Helper import *
+from .installer_base import InstallerBase
+from .constants import Constants
+from .helper import Helper
 
 
-class WindowsInstaller(BaseInstaller):
+class InstallerWindows(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,8 +34,9 @@ class WindowsInstaller(BaseInstaller):
         return sys.executable
 
     def _set_reg_uninstall(self):
-        uninstall_path = "%s %s" % (self.get_install_path(Helper.get_script_name()),
-                                    Constants.ARGUMENT_UNINSTALL)
+        uninstall_path = "%s %s" % (
+            self.get_install_path(Helper.get_script_name()),
+            Constants.ARGUMENT_UNINSTALL)
         if Helper.running_from_script():
             uninstall_path = self._get_python_path() + ' ' + uninstall_path
         values = [

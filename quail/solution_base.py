@@ -1,5 +1,5 @@
 
-class ISolutionResolver:
+class SolutionBase:
     ''' The goal of this interface is to be able to resolve solution files
     comming from anywhere.
     current goals are:

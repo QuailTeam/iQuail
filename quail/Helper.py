@@ -7,7 +7,7 @@ import platform
 class Helper:
     OS_LINUX = platform.system() == 'Linux'
     OS_WINDOWS = platform.system() == 'Windows'
-    
+
     @staticmethod
     def get_module_path():
         return os.path.dirname(os.path.realpath(__file__))
@@ -26,7 +26,8 @@ class Helper:
 
     @staticmethod
     def running_from_script():
-        '''check if being run from script and not builded in standalone binary'''
+        '''check if being run from script
+        and not builded in standalone binary'''
         if getattr(sys, 'frozen', False):
             return False
         return True
@@ -34,7 +35,8 @@ class Helper:
     @staticmethod
     def rerun_as_admin():
         if Helper.OS_LINUX:
-            # os.system('pkexec %s %s' % (Helper.get_script_path(), ' '.join(sys.argv[1:])))
+            # os.system('pkexec %s %s' % (Helper.get_script_path(),
+            # ' '.join(sys.argv[1:])))
             raise NotImplementedError
         elif Helper.OS_WINDOWS:
             if not ctypes.windll.shell32.IsUserAnAdmin():

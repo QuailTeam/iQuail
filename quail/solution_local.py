@@ -1,10 +1,10 @@
 
 import os
-from .ISolutionResolver import ISolutionResolver
-from .Helper import *
+from .solution_base import SolutionBase
+from .helper import Helper
 
 
-class LocalSolution(ISolutionResolver):
+class SolutionLocal(SolutionBase):
     def __init__(self, path):
         if not isinstance(path, list):
             raise AssertionError("Expected list as solution path")

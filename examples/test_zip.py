@@ -9,7 +9,7 @@ configLinux = {
     'name': 'LolAllum1',
     'icon': 'icon.jpeg',
     'binary': 'allum1',
-    'solution': quail.ZipSolution('allum1.zip'),
+    'solution': quail.SolutionZip('allum1.zip'),
     'console': True
 }
 
@@ -17,7 +17,7 @@ configWindows = {
     'name': 'OpenHardwareMonitor',
     'icon': 'OpenHardwareMonitor.exe',
     'binary': 'OpenHardwareMonitor.exe',
-    'solution': quail.ZipSolution('OpenHardwareMonitor.zip'),
+    'solution': quail.SolutionZip('OpenHardwareMonitor.zip'),
     'console': True
 }
 

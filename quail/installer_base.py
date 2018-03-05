@@ -1,10 +1,10 @@
 import os
 import pathlib
 import shutil
-from .Helper import Helper
+from .helper import Helper
 
 
-class BaseInstaller:
+class InstallerBase:
 
     def __init__(self,
                  name,

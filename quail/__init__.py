@@ -1,17 +1,17 @@
 
 # from .LinuxInstaller import LinuxInstaller
 from .run import run
-from .LocalSolution import LocalSolution
-from .FtpSolution import FtpSolution
-from .ZipSolution import ZipSolution
-from .Helper import Helper
-from .Builder import Builder
+from .solution_local import SolutionLocal
+from .solution_ftp import SolutionFtp
+from .solution_zip import SolutionZip
+from .helper import Helper
+from .builder_base import BuilderBase
 
 if Helper.OS_LINUX:
-    from .LinuxInstaller import LinuxInstaller
-    Installer = LinuxInstaller
+    from .installer_linux import InstallerLinux
+    Installer = InstallerLinux
 elif Helper.OS_WINDOWS:
-    from .WindowsInstaller import WindowsInstaller
-    Installer = WindowsInstaller
+    from .installer_windows import InstallerWindows
+    Installer = InstallerWindows
 else:
     raise NotImplementedError

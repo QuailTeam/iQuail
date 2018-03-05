@@ -2,8 +2,8 @@ from ftplib import FTP
 import os
 import tempfile
 import shutil
-from .ISolutionResolver import ISolutionResolver
-from .Helper import Helper
+from .solution_base import SolutionBase
+from .helper import Helper
 
 
 class FtpWalk:
@@ -45,7 +45,7 @@ class FtpWalk:
             path = os.path.dirname(path)
 
 
-class FtpSolution(ISolutionResolver):
+class SolutionFtp(SolutionBase):
     def __init__(self, host, path, port=21):
         if not isinstance(path, list):
             raise AssertionError("Expected list as ftp path")

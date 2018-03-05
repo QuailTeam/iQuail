@@ -3,11 +3,11 @@ import os
 import zipfile
 import tempfile
 import shutil
-from .ISolutionResolver import ISolutionResolver
-from .Helper import *
+from .solution_base import SolutionBase
+from .helper import *
 
 
-class ZipSolution(ISolutionResolver):
+class SolutionZip(SolutionBase):
     ''' Zip solution
     made to be embeded in the executable (with pyinstaller --add-data)
     limitations:

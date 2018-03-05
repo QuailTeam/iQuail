@@ -9,7 +9,7 @@ configLinux = {
     'name': 'LolAllum1',
     'icon': 'icon.jpeg',
     'binary': 'allum1',
-    'solution': quail.FtpSolution('mafreebox.freebox.fr',
+    'solution': quail.SolutionFtp('mafreebox.freebox.fr',
                                   ['Disque dur','autres', 'test_solution']),
     'console': True
 }
@@ -18,7 +18,7 @@ configWindows = {
     'name': 'OpenHardwareMonitor',
     'icon': 'OpenHardwareMonitor.exe',
     'binary': 'OpenHardwareMonitor.exe',
-    'solution': quail.FtpSolution('mafreebox.freebox.fr',
+    'solution': quail.SolutionFtp('mafreebox.freebox.fr',
                                   ['Disque dur','autres', 'OpenHardwareMonitor']),
     'console': True
 }

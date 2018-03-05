@@ -3,10 +3,9 @@ import configparser
 import pathlib
 import os.path
 import shutil
-from .BaseInstaller import BaseInstaller
-from .Constants import Constants
-from .Helper import *
-# poc install linux
+from .installer_base import InstallerBase
+from .constants import Constants
+from .helper import Helper
 
 '''
 Notes for all user install:
@@ -19,13 +18,13 @@ Files /opt
 '''
 
 
-class LinuxInstaller(BaseInstaller):
+class InstallerLinux(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._shortcut = self._get_desktop_path(self.name)
         self._shortcut_uninstall = self._get_desktop_path("%s_uninstall" %
-                                                        (self.name))
+                                                          (self.name))
 
     def _get_desktop_path(self, name):
         return os.path.join(pathlib.Path.home(),

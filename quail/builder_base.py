@@ -1,8 +1,8 @@
 
-from .Helper import Helper
+from .helper import Helper
 
 
-class Builder:
+class BuilderBase:
     def __init__(self,
                  console=True,
                  icon='',
