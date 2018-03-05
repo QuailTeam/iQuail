@@ -3,13 +3,28 @@ class Config:
     '''Class to save solution configuration and default values
     '''
 
-    def __init__(self, name, solution, binary, icon, publisher='Quail', console=False):
-        self._solution = solution
+    def __init__(self, name, binary, icon,
+                 solution,
+                 publisher='Quail',
+                 console=False,
+                 build_icon='',
+                 build_onefile=True):
         self._name = name
-        self._icon = icon
         self._binary = binary
+        self._icon = icon
+        self._solution = solution
         self._publisher = publisher
         self._console = console
+        self._build_icon = build_icon
+        self._build_onefile = build_onefile
+
+    @property
+    def build_onefile(self):
+        return self._build_onefile
+
+    @property
+    def build_icon(self):
+        return self._build_icon
 
     @property
     def solution(self):

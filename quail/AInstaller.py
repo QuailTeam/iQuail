@@ -1,7 +1,7 @@
 import os
 import pathlib
 import shutil
-from .Helper import *
+from .Helper import Helper
 from .Config import Config
 
 

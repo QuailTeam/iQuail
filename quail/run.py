@@ -6,6 +6,7 @@ import argparse
 from .Constants import Constants
 from .Helper import Helper
 from .Config import Config
+from .Builder import Builder
 
 if Helper.OS_LINUX:
     from .LinuxInstaller import LinuxInstaller
@@ -33,7 +34,8 @@ def run(config_dict):
     args = parse_args()
     config = Config(**config_dict)
     if (args.quail_build):
-        # builder = Builder(config)
+        builder = Builder(config)
+        builder.build()
         sys.exit(0)
     installer = Installer(config)
     if args.quail_uninstall:

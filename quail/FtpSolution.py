@@ -3,7 +3,7 @@ import os
 import tempfile
 import shutil
 from .ISolutionResolver import ISolutionResolver
-from .Helper import *
+from .Helper import Helper
 
 
 class FtpWalk:
