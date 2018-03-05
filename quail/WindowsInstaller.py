@@ -15,57 +15,61 @@ class WindowsInstaller(AInstaller):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._uninstallRegKey = os.path.join(
-            'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\', self.config.name)
-        shortcutName = self.config.name + '.lnk'
-        self._desktopShortcut = os.path.join(shell.SHGetFolderPath(
-            0, shellcon.CSIDL_DESKTOP, 0, 0), shortcutName)
-        self._startupBarShortcutPath = os.path.join(os.getenv(
-            'APPDATA'), 'Microsoft\\Windows\\Start Menu\\Programs', self.config.name)
-        self._startupBarShortcut = os.path.join(
-            self._startupBarShortcutPath, shortcutName)
+        self._uninstall_reg_key = os.path.join(
+            'SOFTWARE', 'Microsoft', 'Windows', 'CurrentVersion', 'Uninstall',
+            self.config.name)
+        shortcut_name = self.config.name + '.lnk'
+        self._desktop_shortcut = os.path.join(
+            shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, 0, 0),
+            shortcut_name)
+        self._startup_bar_shortcut = os.path.join(
+            os.getenv('APPDATA'),
+            'Microsoft', 'Windows', 'Start Menu', 'Programs',
+            self.config.name,
+            shortcut_name)
 
     def _get_python_path(self):
         return sys.executable
 
     def _set_reg_uninstall(self):
-        uninstallPath = Helper.get_script() + ' ' + Constants.ARGUMENT_UNINSTALL
+        uninstall_path = "%s %s" % (self.get_install_path(Helper.get_script_name()),
+                                    Constants.ARGUMENT_UNINSTALL)
         if Helper.running_from_script():
-            uninstallPath = '\"' + self._get_python_path() + '\" ' + uninstallPath
+            uninstall_path = self._get_python_path() + ' ' + uninstall_path
         values = [
             ('DisplayName', winreg.REG_SZ, self.config.name),
             ('InstallLocation', winreg.REG_SZ, self.get_install_path()),
             ('DisplayIcon', winreg.REG_SZ, self.get_install_path(self.config.icon)),
             ('Publisher', winreg.REG_SZ, self.config.publisher),
-            ('UninstallString', winreg.REG_SZ, uninstallPath),
+            ('UninstallString', winreg.REG_SZ, uninstall_path),
             ('NoRepair', winreg.REG_DWORD, 1),
             ('NoModify', winreg.REG_DWORD, 1)]
-        keyHandler = winreg.CreateKey(
-            winreg.HKEY_CURRENT_USER, self._uninstallRegKey)
-        for RegName, RegType, RegValue in values:
-            winreg.SetValueEx(keyHandler, RegName, 0, RegType, RegValue)
+        key_handler = winreg.CreateKey(
+            winreg.HKEY_CURRENT_USER, self._uninstall_reg_key)
+        for reg_name, reg_type, reg_value in values:
+            winreg.SetValueEx(key_handler, reg_name, 0, reg_type, reg_value)
 
     def _unset_reg_uninstall(self):
-        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, self._uninstallRegKey)
+        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, self._uninstall_reg_key)
 
-    def _create_shortcut(self, destPath):
-        shellScript=Dispatch('WScript.Shell')
-        shortcut=shellScript.CreateShortCut(destPath)
-        shortcut.Targetpath=self.get_install_path(self.config.binary)
-        shortcut.WorkingDirectory=self.get_install_path()
-        shortcut.IconLocation=self.get_install_path(self.config.icon)
+    def _create_shortcut(self, dest):
+        shell_script = Dispatch('WScript.Shell')
+        shortcut = shell_script.CreateShortCut(dest)
+        shortcut.Targetpath = self.get_install_path(Helper.get_script_name())
+        shortcut.WorkingDirectory = self.get_install_path()
+        shortcut.IconLocation = self.get_install_path(self.config.icon)
         shortcut.save()
 
     def _create_shortcuts(self):
-        self._create_shortcut(self._desktopShortcut)
-        os.makedirs(self._startupBarShortcutPath, 0o777, True)
-        self._create_shortcut(self._startupBarShortcut)
+        self._create_shortcut(self._desktop_shortcut)
+        os.makedirs(os.path.dirname(self._startup_bar_shortcut), 0o777, True)
+        self._create_shortcut(self._startup_bar_shortcut)
 
     def _delete_shortcuts(self):
         with suppress(FileNotFoundError):
-            os.remove(self._desktopShortcut)
+            os.remove(self._desktop_shortcut)
         with suppress(FileNotFoundError):
-            shutil.rmtree(self._startupBarShortcutPath)
+            shutil.rmtree(self._startup_bar_shortcut_path)
 
     def install(self):
         super().install()
@@ -81,7 +85,7 @@ class WindowsInstaller(AInstaller):
         if not super().is_installed():
             return False
         try:
-            winreg.OpenKey(winreg.HKEY_CURRENT_USER, self._uninstallRegKey)
+            winreg.OpenKey(winreg.HKEY_CURRENT_USER, self._uninstall_reg_key)
             return True
         except:
             return False

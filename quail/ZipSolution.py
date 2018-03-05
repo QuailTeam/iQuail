@@ -6,12 +6,14 @@ import shutil
 from .ISolutionResolver import ISolutionResolver
 from .Helper import *
 
+
 class ZipSolution(ISolutionResolver):
     ''' Zip solution
     made to be embeded in the executable (with pyinstaller --add-data)
     limitations:
     max ram size / max tmp size
     '''
+
     def __init__(self, zip_name):
         if not isinstance(zip_name, str):
             raise AssertionError("Expected string as zip file")

@@ -5,6 +5,7 @@ import shutil
 from .ISolutionResolver import ISolutionResolver
 from .Helper import *
 
+
 class FtpWalk:
     def __init__(self, ftp, *path):
         self._ftp = ftp

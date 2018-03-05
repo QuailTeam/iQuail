@@ -2,6 +2,7 @@
 class Config:
     '''Class to save solution configuration and default values
     '''
+
     def __init__(self, name, solution, binary, icon, publisher='Quail', console=False):
         self._solution = solution
         self._name = name

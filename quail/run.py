@@ -33,7 +33,7 @@ def run(config_dict):
     args = parse_args()
     config = Config(**config_dict)
     if (args.quail_build):
-        #builder = Builder(config)
+        # builder = Builder(config)
         sys.exit(0)
     installer = Installer(config)
     if args.quail_uninstall:

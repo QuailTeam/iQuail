@@ -4,6 +4,7 @@ import shutil
 from .Helper import *
 from .Config import Config
 
+
 class AInstaller:
 
     def __init__(self, config):

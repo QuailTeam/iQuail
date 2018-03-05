@@ -3,6 +3,7 @@ import os
 from .ISolutionResolver import ISolutionResolver
 from .Helper import *
 
+
 class LocalSolution(ISolutionResolver):
     def __init__(self, path):
         if not isinstance(path, list):

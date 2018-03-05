@@ -3,6 +3,7 @@ import sys
 import ctypes
 import platform
 
+
 class Helper:
     OS_LINUX = platform.system() == 'Linux'
     OS_WINDOWS = platform.system() == 'Windows'
