@@ -19,6 +19,10 @@ class Builder:
     def icon(self):
         return self._icon
 
+    @property
+    def console(self):
+        return self._console
+
     def get_build_params(self):
         params = [Helper.get_script(),
                   "--exclude-module", "PyInstaller"]
