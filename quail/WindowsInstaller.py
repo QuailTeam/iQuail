@@ -22,10 +22,12 @@ class WindowsInstaller(AInstaller):
         self._desktop_shortcut = os.path.join(
             shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, 0, 0),
             shortcut_name)
-        self._startup_bar_shortcut = os.path.join(
+        self._start_menu_path = os.path.join(
             os.getenv('APPDATA'),
             'Microsoft', 'Windows', 'Start Menu', 'Programs',
-            self.config.name,
+            self.config.name)
+        self._start_menu_shortcut = os.path.join(
+            self._start_menu_path,
             shortcut_name)
 
     def _get_python_path(self):
@@ -62,14 +64,14 @@ class WindowsInstaller(AInstaller):
 
     def _create_shortcuts(self):
         self._create_shortcut(self._desktop_shortcut)
-        os.makedirs(os.path.dirname(self._startup_bar_shortcut), 0o777, True)
-        self._create_shortcut(self._startup_bar_shortcut)
+        os.makedirs(self._start_menu_path, 0o777, True)
+        self._create_shortcut(self._start_menu_shortcut)
 
     def _delete_shortcuts(self):
         with suppress(FileNotFoundError):
             os.remove(self._desktop_shortcut)
         with suppress(FileNotFoundError):
-            shutil.rmtree(os.path.dirname(self._startup_bar_shortcut))
+            shutil.rmtree(self._start_menu_path)
 
     def install(self):
         super().install()
