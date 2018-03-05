@@ -69,7 +69,7 @@ class WindowsInstaller(AInstaller):
         with suppress(FileNotFoundError):
             os.remove(self._desktop_shortcut)
         with suppress(FileNotFoundError):
-            shutil.rmtree(self._startup_bar_shortcut_path)
+            shutil.rmtree(os.path.dirname(self._startup_bar_shortcut))
 
     def install(self):
         super().install()
