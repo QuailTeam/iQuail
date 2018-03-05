@@ -4,7 +4,7 @@ import shutil
 from .Helper import Helper
 
 
-class AInstaller:
+class BaseInstaller:
 
     def __init__(self,
                  name,

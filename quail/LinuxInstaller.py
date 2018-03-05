@@ -3,7 +3,7 @@ import configparser
 import pathlib
 import os.path
 import shutil
-from .AInstaller import AInstaller
+from .BaseInstaller import BaseInstaller
 from .Constants import Constants
 from .Helper import *
 # poc install linux
@@ -19,7 +19,7 @@ Files /opt
 '''
 
 
-class LinuxInstaller(AInstaller):
+class LinuxInstaller(BaseInstaller):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

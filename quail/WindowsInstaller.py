@@ -5,13 +5,13 @@ import winreg
 import shutil
 from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
-from .AInstaller import AInstaller
+from .BaseInstaller import BaseInstaller
 from .Constants import Constants
 from contextlib import suppress
 from .Helper import *
 
 
-class WindowsInstaller(AInstaller):
+class WindowsInstaller(BaseInstaller):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
