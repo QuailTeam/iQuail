@@ -1,25 +1,32 @@
 
 from .Helper import Helper
-from .Config import Config
+
 
 class Builder:
-    def __init__(self, config):
-        if not isinstance(config, Config):
-            raise AssertionError("Expecting quail.Config()")
-        self._config = config
+    def __init__(self,
+                 console=True,
+                 icon='',
+                 onefile=True):
+        self._icon = icon
+        self._onefile = onefile
+        self._console = console
 
     @property
-    def config(self):
-        return self._config
+    def onefile(self):
+        return self._onefile
+
+    @property
+    def icon(self):
+        return self._icon
 
     def get_build_params(self):
         params = [Helper.get_script(),
                   "--exclude-module", "PyInstaller"]
-        if self.config.build_icon:
-            params += ["-i", self.config.build_icon]
-        if self.config.build_onefile:
+        if self.icon:
+            params += ["-i", self.icon]
+        if self.onefile:
             params += ["--onefile"]
-        if not self.config.console:
+        if not self.console:
             params += ["--noconsole"]
         return params
 

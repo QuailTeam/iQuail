@@ -23,9 +23,9 @@ class LinuxInstaller(AInstaller):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.desktop = self._get_desktop_path(self.config.name)
-        self.desktop_uninstall = self._get_desktop_path("%s_uninstall" %
-                                                        (self.config.name))
+        self._shortcut = self._get_desktop_path(self.name)
+        self._shortcut_uninstall = self._get_desktop_path("%s_uninstall" %
+                                                        (self.name))
 
     def _get_desktop_path(self, name):
         return os.path.join(pathlib.Path.home(),
@@ -42,18 +42,18 @@ class LinuxInstaller(AInstaller):
 
     def _register_app(self):
         app_config = {
-            'Name': self.config.name,
+            'Name': self.name,
             'Path': self.get_install_path(),
             'Exec': self.get_install_path(Helper.get_script_name()),
-            'Icon': self.get_install_path(self.config.icon),
-            'Terminal': 'true' if self.config.console else 'false',
+            'Icon': self.get_install_path(self.icon),
+            'Terminal': 'true' if self.console else 'false',
             'Type': 'Application'
         }
-        self._write_desktop(self.desktop, app_config)
+        self._write_desktop(self._shortcut, app_config)
         app_config["Exec"] = app_config["Exec"] + \
             " " + Constants.ARGUMENT_UNINSTALL
         app_config["Name"] = "Uninstall " + app_config["Name"]
-        self._write_desktop(self.desktop_uninstall, app_config)
+        self._write_desktop(self._shortcut_uninstall, app_config)
 
     def install(self):
         super().install()
@@ -61,10 +61,10 @@ class LinuxInstaller(AInstaller):
 
     def uninstall(self):
         super().uninstall()
-        os.remove(self.desktop)
-        os.remove(self.desktop_uninstall)
+        os.remove(self._shortcut)
+        os.remove(self._shortcut_uninstall)
 
     def is_installed(self):
-        if super().is_installed() and os.path.isfile(self.desktop):
+        if super().is_installed() and os.path.isfile(self._shortcut):
             return True
         return False

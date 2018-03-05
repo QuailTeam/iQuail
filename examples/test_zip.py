@@ -23,4 +23,4 @@ configWindows = {
 
 config = configLinux if quail.Helper.OS_LINUX else configWindows
 
-quail.run(config)
+quail.run(quail.Installer(**config))

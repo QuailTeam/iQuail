@@ -17,15 +17,15 @@ class WindowsInstaller(AInstaller):
         super().__init__(*args, **kwargs)
         self._uninstall_reg_key = os.path.join(
             'SOFTWARE', 'Microsoft', 'Windows', 'CurrentVersion', 'Uninstall',
-            self.config.name)
-        shortcut_name = self.config.name + '.lnk'
+            self.name)
+        shortcut_name = self.name + '.lnk'
         self._desktop_shortcut = os.path.join(
             shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, 0, 0),
             shortcut_name)
         self._start_menu_path = os.path.join(
             os.getenv('APPDATA'),
             'Microsoft', 'Windows', 'Start Menu', 'Programs',
-            self.config.name)
+            self.name)
         self._start_menu_shortcut = os.path.join(
             self._start_menu_path,
             shortcut_name)
@@ -39,10 +39,10 @@ class WindowsInstaller(AInstaller):
         if Helper.running_from_script():
             uninstall_path = self._get_python_path() + ' ' + uninstall_path
         values = [
-            ('DisplayName', winreg.REG_SZ, self.config.name),
+            ('DisplayName', winreg.REG_SZ, self.name),
             ('InstallLocation', winreg.REG_SZ, self.get_install_path()),
-            ('DisplayIcon', winreg.REG_SZ, self.get_install_path(self.config.icon)),
-            ('Publisher', winreg.REG_SZ, self.config.publisher),
+            ('DisplayIcon', winreg.REG_SZ, self.get_install_path(self.icon)),
+            ('Publisher', winreg.REG_SZ, self.publisher),
             ('UninstallString', winreg.REG_SZ, uninstall_path),
             ('NoRepair', winreg.REG_DWORD, 1),
             ('NoModify', winreg.REG_DWORD, 1)]
@@ -59,7 +59,7 @@ class WindowsInstaller(AInstaller):
         shortcut = shell_script.CreateShortCut(dest)
         shortcut.Targetpath = self.get_install_path(Helper.get_script_name())
         shortcut.WorkingDirectory = self.get_install_path()
-        shortcut.IconLocation = self.get_install_path(self.config.icon)
+        shortcut.IconLocation = self.get_install_path(self.icon)
         shortcut.save()
 
     def _create_shortcuts(self):
