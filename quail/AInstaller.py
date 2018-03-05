@@ -1,4 +1,4 @@
-import os.path
+import os
 import pathlib
 import shutil
 from .Helper import *
@@ -34,10 +34,10 @@ class AInstaller:
         if os.path.exists(self.get_install_path()):
             shutil.rmtree(self.get_install_path())
         # shutil.copytree(self.get_solution_path(), self.get_install_path())
-        Helper.makedirs_ignore(self.get_install_path())
+        os.makedirs(self.get_install_path(), 0o777, True)
         for root, dirs, files in solution.walk():
             for sdir in dirs:
-                Helper.makedirs_ignore(self.get_install_path(root, sdir))
+                os.makedirs(self.get_install_path(root, sdir), 0o777, True)
             for sfile in files:
                 shutil.copy2(solution.get_file(os.path.join(root, sfile)),
                              self.get_install_path(root))

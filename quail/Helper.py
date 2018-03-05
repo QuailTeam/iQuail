@@ -7,14 +7,7 @@ import platform
 class Helper:
     OS_LINUX = platform.system() == 'Linux'
     OS_WINDOWS = platform.system() == 'Windows'
-
-    @staticmethod
-    def makedirs_ignore(*args, **kwargs):
-        try:
-            os.makedirs(*args, **kwargs)
-        except FileExistsError:
-            pass
-
+    
     @staticmethod
     def get_module_path():
         return os.path.dirname(os.path.realpath(__file__))
