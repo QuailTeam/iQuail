@@ -1,5 +1,7 @@
 quail_build rm when bundle
 
+posixpath?
+
 Windows EXE can't remove itself
 
 UID for solutions?

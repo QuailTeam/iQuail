@@ -34,7 +34,21 @@ class BuilderBase:
             params += ["--noconsole"]
         return params
 
+    def pre_build(self):
+        ''' Pre build commands
+        (Don't call this function yourself)
+        '''
+        pass
+
+    def post_build(self):
+        ''' Post build commands
+        (Don't call this function yourself)
+        '''
+        pass
+
     def build(self):
+        self.pre_build()
         import PyInstaller.__main__ as PyInstallerMain
         # PyInstaller will not exist in bundle, importing only when needed
         PyInstallerMain.run(self.get_build_params())
+        self.post_build()

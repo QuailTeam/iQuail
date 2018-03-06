@@ -6,6 +6,7 @@ from .solution_ftp import SolutionFtp
 from .solution_zip import SolutionZip
 from .helper import Helper
 from .builder_base import BuilderBase
+from .builder_zip import BuilderZip
 
 if Helper.OS_LINUX:
     from .installer_linux import InstallerLinux

@@ -5,22 +5,25 @@ import os.path
 import quail
 import platform
 
-configLinux = {
-    'name': 'LolAllum1',
-    'icon': 'icon.jpeg',
-    'binary': 'allum1',
-    'solution': quail.SolutionZip('allum1.zip'),
-    'console': True
-}
+if quail.Helper.OS_LINUX:
+    solution_path = ['Allum1']
+    config = {
+        'name': 'LolAllum1',
+        'icon': 'icon.jpeg',
+        'binary': 'allum1',
+        'solution': quail.SolutionZip('solution.zip'),
+        'console': True
+    }
+elif quail.Helper.OS_WINDOWS:
+    solution_path = ['OpenHardwareMonitor']
+    config = {
+        'name': 'OpenHardwareMonitor',
+        'icon': 'OpenHardwareMonitor.exe',
+        'binary': 'OpenHardwareMonitor.exe',
+        'solution': quail.SolutionZip('solution.zip'),
+        'console': True
+    }
 
-configWindows = {
-    'name': 'OpenHardwareMonitor',
-    'icon': 'OpenHardwareMonitor.exe',
-    'binary': 'OpenHardwareMonitor.exe',
-    'solution': quail.SolutionZip('OpenHardwareMonitor.zip'),
-    'console': True
-}
-
-config = configLinux if quail.Helper.OS_LINUX else configWindows
-
-quail.run(quail.Installer(**config))
+quail.run(quail.Installer(**config),
+          quail.BuilderZip(solution_path, 'solution.zip')
+          )
