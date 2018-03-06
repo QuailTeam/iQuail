@@ -49,7 +49,8 @@ class InstallerBase:
         '''Build install path
         This function can be overriden to install files to somewhere else
         '''
-        return os.path.join(pathlib.Path.home(), '.quail', self.name)
+        # FIXME: Fix the PosixPath problem properly (python version problem)
+        return os.path.join(str(pathlib.Path.home()), '.quail', self.name)
 
     def get_install_path(self, *args):
         '''Get file from install path'''

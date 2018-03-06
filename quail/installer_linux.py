@@ -27,7 +27,8 @@ class InstallerLinux(InstallerBase):
                                                           (self.name))
 
     def _get_desktop_path(self, name):
-        return os.path.join(pathlib.Path.home(),
+        # FIXME: Fix the PosixPath problem properly (python version problem)
+        return os.path.join(str(pathlib.Path.home()),
                             ".local", "share", "applications",
                             "%s.desktop" % (name))
 
