@@ -1,12 +1,13 @@
 import os
 import zipfile
 from .helper import Helper
-from .builder_base import BuilderBase
+from .build_cmd_base import BuildCmdBase
 
 
-class BuilderZip(BuilderBase):
-    def __init__(self, path, zip_name, zip_clean=True, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class BuildCmdZip(BuildCmdBase):
+    ''' Zip a folder and add it to the executable
+    '''
+    def __init__(self, path, zip_name, zip_clean=True):
         if not isinstance(path, list):
             raise AssertionError("Expected list as path")
         self._zip_clean = zip_clean
@@ -14,7 +15,6 @@ class BuilderZip(BuilderBase):
         self._zip = zip_name
 
     def pre_build(self):
-        super().pre_build()
         zipf = zipfile.ZipFile(self._zip, 'w', zipfile.ZIP_DEFLATED)
         for root, dirs, files in os.walk(self._path):
             for file in files:
@@ -25,11 +25,10 @@ class BuilderZip(BuilderBase):
         zipf.close()
 
     def post_build(self):
-        super().post_build()
         if self._zip_clean:
             os.remove(self._zip)
 
     def get_build_params(self):
-        params = super().get_build_params()
+        params = []
         params += ['--add-data', self._zip + os.path.pathsep + '.']
         return params

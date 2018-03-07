@@ -24,8 +24,7 @@ class BuilderBase:
         return self._console
 
     def get_build_params(self):
-        params = [Helper.get_script(),
-                  "--exclude-module", "PyInstaller"]
+        params = []
         if self.icon:
             params += ["-i", self.icon]
         if self.onefile:
@@ -45,10 +44,3 @@ class BuilderBase:
         (Don't call this function yourself)
         '''
         pass
-
-    def build(self):
-        self.pre_build()
-        import PyInstaller.__main__ as PyInstallerMain
-        # PyInstaller will not exist in bundle, importing only when needed
-        PyInstallerMain.run(self.get_build_params())
-        self.post_build()

@@ -25,5 +25,6 @@ elif quail.Helper.OS_WINDOWS:
     }
 
 quail.run(quail.Installer(**config),
-          quail.BuilderZip(solution_path, 'solution.zip')
+          quail.Builder(
+          quail.BuildCmdZip(solution_path, 'solution.zip'))
           )

@@ -5,7 +5,7 @@ import os
 import argparse
 from .constants import Constants
 from .helper import Helper
-from .builder_base import BuilderBase
+from .builder import Builder
 
 
 def parse_args():
@@ -19,7 +19,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def run(installer, builder=BuilderBase()):
+def run(installer, builder=Builder()):
     '''run config'''
     args = parse_args()
     if args.quail_build and Helper.running_from_script():
