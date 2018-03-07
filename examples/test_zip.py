@@ -31,6 +31,7 @@ if quail.Helper.OS_WINDOWS:
         ),
         quail.builder.Builder(
             quail.builder.CmdIcon('icon.ico'),
+            quail.builder.CmdNoconsole(),
             quail.builder.CmdZip(solution_path, 'solution.zip')
         )
     )
