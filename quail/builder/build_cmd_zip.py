@@ -1,6 +1,6 @@
 import os
 import zipfile
-from .helper import Helper
+from ..helper import Helper
 from .build_cmd_base import BuildCmdBase
 
 

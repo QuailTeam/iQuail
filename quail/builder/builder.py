@@ -1,16 +1,18 @@
 
-from .helper import Helper
+from ..helper import Helper
 
 
 class Builder:
     '''Build executable using PyInstaller
     Takes BuildCmd as argument
     '''
+
     def __init__(self, *build_cmds):
         self._build_cmds = build_cmds
 
     def default_build_params(self):
         params = [Helper.get_script(),
+                  "--onefile",
                   "--exclude-module", "PyInstaller"]
         return params
 

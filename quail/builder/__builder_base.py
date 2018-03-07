@@ -1,5 +1,5 @@
 
-from .helper import Helper
+from ..helper import Helper
 
 
 class BuilderBase:
