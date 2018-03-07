@@ -15,9 +15,9 @@ if quail.Helper.OS_LINUX:
             solution=quail.SolutionZip('solution.zip'),
             console=True
         ),
-        quail.Builder(
-            quail.BuildCmdIcon('icon.png'),
-            quail.BuildCmdZip(solution_path, 'solution.zip'))
+        quail.builder.Builder(
+            quail.builder.CmdZip(solution_path, 'solution.zip')
+        )
     )
 if quail.Helper.OS_WINDOWS:
     solution_path = ['OpenHardwareMonitor']
@@ -29,7 +29,8 @@ if quail.Helper.OS_WINDOWS:
             solution=quail.SolutionZip('solution.zip'),
             console=True
         ),
-        quail.Builder(
-            quail.BuildCmdIcon('icon.ico'),
-            quail.BuildCmdZip(solution_path, 'solution.zip'))
+        quail.builder.Builder(
+            quail.builder.CmdIcon('icon.ico'),
+            quail.builder.CmdZip(solution_path, 'solution.zip')
+        )
     )

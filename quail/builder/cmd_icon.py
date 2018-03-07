@@ -1,8 +1,8 @@
 
-from .build_cmd_base import BuildCmdBase
+from .cmd_base import CmdBase
 
 
-class BuildCmdIcon(BuildCmdBase):
+class CmdIcon(CmdBase):
     def __init__(self, icon):
         self._icon = icon
 

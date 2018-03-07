@@ -1,11 +1,11 @@
 
 
-class BuildCmdBase:
+class CmdBase:
     def __init__(self):
         pass
 
     def get_build_params(self):
-        '''Additional build params
+        '''Additional build params for pyinstaller
         '''
         return []
 

@@ -1,10 +1,10 @@
 import os
 import zipfile
 from ..helper import Helper
-from .build_cmd_base import BuildCmdBase
+from .cmd_base import CmdBase
 
 
-class BuildCmdZip(BuildCmdBase):
+class CmdZip(CmdBase):
     ''' Zip a folder and add it to the executable
     '''
     def __init__(self, path, zip_name, zip_clean=True):

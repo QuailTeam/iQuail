@@ -5,7 +5,7 @@ from .solution_local import SolutionLocal
 from .solution_ftp import SolutionFtp
 from .solution_zip import SolutionZip
 from .helper import Helper
-from .builder import *
+
 
 if Helper.OS_LINUX:
     from .installer_linux import InstallerLinux

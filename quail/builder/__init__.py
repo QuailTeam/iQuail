@@ -1,4 +1,4 @@
 
 from .builder import Builder
-from .build_cmd_zip import BuildCmdZip
-from .build_cmd_icon import BuildCmdIcon
+from .cmd_zip import CmdZip
+from .cmd_icon import CmdIcon
