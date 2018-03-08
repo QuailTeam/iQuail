@@ -9,47 +9,61 @@ import hashlib
 import json
 import os
 import pathlib
+import re
 
 
 class IntegrityVerifier:
     """Verify integrity of a given path."""
 
-    def __init__(self, path):
+    def __init__(self, path, dump_ignore=None, verify_ignore=None):
         """
         Initialize the integrity verifier.
 
         path: The path of the checked folder.
         Only use the object to verify this folder.
         """
-        self.path = pathlib.Path(path)
+        self._path = pathlib.Path(path)
+        self._dump_ignore = dump_ignore or [r"^\."]
+        self._verify_ignore = verify_ignore or [r"^\."]
 
-    def __iterate(self, path=None):
-        path = path or self.path
-        hashs = {os.path.basename(str(elem)): self.__consume(elem)
+    def _iterate(self, path=None):
+        path = path or self._path
+        hashs = {os.path.basename(str(elem)): self._consume(elem)
                  for elem in path.iterdir()
-                 if not str(os.path.basename(str(elem))).startswith(".")}
+                 if self._accept(str(os.path.basename(str(elem))))}
         return hashs
 
-    def __consume(self, path):
+    def _accept(self, filename):
+        if filename == ".integrity.json":
+            return False
+        for rule in self._ignore:
+            if re.search(rule, filename):
+                return False
+        return True
+
+    def _consume(self, path):
         if path.is_dir():
-            return self.__iterate(path=path)
+            return self._iterate(path=path)
         elif path.is_file():
             return hashlib.sha256(path.read_bytes()).hexdigest()
         raise AssertionError("Type of file '{0}' unhandled".format(str(path)))
 
-    def __generate(self):
-        self.hashs = self.__iterate()
+    def _generate(self):
+        self._hashs = self._iterate()
 
-    def __compare_hashs(self, d1, d2, path=[]):
-        for k in d1:
-            if k not in d2:
-                self.missing.append(path + [k])
+    def _compare_hashs(self, file_hashs, new_hashs, path=[]):
+        for filename in file_hashs:
+            if filename not in new_hashs:
+                self.missing.append(path + [filename])
             else:
-                if isinstance(d1[k], dict) and isinstance(d2[k], dict):
-                    self.__compare_hashs(d1[k], d2[k], path + [k])
-                elif d1[k] != d2[k]:
-                    self.diffs.append(path + [k])
-        return len(self.missing) + len(self.diffs) == 0
+                if isinstance(file_hashs[filename], dict) \
+                        and isinstance(new_hashs[filename], dict):
+                    self._compare_hashs(file_hashs[filename],
+                                        new_hashs[filename],
+                                        path + [filename])
+                elif file_hashs[filename] != new_hashs[filename]:
+                    self.changed.append(path + [filename])
+        return len(self.missing) + len(self.changed) == 0
 
     def dump(self, path=None):
         """
@@ -59,10 +73,11 @@ class IntegrityVerifier:
         Then dump them in a file called '.integrity.json' or at the path
         if specified.
         """
-        self.__generate()
-        with open(os.path.join(str(self.path), path or ".integrity.json"),
-                  mode='w+') as file:
-            json.dump(self.hashs, file)
+        self._ignore = self._dump_ignore
+        self._generate()
+        filename = os.path.join(str(self._path), path or ".integrity.json")
+        with open(filename, mode='w+') as file:
+            json.dump(self._hashs, file)
 
     def verify(self, path=None):
         """
@@ -73,12 +88,13 @@ class IntegrityVerifier:
         or the file situated on the given path.
         Return True if no errors were found.
         In case of errors being encoutered, the paths are saved in self.missing
-        and self.diffs as lists.
+        and self.changed as lists.
         """
-        self.__generate()
-        with open(os.path.join(str(self.path), path or ".integrity.json"),
-                  mode='r') as file:
+        self._ignore = self._verify_ignore
+        self._generate()
+        filename = os.path.join(str(self._path), path or ".integrity.json")
+        with open(filename, mode='r') as file:
             hashs = json.load(file)
         self.missing = []
-        self.diffs = []
-        return self.__compare_hashs(hashs, self.hashs)
+        self.changed = []
+        return self._compare_hashs(hashs, self._hashs)
