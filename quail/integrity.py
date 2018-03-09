@@ -1,100 +1,69 @@
-"""
-Module used to verify the integrity of a repository.
-
-- use IntegrityVerifier.dump() to generate the integrity file.
-- use IntegrityVerifier.verify() to check it again.
-"""
 
 import hashlib
-import json
 import os
 import pathlib
-import re
+import fnmatch
+import json
+from contextlib import suppress
+from .constants import Constants
+
+
+def checksum(file_path, block_size=65536):
+    file_path = str(file_path)
+    sha256 = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        for block in iter(lambda: f.read(block_size), b''):
+            sha256.update(block)
+    return sha256.hexdigest()
 
 
 class IntegrityVerifier:
-    """Verify integrity of a given path."""
+    def __init__(self, path):
+        self._root = str(path)
+        self._integrity_file = os.path.join(self._root,
+                                            Constants.INTEGRITY_FILE)
 
-    def __init__(self, path, dump_ignore=None, verify_ignore=None):
-        """
-        Initialize the integrity verifier.
+    @classmethod
+    def _get_diff(self, base_checksums, new_checksums):
+        ''' returns different files
+        '''
+        def isdict(x): return isinstance(x, dict)
+        diff = []
+        def get_diff_dir(base_checksums, new_checksums, path='.'):
+            for name in base_checksums.keys():
+                pathname = os.path.join(path, name)
+                if isdict(base_checksums[name]):
+                    new = {}
+                    if name in new_checksums and isdict(new_checksums[name]):
+                        new = new_checksums[name]
+                    get_diff_dir(base_checksums[name], new, pathname)
+                elif not (name in new_checksums
+                          and new_checksums[name] == base_checksums[name]):
+                    diff.append(pathname)
+        get_diff_dir(base_checksums, new_checksums)
+        return diff
 
-        path: The path of the checked folder.
-        Only use the object to verify this folder.
-        """
-        self._path = pathlib.Path(path)
-        self._dump_ignore = dump_ignore or [r"^\."]
-        self._verify_ignore = verify_ignore or [r"^\."]
+    def calc_checksums(self):
+        def calc_checksums_dir(path):
+            checksums = {}
+            for child in path.iterdir():
+                basename = os.path.basename(str(child))
+                if child.is_file():
+                    checksums.update({basename: checksum(child)})
+                elif child.is_dir():
+                    checksums.update({basename: calc_checksums_dir(child)})
+            return checksums
+        return calc_checksums_dir(pathlib.Path(self._root))
 
-    def _iterate(self, path=None):
-        path = path or self._path
-        hashs = {os.path.basename(str(elem)): self._consume(elem)
-                 for elem in path.iterdir()
-                 if self._accept(str(os.path.basename(str(elem))))}
-        return hashs
+    def dump(self):
+        with suppress(FileNotFoundError):
+            os.remove(self._integrity_file)
+        new_checksums = self.calc_checksums()
+        with open(self._integrity_file, 'w') as file:
+            json.dump(new_checksums, file)
 
-    def _accept(self, filename):
-        if filename == ".integrity.json":
-            return False
-        for rule in self._ignore:
-            if re.search(rule, filename):
-                return False
-        return True
-
-    def _consume(self, path):
-        if path.is_dir():
-            return self._iterate(path=path)
-        elif path.is_file():
-            return hashlib.sha256(path.read_bytes()).hexdigest()
-        raise AssertionError("Type of file '{0}' unhandled".format(str(path)))
-
-    def _generate(self):
-        self._hashs = self._iterate()
-
-    def _compare_hashs(self, file_hashs, new_hashs, path=[]):
-        for filename in file_hashs:
-            if filename not in new_hashs:
-                self.missing.append(path + [filename])
-            else:
-                if isinstance(file_hashs[filename], dict) \
-                        and isinstance(new_hashs[filename], dict):
-                    self._compare_hashs(file_hashs[filename],
-                                        new_hashs[filename],
-                                        path + [filename])
-                elif file_hashs[filename] != new_hashs[filename]:
-                    self.changed.append(path + [filename])
-        return len(self.missing) + len(self.changed) == 0
-
-    def dump(self, path=None):
-        """
-        Dump the hashs of a folder.
-
-        Iterate over every file in the linked folder, generating the hashs.
-        Then dump them in a file called '.integrity.json' or at the path
-        if specified.
-        """
-        self._ignore = self._dump_ignore
-        self._generate()
-        filename = os.path.join(str(self._path), path or ".integrity.json")
-        with open(filename, mode='w+') as file:
-            json.dump(self._hashs, file)
-
-    def verify(self, path=None):
-        """
-        Verify the hashs of a folder.
-
-        Iterate over every file in the linked folder, generating the hashs.
-        Then compare them with the content of the '.integrity.json' file
-        or the file situated on the given path.
-        Return True if no errors were found.
-        In case of errors being encoutered, the paths are saved in self.missing
-        and self.changed as lists.
-        """
-        self._ignore = self._verify_ignore
-        self._generate()
-        filename = os.path.join(str(self._path), path or ".integrity.json")
-        with open(filename, mode='r') as file:
-            hashs = json.load(file)
-        self.missing = []
-        self.changed = []
-        return self._compare_hashs(hashs, self._hashs)
+    def verify(self):
+        new_checksums = self.calc_checksums()
+        with open(self._integrity_file, 'r') as file:
+            stored_checksums = json.load(file)
+        return self._get_diff(stored_checksums, new_checksums)
