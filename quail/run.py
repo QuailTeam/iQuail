@@ -7,7 +7,6 @@ from .constants import Constants
 from .helper import Helper
 from .builder import Builder
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(Constants.ARGUMENT_UNINSTALL,
