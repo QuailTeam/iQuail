@@ -8,7 +8,7 @@ from win32com.client import Dispatch
 from contextlib import suppress
 from .installer_base import InstallerBase
 from .constants import Constants
-from .helper import Helper
+from . import helper
 
 
 class InstallerWindows(InstallerBase):
@@ -35,9 +35,9 @@ class InstallerWindows(InstallerBase):
 
     def _set_reg_uninstall(self):
         uninstall_path = "%s %s" % (
-            self.get_install_path(Helper.get_script_name()),
+            self.get_install_path(helper.get_script_name()),
             Constants.ARGUMENT_UNINSTALL)
-        if Helper.running_from_script():
+        if helper.running_from_script():
             uninstall_path = self._get_python_path() + ' ' + uninstall_path
         values = [
             ('DisplayName', winreg.REG_SZ, self.name),
@@ -58,7 +58,7 @@ class InstallerWindows(InstallerBase):
     def _create_shortcut(self, dest):
         shell_script = Dispatch('WScript.Shell')
         shortcut = shell_script.CreateShortCut(dest)
-        shortcut.Targetpath = self.get_install_path(Helper.get_script_name())
+        shortcut.Targetpath = self.get_install_path(helper.get_script_name())
         shortcut.WorkingDirectory = self.get_install_path()
         shortcut.IconLocation = self.get_install_path(self.icon)
         shortcut.save()

@@ -3,8 +3,9 @@ import os
 import zipfile
 import tempfile
 import shutil
+import sys
 from .solution_base import SolutionBase
-from .helper import *
+from . import helper
 
 
 class SolutionZip(SolutionBase):
@@ -17,7 +18,7 @@ class SolutionZip(SolutionBase):
     def __init__(self, zip_name):
         if not isinstance(zip_name, str):
             raise AssertionError("Expected string as zip file")
-        if Helper.running_from_script():
+        if helper.running_from_script():
             self._zip_path = os.path.abspath(zip_name)
         else:
             self._zip_path = os.path.join(sys._MEIPASS, zip_name)

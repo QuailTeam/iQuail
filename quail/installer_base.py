@@ -1,7 +1,7 @@
 import os
 import pathlib
 import shutil
-from .helper import Helper
+from . import helper
 
 
 class InstallerBase:
@@ -70,9 +70,9 @@ class InstallerBase:
                 shutil.copy2(self.solution.get_file(os.path.join(root, sfile)),
                              self.get_install_path(root))
         self.solution.close()
-        shutil.copy2(Helper.get_script(), self.get_install_path())
-        if Helper.running_from_script():
-            shutil.copytree(Helper.get_module_path(),
+        shutil.copy2(helper.get_script(), self.get_install_path())
+        if helper.running_from_script():
+            shutil.copytree(helper.get_module_path(),
                             os.path.join(self.get_install_path(), "quail"))
 
     def uninstall(self):

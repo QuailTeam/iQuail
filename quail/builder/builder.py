@@ -1,5 +1,5 @@
 
-from ..helper import Helper
+from .. import helper
 
 
 class Builder:
@@ -11,7 +11,7 @@ class Builder:
         self._build_cmds = build_cmds
 
     def default_build_params(self):
-        params = [Helper.get_script(),
+        params = [helper.get_script(),
                   "--onefile",
                   "--exclude-module", "PyInstaller"]
         return params

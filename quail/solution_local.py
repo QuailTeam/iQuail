@@ -1,7 +1,7 @@
 
 import os
 from .solution_base import SolutionBase
-from .helper import Helper
+from . import helper
 
 
 class SolutionLocal(SolutionBase):

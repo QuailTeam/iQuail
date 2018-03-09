@@ -1,8 +1,7 @@
 
-import hashlib
+from hashlib import sha256
 import os
 import pathlib
-import fnmatch
 import json
 from contextlib import suppress
 from .constants import Constants
@@ -10,11 +9,11 @@ from .constants import Constants
 
 def checksum(file_path, block_size=65536):
     file_path = str(file_path)
-    sha256 = hashlib.sha256()
+    hasher = sha256()
     with open(file_path, 'rb') as f:
         for block in iter(lambda: f.read(block_size), b''):
-            sha256.update(block)
-    return sha256.hexdigest()
+            hasher.update(block)
+    return hasher.hexdigest()
 
 
 class IntegrityVerifier:

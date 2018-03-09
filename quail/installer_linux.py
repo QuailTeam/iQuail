@@ -5,7 +5,7 @@ import os.path
 import shutil
 from .installer_base import InstallerBase
 from .constants import Constants
-from .helper import Helper
+from . import helper
 
 '''
 Notes for all user install:
@@ -44,7 +44,7 @@ class InstallerLinux(InstallerBase):
         app_config = {
             'Name': self.name,
             'Path': self.get_install_path(),
-            'Exec': self.get_install_path(Helper.get_script_name()),
+            'Exec': self.get_install_path(helper.get_script_name()),
             'Icon': self.get_install_path(self.icon),
             'Terminal': 'true' if self.console else 'false',
             'Type': 'Application'

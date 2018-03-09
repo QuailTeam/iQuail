@@ -5,8 +5,7 @@ import os.path
 import quail
 import platform
 
-
-if quail.Helper.OS_LINUX:
+if quail.helper.OS_LINUX:
     solution_path = ['Allum1']
     quail.run(
         quail.Installer(
@@ -20,7 +19,7 @@ if quail.Helper.OS_LINUX:
             quail.builder.CmdZip(solution_path, 'solution.zip')
         )
     )
-if quail.Helper.OS_WINDOWS:
+if quail.helper.OS_WINDOWS:
     solution_path = ['OpenHardwareMonitor']
     quail.run(
         quail.Installer(
@@ -32,7 +31,6 @@ if quail.Helper.OS_WINDOWS:
         ),
         quail.builder.Builder(
             quail.builder.CmdIcon('icon.ico'),
-            quail.builder.CmdNoconsole(),
             quail.builder.CmdZip(solution_path, 'solution.zip')
         )
     )

@@ -4,13 +4,14 @@ from .run import run
 from .solution_local import SolutionLocal
 from .solution_ftp import SolutionFtp
 from .solution_zip import SolutionZip
-from .helper import Helper
+from . import helper
+from . import builder
 
 
-if Helper.OS_LINUX:
+if helper.OS_LINUX:
     from .installer_linux import InstallerLinux
     Installer = InstallerLinux
-elif Helper.OS_WINDOWS:
+elif helper.OS_WINDOWS:
     from .installer_windows import InstallerWindows
     Installer = InstallerWindows
 else:
