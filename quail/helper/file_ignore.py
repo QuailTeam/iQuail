@@ -18,7 +18,6 @@ def accept_path(path, ignore_list):
         not_ignore = not_pattern(ignore)
         if fnmatch(path, ignore) ^ fnmatch(path, not_ignore):
             accept = fnmatch(path, not_ignore)
-            print(ignore)
     return accept
 
 class FileIgnore:
@@ -28,7 +27,6 @@ class FileIgnore:
                 self._ignore_list = f.read().splitlines()
         except FileNotFoundError:
             self._ignore_list = []
-        print(self._ignore_list)
 
     def accept(self, path):
         return accept_path(path, self._ignore_list)

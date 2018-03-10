@@ -1,11 +1,10 @@
-
 from hashlib import sha256
 import os
 import pathlib
 import json
 from contextlib import suppress
-from .constants import Constants
-
+from .file_ignore import FileIgnore
+from ..constants import Constants
 
 def checksum(file_path, block_size=65536):
     file_path = str(file_path)
@@ -19,8 +18,11 @@ def checksum(file_path, block_size=65536):
 class IntegrityVerifier:
     def __init__(self, path):
         self._root = str(path)
-        self._integrity_file = os.path.join(self._root,
-                                            Constants.INTEGRITY_FILE)
+        self._checksums_file = os.path.join(self._root,
+                                            Constants.CHECKSUMS_FILE)
+        integrity_ignore_file = os.path.join(self._root,
+                                            Constants.INTEGRITY_IGNORE_FILE)
+        self._integrity_ignore = FileIgnore(integrity_ignore_file)
 
     @classmethod
     def _get_diff(self, base_checksums, new_checksums):
@@ -47,22 +49,23 @@ class IntegrityVerifier:
             checksums = {}
             for child in path.iterdir():
                 basename = os.path.basename(str(child))
-                if child.is_file():
-                    checksums.update({basename: checksum(child)})
-                elif child.is_dir():
-                    checksums.update({basename: calc_checksums_dir(child)})
+                if self._integrity_ignore.accept(str(child)):
+                    if child.is_file():
+                        checksums.update({basename: checksum(child)})
+                    elif child.is_dir():
+                        checksums.update({basename: calc_checksums_dir(child)})
             return checksums
         return calc_checksums_dir(pathlib.Path(self._root))
 
     def dump(self):
         with suppress(FileNotFoundError):
-            os.remove(self._integrity_file)
+            os.remove(self._checksums_file)
         new_checksums = self.calc_checksums()
-        with open(self._integrity_file, 'w') as file:
+        with open(self._checksums_file, 'w') as file:
             json.dump(new_checksums, file)
 
     def verify(self):
         new_checksums = self.calc_checksums()
-        with open(self._integrity_file, 'r') as file:
+        with open(self._checksums_file, 'r') as file:
             stored_checksums = json.load(file)
         return self._get_diff(stored_checksums, new_checksums)

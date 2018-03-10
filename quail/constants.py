@@ -2,4 +2,5 @@
 class Constants:
     ARGUMENT_UNINSTALL = "--quail_uninstall"
     ARGUMENT_BUILD = "--quail_build"
-    INTEGRITY_FILE = ".integrity.json"
+    CHECKSUMS_FILE = ".integrity.json"
+    INTEGRITY_IGNORE_FILE = ".integrity_ignore"
