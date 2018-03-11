@@ -5,13 +5,6 @@ import os.path
 import quail
 import platform
 
-#!/usr/bin/python3
-
-import os
-import os.path
-import quail
-import platform
-
 if quail.helper.OS_LINUX:
     solution_path = ['Allum1']
     quail.run(
