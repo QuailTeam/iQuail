@@ -19,6 +19,7 @@ if quail.helper.OS_LINUX:
             quail.builder.CmdZip(solution_path, 'solution.zip')
         )
     )
+
 if quail.helper.OS_WINDOWS:
     solution_path = ['OpenHardwareMonitor']
     quail.run(

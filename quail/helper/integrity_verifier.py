@@ -6,6 +6,7 @@ from contextlib import suppress
 from .file_ignore import FileIgnore
 from ..constants import Constants
 
+
 def checksum(file_path, block_size=65536):
     file_path = str(file_path)
     hasher = sha256()
@@ -16,12 +17,13 @@ def checksum(file_path, block_size=65536):
 
 
 class IntegrityVerifier:
+
     def __init__(self, path):
         self._root = str(path)
         self._checksums_file = os.path.join(self._root,
                                             Constants.CHECKSUMS_FILE)
         integrity_ignore_file = os.path.join(self._root,
-                                            Constants.INTEGRITY_IGNORE_FILE)
+                                             Constants.INTEGRITY_IGNORE_FILE)
         self._integrity_ignore = FileIgnore(integrity_ignore_file)
 
     @classmethod
@@ -30,6 +32,7 @@ class IntegrityVerifier:
         '''
         def isdict(x): return isinstance(x, dict)
         diff = []
+
         def get_diff_dir(base_checksums, new_checksums, path='.'):
             for name in base_checksums.keys():
                 pathname = os.path.join(path, name)
