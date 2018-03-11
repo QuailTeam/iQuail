@@ -2,6 +2,7 @@ import os
 import pathlib
 import shutil
 from . import helper
+from .constants import Constants
 
 
 class InstallerBase:
@@ -12,7 +13,8 @@ class InstallerBase:
                  icon,
                  solution,
                  publisher='Quail',
-                 console=False):
+                 console=False,
+                 integrity=False):
         self._name = name
         self._binary = binary
         self._icon = icon
@@ -20,6 +22,7 @@ class InstallerBase:
         self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path()
+        self._integrity = integrity
 
     @property
     def solution(self):
@@ -49,19 +52,23 @@ class InstallerBase:
         '''Build install path
         This function can be overriden to install files to somewhere else
         '''
-        # FIXME: Fix the PosixPath problem properly (python version problem)
         return os.path.join(str(pathlib.Path.home()), '.quail', self.name)
 
     def get_install_path(self, *args):
         '''Get file from install path'''
         return os.path.join(self._install_path, *args)
 
+    def _verify_integrity(self):
+        verifier = helper.IntegrityVerifier(self.get_install_path())
+        bad_files = verifier.verify()
+        if len(bad_files):
+            raise AssertionError("Corrupt files: " + str(bad_files))
+
     def install(self):
         if not self.solution.open():
             raise AssertionError("Can't access solution")
         if os.path.exists(self.get_install_path()):
             shutil.rmtree(self.get_install_path())
-        # shutil.copytree(self.get_solution_path(), self.get_install_path())
         os.makedirs(self.get_install_path(), 0o777, True)
         for root, dirs, files in self.solution.walk():
             for sdir in dirs:
@@ -74,6 +81,8 @@ class InstallerBase:
         if helper.running_from_script():
             shutil.copytree(helper.get_module_path(),
                             os.path.join(self.get_install_path(), "quail"))
+        if self._integrity:
+            self._verify_integrity()
 
     def uninstall(self):
         shutil.rmtree(self.get_install_path())
