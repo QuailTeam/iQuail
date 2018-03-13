@@ -58,12 +58,6 @@ class InstallerBase:
         '''Get file from install path'''
         return os.path.join(self._install_path, *args)
 
-    def _verify_integrity(self):
-        verifier = helper.IntegrityVerifier(self.get_install_path())
-        bad_files = verifier.verify()
-        if len(bad_files):
-            raise AssertionError("Corrupt files: " + str(bad_files))
-
     def install(self):
         if not self.solution.open():
             raise AssertionError("Can't access solution")

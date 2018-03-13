@@ -68,6 +68,8 @@ class IntegrityVerifier:
             json.dump(new_checksums, file)
 
     def verify(self):
+        if not os.path.isfile(self._checksums_file):
+            raise FileNotFoundError
         new_checksums = self.calc_checksums()
         with open(self._checksums_file, 'r') as file:
             stored_checksums = json.load(file)

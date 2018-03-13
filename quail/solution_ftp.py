@@ -13,6 +13,9 @@ class FtpWalk:
             self._ftp.cwd(c)
         self._path = self._ftp.pwd()
 
+    def local(self):
+        return False
+
     def listdir(self, _path):
         file_list, dirs, nondirs = [], [], []
         old_directory = self._ftp.pwd()

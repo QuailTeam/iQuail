@@ -10,6 +10,9 @@ class SolutionLocal(SolutionBase):
             raise AssertionError("Expected list as solution path")
         self._path = os.path.abspath(os.path.join(*path))
 
+    def local(self):
+        return True
+
     def open(self):
         return os.path.exists(self._path)
 

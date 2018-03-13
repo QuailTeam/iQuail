@@ -23,6 +23,9 @@ class SolutionZip(SolutionBase):
         else:
             self._zip_path = os.path.join(sys._MEIPASS, zip_name)
 
+    def local(self):
+        return True
+
     def open(self):
         if not os.path.exists(self._zip_path):
             return False

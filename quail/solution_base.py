@@ -2,6 +2,7 @@
 import os
 import shutil
 
+
 class SolutionBase:
     ''' The goal of this interface is to be able to resolve solution files
     comming from anywhere.
@@ -10,6 +11,28 @@ class SolutionBase:
     - from local directory
     - over network
     '''
+
+    def verify(self, dest):
+        ''' verify
+        returns None if no checksums file was found
+        returns True if all files are good
+        returns False one or more file was corrupt
+        '''
+        # TODO: get Constants.CHECKSUMS_FILE
+        # WIP
+        verifier = helper.IntegrityVerifier(dest)
+        try:
+            bad_files = verifier.verify()
+        except FileNotFoundError:
+            return
+        if len(bad_files) == 0:
+            return True
+        elif self.local():
+            return False
+        for bad_file in bad_files:
+            shutil.copy2(self.get_file(bad_file),
+                         dest)
+        return False
 
     def download(self, dest):
         ''' Download solution to dest folder
@@ -24,6 +47,12 @@ class SolutionBase:
             for sfile in files:
                 shutil.copy2(self.get_file(os.path.join(root, sfile)),
                              os.path.join(dest, root))
+
+    def local(self):
+        '''returns True if solution is stored locally,
+        and if there is any corruption, it will not try again
+        '''
+        raise NotImplementedError
 
     def open(self):
         '''Open solution if needed
