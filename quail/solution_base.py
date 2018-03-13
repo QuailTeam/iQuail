@@ -1,4 +1,7 @@
 
+import os
+import shutil
+
 class SolutionBase:
     ''' The goal of this interface is to be able to resolve solution files
     comming from anywhere.
@@ -7,6 +10,20 @@ class SolutionBase:
     - from local directory
     - over network
     '''
+
+    def download(self, dest):
+        ''' Download solution to dest folder
+        (open the solution before using download)
+        '''
+        if os.path.exists(dest):
+            shutil.rmtree(dest)
+        os.makedirs(dest, 0o777, True)
+        for root, dirs, files in self.walk():
+            for sdir in dirs:
+                os.makedirs(os.path.join(dest, root, sdir), 0o777, True)
+            for sfile in files:
+                shutil.copy2(self.get_file(os.path.join(root, sfile)),
+                             os.path.join(dest, root))
 
     def open(self):
         '''Open solution if needed

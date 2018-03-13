@@ -67,22 +67,13 @@ class InstallerBase:
     def install(self):
         if not self.solution.open():
             raise AssertionError("Can't access solution")
-        if os.path.exists(self.get_install_path()):
-            shutil.rmtree(self.get_install_path())
-        os.makedirs(self.get_install_path(), 0o777, True)
-        for root, dirs, files in self.solution.walk():
-            for sdir in dirs:
-                os.makedirs(self.get_install_path(root, sdir), 0o777, True)
-            for sfile in files:
-                shutil.copy2(self.solution.get_file(os.path.join(root, sfile)),
-                             self.get_install_path(root))
+        self.solution.download(self.get_install_path())
         self.solution.close()
+        # install script and module:
         shutil.copy2(helper.get_script(), self.get_install_path())
         if helper.running_from_script():
             shutil.copytree(helper.get_module_path(),
                             os.path.join(self.get_install_path(), "quail"))
-        if self._integrity:
-            self._verify_integrity()
 
     def uninstall(self):
         shutil.rmtree(self.get_install_path())
