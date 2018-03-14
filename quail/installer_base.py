@@ -3,7 +3,7 @@ import pathlib
 import shutil
 from . import helper
 from .constants import Constants
-
+from .solution_downloader import SolutionDownloader
 
 class InstallerBase:
 
@@ -59,10 +59,8 @@ class InstallerBase:
         return os.path.join(self._install_path, *args)
 
     def install(self):
-        if not self.solution.open():
-            raise AssertionError("Can't access solution")
-        self.solution.download(self.get_install_path())
-        self.solution.close()
+        downloader = SolutionDownloader(self.solution, self.get_install_path())
+        downloader.download_all()
         # install script and module:
         shutil.copy2(helper.get_script(), self.get_install_path())
         if helper.running_from_script():
