@@ -9,8 +9,7 @@ class BaseTestCase(unittest.TestCase):
         self._tmpdir = tempfile.mkdtemp()
 
     def tearDown(self):
-        # shutil.rmtree(self._tmpdir)
-        print(self._tmpdir)
+        shutil.rmtree(self._tmpdir)
 
     def tmp(self, *path):
         return os.path.join(self._tmpdir, *path)
