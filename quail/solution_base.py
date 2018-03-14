@@ -12,41 +12,13 @@ class SolutionBase:
     - over network
     '''
 
-    def verify(self, dest):
-        ''' verify
-        returns None if no checksums file was found
-        returns True if all files are good
-        returns False one or more file was corrupt
-        '''
-        # TODO: get Constants.CHECKSUMS_FILE
-        # WIP
-        verifier = helper.IntegrityVerifier(dest)
-        try:
-            bad_files = verifier.verify()
-        except FileNotFoundError:
-            return
-        if len(bad_files) == 0:
-            return True
-        elif self.local():
-            return False
-        for bad_file in bad_files:
-            shutil.copy2(self.get_file(bad_file),
-                         dest)
-        return False
+    def __enter__(self):
+        if not self.open():
+            raise AssertionError("Can't access solution")
+        return self
 
-    def download(self, dest):
-        ''' Download solution to dest folder
-        (open the solution before using download)
-        '''
-        if os.path.exists(dest):
-            shutil.rmtree(dest)
-        os.makedirs(dest, 0o777, True)
-        for root, dirs, files in self.walk():
-            for sdir in dirs:
-                os.makedirs(os.path.join(dest, root, sdir), 0o777, True)
-            for sfile in files:
-                shutil.copy2(self.get_file(os.path.join(root, sfile)),
-                             os.path.join(dest, root))
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
 
     def local(self):
         '''returns True if solution is stored locally,
@@ -72,7 +44,7 @@ class SolutionBase:
         '''
         raise NotImplementedError
 
-    def get_file(self, relative_path):
+    def get_file(self, relpath):
         '''Load file if needed, from solution relative path
         returns file real path'''
         raise NotImplementedError

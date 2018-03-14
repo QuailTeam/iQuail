@@ -55,9 +55,11 @@ class IntegrityVerifier:
         def isdict(x): return isinstance(x, dict)
         diff = []
 
-        def get_diff_dir(base_checksums, new_checksums, path='.'):
+        def get_diff_dir(base_checksums, new_checksums, path='.', ignore=False):
             for name in base_checksums.keys():
                 pathname = os.path.join(path, name)
+                if ignore and not self._integrity_ignore.accept(pathname):
+                    continue
                 if isdict(base_checksums[name]):
                     new = {}
                     if name in new_checksums and isdict(new_checksums[name]):
@@ -74,11 +76,10 @@ class IntegrityVerifier:
             checksums = {}
             for child in path.iterdir():
                 basename = os.path.basename(str(child))
-                if self._integrity_ignore.accept(str(child)):
-                    if child.is_file():
-                        checksums.update({basename: checksum_file(child)})
-                    elif child.is_dir():
-                        checksums.update({basename: calc_checksums_dir(child)})
+                if child.is_file():
+                    checksums.update({basename: checksum_file(child)})
+                elif child.is_dir():
+                    checksums.update({basename: calc_checksums_dir(child)})
             return checksums
         return calc_checksums_dir(pathlib.Path(self._root))
 
