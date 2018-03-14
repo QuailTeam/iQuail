@@ -1,6 +1,6 @@
-quail_build rm when bundle
+File ignore
 
-posixpath?
+quail_build rm when bundle
 
 Windows EXE can't remove itself
 
@@ -9,7 +9,6 @@ UID for solutions?
 limitation ram mkdtemp
 
 ftp stuck on empty file
-
 
 Dl - update:
 dl >> si modif update (up force)

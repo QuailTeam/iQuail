@@ -88,8 +88,9 @@ class IntegrityVerifier:
         '''
         with suppress(FileNotFoundError):
             os.remove(self._checksums_file)
+        checksums = self.calc_checksums()
         with open(self._checksums_file, 'w') as file:
-            json.dump(self.calc_checksums(), file)
+            json.dump(checksums, file)
 
     def verify_file(self, relpath):
         '''compute checksum of a file and compare it to stored checksums
