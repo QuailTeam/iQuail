@@ -7,17 +7,6 @@ from .installer_base import InstallerBase
 from .constants import Constants
 from . import helper
 
-'''
-Notes for all user install:
-
-path = os.path.join(os.sep, "usr", "share", "applications",
-                            "%s.desktop" % (binary))
-
-Files /opt
-
-'''
-
-
 class InstallerLinux(InstallerBase):
 
     def __init__(self, *args, **kwargs):
@@ -26,7 +15,6 @@ class InstallerLinux(InstallerBase):
         self._uninstall_shortcut = "%s_uninstall" % (self.name)
 
     def _get_desktop_path(self, name):
-        # FIXME: Fix the PosixPath problem properly (python version problem)
         return os.path.join(str(pathlib.Path.home()),
                             ".local", "share", "applications",
                             "%s.desktop" % (name))
