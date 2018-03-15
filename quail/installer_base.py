@@ -3,7 +3,7 @@ import pathlib
 import shutil
 from . import helper
 from .constants import Constants
-from .solution_downloader import SolutionDownloader
+from .solutioner import Solutioner
 
 class InstallerBase:
 
@@ -59,8 +59,8 @@ class InstallerBase:
         return os.path.join(self._install_path, *args)
 
     def install(self):
-        downloader = SolutionDownloader(self.solution, self.get_install_path())
-        downloader.download_all()
+        solutioner = Solutioner(self.solution, self.get_install_path())
+        solutioner.download_all()
         # install script and module:
         shutil.copy2(helper.get_script(), self.get_install_path())
         if helper.running_from_script():

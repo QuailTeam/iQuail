@@ -4,7 +4,7 @@ import shutil
 from . import helper
 
 
-class SolutionDownloader:
+class Solutioner:
 
     def __init__(self, solution, dest):
         self._dest = dest
