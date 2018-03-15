@@ -3,6 +3,8 @@ import os
 import sys
 import winreg
 import shutil
+import atexit
+import tempfile
 from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
 from contextlib import suppress
@@ -80,9 +82,10 @@ class InstallerWindows(InstallerBase):
         self._create_shortcuts()
 
     def uninstall(self):
-        super().uninstall()
+        super().uninstall(_on_rmtree_error)
         self._unset_reg_uninstall()
         self._delete_shortcuts()
+        atexit.register(_delete_itself)
 
     def is_installed(self):
         if not super().is_installed():
@@ -92,3 +95,18 @@ class InstallerWindows(InstallerBase):
             return True
         except:
             return False
+
+
+def _on_rmtree_error(function, path, excinfo):
+    if not (path == helper.get_script() or
+            (function == os.rmdir and path == helper.get_script_path())):
+        raise
+
+
+def _delete_itself():
+    if not os.path.exists(helper.get_script()):
+        return
+    tmpdir = tempfile.mkdtemp()
+    shutil.copy2(helper.get_script(), tmpdir)
+    newscript = os.path.join(tmpdir, helper.get_script_name())
+    os.execl(newscript, newscript, "--quail_rm", helper.get_script_path())

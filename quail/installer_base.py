@@ -67,8 +67,8 @@ class InstallerBase:
             shutil.copytree(helper.get_module_path(),
                             os.path.join(self.get_install_path(), "quail"))
 
-    def uninstall(self):
-        shutil.rmtree(self.get_install_path())
+    def uninstall(self, on_error=None):
+        shutil.rmtree(self.get_install_path(), False, on_error)
 
     def is_installed(self):
         return os.path.exists(self.get_install_path())
