@@ -22,9 +22,8 @@ class InstallerLinux(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._shortcut = self._get_desktop_path(self.name)
-        self._shortcut_uninstall = self._get_desktop_path("%s_uninstall" %
-                                                          (self.name))
+        self._launch_shortcut = self.name
+        self._uninstall_shortcut = "%s_uninstall" % (self.name)
 
     def _get_desktop_path(self, name):
         # FIXME: Fix the PosixPath problem properly (python version problem)
@@ -40,31 +39,50 @@ class InstallerLinux(InstallerBase):
         with open(filename, "w") as f:
             config.write(f)
 
-    def _register_app(self):
+    def register_app(self, filename, name, binary, icon,
+                     workpath=None, console=None):
+        if not workpath:
+            workpath = os.path.dirname(binary)
         app_config = {
-            'Name': self.name,
-            'Path': self.get_install_path(),
-            'Exec': self.get_install_path(helper.get_script_name()),
-            'Icon': self.get_install_path(self.icon),
-            'Terminal': 'true' if self.console else 'false',
+            'Name': name,
+            'Path': workpath,
+            'Exec': binary,
+            'Icon': icon,
+            'Terminal': 'true' if console else 'false',
             'Type': 'Application'
         }
-        self._write_desktop(self._shortcut, app_config)
-        app_config["Exec"] = app_config["Exec"] + \
-            " " + Constants.ARGUMENT_UNINSTALL
-        app_config["Name"] = "Uninstall " + app_config["Name"]
-        self._write_desktop(self._shortcut_uninstall, app_config)
+        self._write_desktop(self._get_desktop_path(filename), app_config)
+
+    def unregister_app(self, filename):
+        os.remove(self._get_desktop_path(filename))
+
+    def registered(self, filename):
+        return os.path.isfile(self._get_desktop_path(self._launch_shortcut))
 
     def install(self):
         super().install()
-        self._register_app()
+        binary = self.get_install_path(helper.get_script_name())
+        self.register_app(filename=self._launch_shortcut,
+                          name=self.name,
+                          workpath=self.get_install_path(),
+                          binary=binary,
+                          icon=self.get_install_path(self.icon),
+                          console=self.console
+                          )
+        self.register_app(filename=self._uninstall_shortcut,
+                          name="Uninstall " + self.name,
+                          workpath=self.get_install_path(),
+                          binary=binary + " " + Constants.ARGUMENT_UNINSTALL,
+                          icon=self.get_install_path(self.icon),
+                          console=self.console
+                          )
 
     def uninstall(self):
         super().uninstall()
-        os.remove(self._shortcut)
-        os.remove(self._shortcut_uninstall)
+        self.unregister_app(self._launch_shortcut)
+        self.unregister_app(self._uninstall_shortcut)
 
     def is_installed(self):
-        if super().is_installed() and os.path.isfile(self._shortcut):
+        if super().is_installed() and self.registered(self._launch_shortcut):
             return True
         return False
