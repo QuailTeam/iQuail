@@ -11,6 +11,14 @@ class SolutionBase:
     - from local directory
     - over network
     '''
+    def __init__(self, hook=None):
+        '''hook will be called to update progression status
+        '''
+        self._hook = hook
+
+    def update_progress(self, percent):
+        if self._hook:
+            self._hook(percent)
 
     def __enter__(self):
         if not self.open():

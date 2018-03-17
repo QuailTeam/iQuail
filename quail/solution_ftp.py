@@ -50,6 +50,7 @@ class FtpWalk:
 
 class SolutionFtp(SolutionBase):
     def __init__(self, host, path, port=21):
+        super().__init__(*args, **kwargs)
         if not isinstance(path, list):
             raise AssertionError("Expected list as ftp path")
         self._path = path

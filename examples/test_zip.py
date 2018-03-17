@@ -5,6 +5,9 @@ import os.path
 import quail
 import platform
 
+def print_progress(percent):
+    print("%s%%" % (percent))
+
 if quail.helper.OS_LINUX:
     solution_path = ['Allum1']
     quail.run(
@@ -27,7 +30,7 @@ if quail.helper.OS_WINDOWS:
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
-            solution=quail.SolutionZip('solution.zip'),
+            solution=quail.SolutionZip('solution.zip', hook=print_progress),
             console=True
         ),
         quail.builder.Builder(

@@ -15,15 +15,14 @@ class SolutionZip(SolutionBase):
     max ram size / max tmp size
     '''
 
-    def __init__(self, zip_name, process = None):
-        print (zip_name)
+    def __init__(self, zip_name, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if not isinstance(zip_name, str):
             raise AssertionError("Expected string as zip file")
         if helper.running_from_script():
             self._zip_path = os.path.abspath(zip_name)
         else:
             self._zip_path = os.path.join(sys._MEIPASS, zip_name)
-        self.process = process
 
     def local(self):
         return True
@@ -37,8 +36,7 @@ class SolutionZip(SolutionBase):
         extracted_size = 0
         for file in zip_ref.infolist():
             extracted_size += file.file_size
-            if (self.process != None):
-                self.process(extracted_size * 100/uncompress_size)
+            self.update_progress(extracted_size * 100 / uncompress_size)
             zip_ref.extract(file, self._path)
         zip_ref.close()
         return True

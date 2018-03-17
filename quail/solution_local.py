@@ -6,12 +6,12 @@ from . import helper
 
 class SolutionLocal(SolutionBase):
     def __init__(self, path):
+        super().__init__(*args, **kwargs)
         if isinstance(path, list):
             self._path = os.path.join(*path)
         else:
             self._path = path
         self._path = os.path.abspath(self._path)
-
 
     def local(self):
         return True
