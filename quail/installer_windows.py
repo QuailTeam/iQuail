@@ -13,6 +13,25 @@ from .constants import Constants
 from . import helper
 
 
+def _on_rmtree_error(function, path, excinfo):
+    '''function to ignore if windows can't remove quail binary
+    On windows we can't remove binaries being run
+    quail binary will be removed at exit with _delete_itself when uninstalling
+    '''
+    if not (path == helper.get_script() or
+            (function == os.rmdir and path == helper.get_script_path())):
+        raise
+
+
+def _delete_itself():
+    if not os.path.exists(helper.get_script()):
+        return
+    tmpdir = tempfile.mkdtemp()
+    shutil.copy2(helper.get_script(), tmpdir)
+    newscript = os.path.join(tmpdir, helper.get_script_name())
+    os.execl(newscript, newscript, "--quail_rm", helper.get_script_path())
+
+
 class InstallerWindows(InstallerBase):
 
     def __init__(self, *args, **kwargs):
@@ -32,15 +51,12 @@ class InstallerWindows(InstallerBase):
             self._start_menu_path,
             shortcut_name)
 
-    def _get_python_path(self):
-        return sys.executable
-
     def _set_reg_uninstall(self):
         uninstall_path = "%s %s" % (
             self.get_install_path(helper.get_script_name()),
             Constants.ARGUMENT_UNINSTALL)
         if helper.running_from_script():
-            uninstall_path = self._get_python_path() + ' ' + uninstall_path
+            uninstall_path = sys.executable + ' ' + uninstall_path
         values = [
             ('DisplayName', winreg.REG_SZ, self.name),
             ('InstallLocation', winreg.REG_SZ, self.get_install_path()),
@@ -57,34 +73,38 @@ class InstallerWindows(InstallerBase):
     def _unset_reg_uninstall(self):
         winreg.DeleteKey(winreg.HKEY_CURRENT_USER, self._uninstall_reg_key)
 
-    def _create_shortcut(self, dest):
+    def add_shortcut(self, dest, binary, icon, workpath=None):
+        if not workpath:
+            workpath = os.path.dirname(binary)
         shell_script = Dispatch('WScript.Shell')
         shortcut = shell_script.CreateShortCut(dest)
-        shortcut.Targetpath = self.get_install_path(helper.get_script_name())
-        shortcut.WorkingDirectory = self.get_install_path()
-        shortcut.IconLocation = self.get_install_path(self.icon)
+        shortcut.Targetpath = binary
+        shortcut.WorkingDirectory = workpath
+        shortcut.IconLocation = icon
         shortcut.save()
 
-    def _create_shortcuts(self):
-        self._create_shortcut(self._desktop_shortcut)
-        os.makedirs(self._start_menu_path, 0o777, True)
-        self._create_shortcut(self._start_menu_shortcut)
-
-    def _delete_shortcuts(self):
+    def delete_shortcut(self, dest):
         with suppress(FileNotFoundError):
-            os.remove(self._desktop_shortcut)
-        with suppress(FileNotFoundError):
-            shutil.rmtree(self._start_menu_path)
+            os.remove(dest)
 
     def install(self):
         super().install()
         self._set_reg_uninstall()
-        self._create_shortcuts()
+        shortcut_config = {
+            "binary": self.get_install_path(helper.get_script_name()),
+            "icon": self.get_install_path(self.icon),
+            "workpath": self.get_install_path()
+        }
+        self.add_shortcut(self._desktop_shortcut, **shortcut_config)
+        os.makedirs(self._start_menu_path, 0o777, True)
+        self.add_shortcut(self._start_menu_shortcut, **shortcut_config)
 
     def uninstall(self):
         super().uninstall(_on_rmtree_error)
+        self.delete_shortcut(self._desktop_shortcut)
+        with suppress(FileNotFoundError):
+            shutil.rmtree(self._start_menu_path)
         self._unset_reg_uninstall()
-        self._delete_shortcuts()
         atexit.register(_delete_itself)
 
     def is_installed(self):
@@ -95,18 +115,3 @@ class InstallerWindows(InstallerBase):
             return True
         except:
             return False
-
-
-def _on_rmtree_error(function, path, excinfo):
-    if not (path == helper.get_script() or
-            (function == os.rmdir and path == helper.get_script_path())):
-        raise
-
-
-def _delete_itself():
-    if not os.path.exists(helper.get_script()):
-        return
-    tmpdir = tempfile.mkdtemp()
-    shutil.copy2(helper.get_script(), tmpdir)
-    newscript = os.path.join(tmpdir, helper.get_script_name())
-    os.execl(newscript, newscript, "--quail_rm", helper.get_script_path())
