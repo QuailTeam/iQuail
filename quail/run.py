@@ -38,6 +38,6 @@ def run(installer, builder=Builder()):
             binary = installer.get_install_path(installer.binary)
             if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
                 os.chmod(binary, 0o755)
-            os.system(binary + " " + " ".join(sys.argv))
+            os.system(binary + " " + " ".join(sys.argv[1:]))
         else:
             installer.install()
