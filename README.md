@@ -42,7 +42,7 @@ To build a quail installer run ```quail_script.py --quail_build```
 
 
 ## License
-This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE](LICENSE) file for details
 
 Big thanks to PyInstaller project, our project would have never been possible without them:
 https://github.com/pyinstaller/pyinstaller
