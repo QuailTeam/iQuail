@@ -20,18 +20,18 @@ class SolutionZip(SolutionBase):
         if not isinstance(zip_name, str):
             raise AssertionError("Expected string as zip file")
         if helper.running_from_script():
-            self._zip_path = os.path.abspath(zip_name)
+            self._zip_name = os.path.abspath(zip_name)
         else:
-            self._zip_path = os.path.join(sys._MEIPASS, zip_name)
+            self._zip_name = os.path.join(sys._MEIPASS, zip_name)
 
     def local(self):
         return True
 
     def open(self):
-        if not os.path.exists(self._zip_path):
+        if not os.path.exists(self._zip_name):
             return False
         self._path = tempfile.mkdtemp()
-        zip_ref = zipfile.ZipFile(self._zip_path, 'r')
+        zip_ref = zipfile.ZipFile(self._zip_name, 'r')
         uncompress_size = sum((file.file_size for file in zip_ref.infolist()))
         extracted_size = 0
         for file in zip_ref.infolist():

@@ -8,10 +8,12 @@ class CmdZip(CmdBase):
     ''' Zip a folder and add it to the executable
     '''
     def __init__(self, path, zip_name, zip_clean=True):
-        if not isinstance(path, list):
-            raise AssertionError("Expected list as path")
+        if isinstance(path, list):
+            self._path = os.path.join(*path)
+        else:
+            self._path = path
+        self._path = os.path.abspath(self._path)
         self._zip_clean = zip_clean
-        self._path = os.path.abspath(os.path.join(*path))
         self._zip = zip_name
 
     def pre_build(self):

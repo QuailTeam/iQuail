@@ -8,7 +8,10 @@ class Builder:
     '''
 
     def __init__(self, *build_cmds):
-        self._build_cmds = build_cmds
+        self._build_cmds = list(build_cmds)
+
+    def append_cmds(self, cmds):
+        self._build_cmds.extend(cmds)
 
     def default_build_params(self):
         params = [helper.get_script(),
