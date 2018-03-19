@@ -5,7 +5,7 @@ from . import helper
 
 
 class SolutionLocal(SolutionBase):
-    def __init__(self, path):
+    def __init__(self, path, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if isinstance(path, list):
             self._path = os.path.join(*path)

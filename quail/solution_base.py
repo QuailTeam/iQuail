@@ -12,13 +12,23 @@ class SolutionBase:
     - over network
     '''
     def __init__(self, hook=None):
-        '''hook will be called to update progression status
+        '''hook(integer) will be called to update progression status
         '''
         self._hook = hook
 
     def update_progress(self, percent):
+        ''' This function will be called to update solution progression
+        while downloading.
+        It will call
+        '''
         if self._hook:
             self._hook(percent)
+
+    def additional_build_cmds(self):
+        '''Additional build commands, which will be passed to builder.Builder
+        return a list of builder.CmdBase
+        '''
+        return []
 
     def __enter__(self):
         if not self.open():
