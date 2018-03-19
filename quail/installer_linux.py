@@ -7,6 +7,7 @@ from .installer_base import InstallerBase
 from .constants import Constants
 from . import helper
 
+
 class InstallerLinux(InstallerBase):
 
     def __init__(self, *args, **kwargs):
@@ -27,7 +28,7 @@ class InstallerLinux(InstallerBase):
         with open(filename, "w") as f:
             config.write(f)
 
-    def register_app(self, filename, name, binary, icon,
+    def add_shortcut(self, dest, name, binary, icon,
                      workpath=None, console=None):
         if not workpath:
             workpath = os.path.dirname(binary)
@@ -39,25 +40,25 @@ class InstallerLinux(InstallerBase):
             'Terminal': 'true' if console else 'false',
             'Type': 'Application'
         }
-        self._write_desktop(self._get_desktop_path(filename), app_config)
+        self._write_desktop(self._get_desktop_path(dest), app_config)
 
-    def unregister_app(self, filename):
-        os.remove(self._get_desktop_path(filename))
+    def delete_shortcut(self, dest):
+        os.remove(self._get_desktop_path(dest))
 
-    def registered(self, filename):
-        return os.path.isfile(self._get_desktop_path(self._launch_shortcut))
+    def registered(self, dest):
+        return os.path.isfile(self._get_desktop_path(dest))
 
     def install(self):
         super().install()
         binary = self.get_install_path(helper.get_script_name())
-        self.register_app(filename=self._launch_shortcut,
+        self.add_shortcut(dest=self._launch_shortcut,
                           name=self.name,
                           workpath=self.get_install_path(),
                           binary=binary,
                           icon=self.get_install_path(self.icon),
                           console=self.console
                           )
-        self.register_app(filename=self._uninstall_shortcut,
+        self.add_shortcut(dest=self._uninstall_shortcut,
                           name="Uninstall " + self.name,
                           workpath=self.get_install_path(),
                           binary=binary + " " + Constants.ARGUMENT_UNINSTALL,
@@ -67,8 +68,8 @@ class InstallerLinux(InstallerBase):
 
     def uninstall(self):
         super().uninstall()
-        self.unregister_app(self._launch_shortcut)
-        self.unregister_app(self._uninstall_shortcut)
+        self.delete_shortcut(self._launch_shortcut)
+        self.delete_shortcut(self._uninstall_shortcut)
 
     def is_installed(self):
         if super().is_installed() and self.registered(self._launch_shortcut):
