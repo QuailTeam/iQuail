@@ -1,9 +1,10 @@
 
 import os
 import shutil
+from . import builder
 
 
-class SolutionBase:
+class SolutionBase(builder.BuilderAction):
     ''' The goal of this interface is to be able to resolve solution files
     comming from anywhere.
     current goals are:
@@ -23,12 +24,6 @@ class SolutionBase:
         '''
         if self._hook:
             self._hook(percent)
-
-    def additional_build_cmds(self):
-        '''Additional build commands, which will be passed to builder.Builder
-        return a list of builder.CmdBase
-        '''
-        return []
 
     def __enter__(self):
         if not self.open():

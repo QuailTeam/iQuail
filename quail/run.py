@@ -30,7 +30,7 @@ def run(installer, builder=Builder()):
     if args.quail_rm:
         shutil.rmtree(args.quail_rm)
     elif args.quail_build and helper.running_from_script():
-        builder.append_cmds(installer.solution.additional_build_cmds())
+        builder.register(installer.solution)
         builder.build()
     elif args.quail_uninstall:
         installer.uninstall()

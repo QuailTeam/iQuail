@@ -16,5 +16,5 @@ class SolutionPacked(SolutionZip):
         super().__init__(zip_name=self._zip_name, *args, **kwargs)
 
 
-    def additional_build_cmds(self):
+    def builder_cmds(self):
         return [CmdZip(self._path, self._zip_name)]
