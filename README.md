@@ -25,8 +25,8 @@ Quail is currently in planning development stage, everything is subject to chang
 ## Installation
 1. Install python 3.6
 https://www.python.org/downloads/release/python-360/
-2. Install PyQt5 and PyInstaller
-```python -m pip install PyQt5 PyInstaller```
+2. Install Tkinter (if its not already in python3) and PyInstaller
+```python -m pip install PyInstaller```
 
 3. Run ```python setup.py install```
 or set PYTHONPATH to quail directory
