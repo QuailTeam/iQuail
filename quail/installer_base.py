@@ -13,8 +13,7 @@ class InstallerBase:
                  icon,
                  solution,
                  publisher='Quail',
-                 console=False,
-                 integrity=False):
+                 console=False):
         self._name = name
         self._binary = binary
         self._icon = icon
@@ -22,7 +21,6 @@ class InstallerBase:
         self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path()
-        self._integrity = integrity
 
     @property
     def solution(self):

@@ -13,8 +13,7 @@ if quail.helper.OS_LINUX:
             icon='icon.jpeg',
             binary='allum1',
             solution=quail.SolutionLocal(['Allum1']),
-            console=True,
-            integrity=True
+            console=True
         ),
         quail.builder.Builder(
             quail.builder.CmdIntegrity(solution_path)
@@ -28,8 +27,7 @@ if quail.helper.OS_WINDOWS:
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
             solution=quail.SolutionLocal(['OpenHardwareMonitor']),
-            console=True,
-            integrity=True
+            console=True
         ),
         quail.builder.Builder(
             quail.builder.CmdIntegrity(solution_path)
