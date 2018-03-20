@@ -6,6 +6,6 @@ from .solution_ftp import SolutionFtp
 from .solution_zip import SolutionZip
 from .solution_packed import SolutionPacked
 from .installer import Installer
-#from .installer_gui import InstallerGui
+from .installer_gui import InstallerGui
 from . import helper
 from . import builder
