@@ -15,10 +15,11 @@ Quail is currently in planning development stage, everything is subject to chang
 * Standalone executable
 
 ## Short time goals
-* Building a versionning server
-* Using quail to update solutions which alerady have an installer .msi / .deb / setup.exe / .rpm  files
-* Options to suggest or force updates at launch
+* Using github release feature to deploy/update solutions
 * Integrity verification and updating only modified data
+* Building a versioning server
+* Using quail to update solutions which already have an installer .msi / .deb / setup.exe / .rpm  files
+* Options to suggest or force updates at launch
 * Scriptable GUI (for install, update, uninstall)
 
 
