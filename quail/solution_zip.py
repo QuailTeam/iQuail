@@ -30,23 +30,24 @@ class SolutionZip(SolutionBase):
     def open(self):
         if not os.path.exists(self._zip_name):
             return False
-        self._path = tempfile.mkdtemp()
+        self._src = tempfile.mkdtemp()
         zip_ref = zipfile.ZipFile(self._zip_name, 'r')
         uncompress_size = sum((file.file_size for file in zip_ref.infolist()))
         extracted_size = 0
         for file in zip_ref.infolist():
             extracted_size += file.file_size
-            self.update_progress(extracted_size * 100 / uncompress_size)
-            zip_ref.extract(file, self._path)
+            self._update_progress(extracted_size * 100 / uncompress_size)
+            zip_ref.extract(file, self._src)
         zip_ref.close()
         return True
 
     def close(self):
-        shutil.rmtree(self._path)
+        shutil.rmtree(self._src)
 
     def walk(self):
-        for root, dirs, files in os.walk(self._path):
-            yield (os.path.relpath(root, self._path), dirs, files)
+        for root, dirs, files in os.walk(self._src):
+            yield (os.path.relpath(root, self._src), dirs, files)
 
-    def get_file(self, relative_path):
-        return os.path.join(self._path, relative_path)
+    def get_file(self, relpath):
+        return shutil.copy2(os.path.join(self._src, relpath),
+                            os.path.join(self._dest, relpath))

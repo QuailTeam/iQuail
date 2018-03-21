@@ -58,7 +58,6 @@ class SolutionFtp(SolutionBase):
         self._port = port
 
     def open(self):
-        self._tmpdir = tempfile.mkdtemp()
         self._ftp = FTP()
         try:
             self._ftp.connect(self._host, self._port)
@@ -74,28 +73,24 @@ class SolutionFtp(SolutionBase):
 
     def close(self):
         self._ftp.close()
-        shutil.rmtree(self._tmpdir)
 
     def walk(self):
         for relpath, value in self._files.items():
             yield (relpath, value[1], value[2])
 
-    def _get_tmp_path(self, relative_path):
-        return os.path.join(self._tmpdir, relative_path)
-
-    def _open_tmp_file(self, relative_path):
-        path = self._get_tmp_path(relative_path)
+    def _open_file(self, relpath):
+        path = os.path.join(self._dest, relpath)
         os.makedirs(os.path.dirname(path), 0o777, True)
         return open(path, 'wb')
 
-    def get_file(self, relative_path):
-        print("Downloading %s" % (relative_path))
-        real_path = self._files[os.path.dirname(relative_path)][0]
-        name = os.path.basename(relative_path)
+    def get_file(self, relpath):
+        print("Downloading %s" % (relpath))
+        real_path = self._files[os.path.dirname(relpath)][0]
+        name = os.path.basename(relpath)
         old_directory = self._ftp.pwd()
         self._ftp.cwd(real_path)
-        f = self._open_tmp_file(relative_path)
+        f = self._open_file(relpath)
         self._ftp.retrbinary("RETR %s" % (name), f.write)
         f.close()
         self._ftp.cwd(old_directory)
-        return self._get_tmp_path(relative_path)
+        return os.path.join(self._dest, relpath)

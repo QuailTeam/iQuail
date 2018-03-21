@@ -57,8 +57,9 @@ class InstallerBase:
         return os.path.join(self._install_path, *args)
 
     def install(self):
-        solutioner = Solutioner(self.solution, self.get_install_path())
-        solutioner.download_all()
+        self.solution.setup(self.get_install_path())
+        with self.solution as s:
+            s.get_all()
         # install script and module:
         shutil.copy2(helper.get_script(), self.get_install_path())
         if helper.running_from_script():

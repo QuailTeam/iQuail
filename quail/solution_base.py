@@ -12,18 +12,24 @@ class SolutionBase(builder.BuilderAction):
     - from local directory
     - over network
     '''
-    def __init__(self, hook=None):
+
+    def setup(self, dest, hook=None):
         '''hook(integer) will be called to update progression status
         '''
-        self._hook = hook
+        self.__dest = dest
+        self.__hook = hook
 
-    def update_progress(self, percent):
+    @property
+    def _dest(self):
+        return self.__dest
+
+    def _update_progress(self, percent):
         ''' This function will be called to update solution progression
         while downloading.
         It will call
         '''
-        if self._hook:
-            self._hook(percent)
+        if self.__hook:
+            self.__hook(percent)
 
     def __enter__(self):
         if not self.open():
@@ -58,6 +64,21 @@ class SolutionBase(builder.BuilderAction):
         raise NotImplementedError
 
     def get_file(self, relpath):
-        '''Load file if needed, from solution relative path
-        returns file real path'''
+        ''' Download file to dest folder
+        (open & setup the solution before using download)'''
         raise NotImplementedError
+
+
+    def get_all(self):
+        ''' Download solution to dest folder
+        (open & setup the solution before using download)
+        '''
+        if os.path.exists(self._dest):
+            shutil.rmtree(self._dest)
+        os.makedirs(self._dest, 0o777, True)
+        for root, dirs, files in self.walk():
+            for sdir in dirs:
+                os.makedirs(os.path.join(self._dest, root, sdir),
+                            0o777, True)
+            for sfile in files:
+                self.get_file(os.path.join(root, sfile))
