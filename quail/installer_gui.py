@@ -3,19 +3,22 @@
 import sys
 from threading import Thread
 from tkinter import Button, Label, Tk, messagebox
-from .install import Install
+from .installer import Installer
 
-class InstallGui(Install):
-    
+
+class InstallerGui(Installer):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tk = Tk()
         self._thread = None
-        
+
     def _init_gui(self):
-        self.button_install = Button(self.tk, text="Install", command=self._run_install)
+        self.button_install = Button(self.tk,
+                                     text="Install",
+                                     command=self._run_install)
         self.button_install.pack(side="left", padx=2, pady=2)
-        
+
     def install(self):
         self._init_gui()
         self.tk.protocol("WM_DELETE_WINDOW", self._on_closing)

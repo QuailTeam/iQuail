@@ -10,11 +10,11 @@ def print_progress(percent):
 
 if quail.helper.OS_LINUX:
     quail.run(
-        quail.Install(
+        quail.SolutionPacked(path='Allum1'),
+        quail.Installer(
             name='LolAllum1',
             icon='icon.jpeg',
             binary='allum1',
-            solution=quail.SolutionPacked(path='Allum1'),
             console=True
         ),
         quail.builder.Builder()
@@ -22,11 +22,11 @@ if quail.helper.OS_LINUX:
 
 if quail.helper.OS_WINDOWS:
     quail.run(
-        quail.Install(
+        quail.SolutionPacked(path='OpenHardwareMonitor'),
+        quail.Installer(
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
-            solution=quail.SolutionPacked(path='OpenHardwareMonitor'),
             console=True
         ),
         quail.builder.Builder(

@@ -3,28 +3,21 @@ import pathlib
 import shutil
 from . import helper
 from .constants import Constants
-from .solutioner import Solutioner
 
-class InstallBase:
-
+class InstallerBase:
+    '''Register application for the OS'''
     def __init__(self,
                  name,
                  binary,
                  icon,
-                 solution,
                  publisher='Quail',
                  console=False):
         self._name = name
         self._binary = binary
         self._icon = icon
-        self._solution = solution
         self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path()
-
-    @property
-    def solution(self):
-        return self._solution
 
     @property
     def name(self):
@@ -57,9 +50,7 @@ class InstallBase:
         return os.path.join(self._install_path, *args)
 
     def install(self):
-        self.solution.setup(self.get_install_path())
-        with self.solution as s:
-            s.get_all()
+        os.makedirs(self.get_install_path(), 0o777, True)
         # install script and module:
         shutil.copy2(helper.get_script(), self.get_install_path())
         if helper.running_from_script():
@@ -67,7 +58,9 @@ class InstallBase:
                             os.path.join(self.get_install_path(), "quail"))
 
     def uninstall(self, on_error=None):
+        # TODO: remove only binary and lib
         shutil.rmtree(self.get_install_path(), False, on_error)
 
     def is_installed(self):
+        # TODO: check binary exists
         return os.path.exists(self.get_install_path())

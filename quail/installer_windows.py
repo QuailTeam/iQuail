@@ -8,7 +8,7 @@ import tempfile
 from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
 from contextlib import suppress
-from .install_base import InstallBase
+from .installer_base import InstallerBase
 from .constants import Constants
 from . import helper
 
@@ -30,9 +30,10 @@ def _delete_itself():
     shutil.copy2(helper.get_script(), tmpdir)
     newscript = os.path.join(tmpdir, helper.get_script_name())
     os.execl(newscript, newscript, "--quail_rm", helper.get_script_path())
+    # TODO: remove only quail executable
 
 
-class InstallWindows(InstallBase):
+class InstallerWindows(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

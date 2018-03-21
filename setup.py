@@ -17,7 +17,7 @@ setup(
                  'Topic :: Software Development'
                  ],
     install_requires=[
-        'pyinstaller', 'PyQt5'
+        'pyinstaller'
     ],
     entry_points={
         'console_scripts': [

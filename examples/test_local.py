@@ -8,11 +8,11 @@ import platform
 if quail.helper.OS_LINUX:
     solution_path = ['Allum1']
     quail.run(
-        quail.Install(
+        quail.SolutionLocal(['Allum1']),
+        quail.Installer(
             name='LolAllum1',
             icon='icon.jpeg',
             binary='allum1',
-            solution=quail.SolutionLocal(['Allum1']),
             console=True
         ),
         quail.builder.Builder(
@@ -22,11 +22,11 @@ if quail.helper.OS_LINUX:
 if quail.helper.OS_WINDOWS:
     solution_path = ['OpenHardwareMonitor']
     quail.run(
-        quail.Install(
+        quail.SolutionLocal(['OpenHardwareMonitor']),
+        quail.Installer(
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
-            solution=quail.SolutionLocal(['OpenHardwareMonitor']),
             console=True
         ),
         quail.builder.Builder(

@@ -3,12 +3,12 @@ import configparser
 import pathlib
 import os.path
 import shutil
-from .install_base import InstallBase
+from .installer_base import InstallerBase
 from .constants import Constants
 from . import helper
 
 
-class InstallLinux(InstallBase):
+class InstallerLinux(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
