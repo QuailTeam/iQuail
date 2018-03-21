@@ -8,7 +8,7 @@ import platform
 if quail.helper.OS_LINUX:
     solution_path = ['Allum1']
     quail.run(
-        quail.InstallerGui(
+        quail.InstallGui(
             name='LolAllum1',
             icon='icon.jpeg',
             binary='allum1',
@@ -23,7 +23,7 @@ if quail.helper.OS_LINUX:
 if quail.helper.OS_WINDOWS:
     solution_path = ['OpenHardwareMonitor']
     quail.run(
-        quail.InstallerGui(
+        quail.InstallGui(
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
