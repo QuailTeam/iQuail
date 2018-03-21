@@ -8,7 +8,7 @@ import tempfile
 from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
 from contextlib import suppress
-from .installer_base import InstallerBase
+from .install_base import InstallBase
 from .constants import Constants
 from . import helper
 
@@ -32,7 +32,7 @@ def _delete_itself():
     os.execl(newscript, newscript, "--quail_rm", helper.get_script_path())
 
 
-class InstallerWindows(InstallerBase):
+class InstallWindows(InstallBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

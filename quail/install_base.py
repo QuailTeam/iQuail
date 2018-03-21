@@ -5,7 +5,7 @@ from . import helper
 from .constants import Constants
 from .solutioner import Solutioner
 
-class InstallerBase:
+class InstallBase:
 
     def __init__(self,
                  name,

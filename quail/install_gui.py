@@ -3,9 +3,9 @@
 import sys
 from threading import Thread
 from tkinter import Button, Label, Tk, messagebox
-from .installer import Installer
+from .install import Install
 
-class InstallerGui(Installer):
+class InstallGui(Install):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
