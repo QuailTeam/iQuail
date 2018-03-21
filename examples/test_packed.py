@@ -14,7 +14,7 @@ if quail.helper.OS_LINUX:
             name='LolAllum1',
             icon='icon.jpeg',
             binary='allum1',
-            solution=quail.SolutionPacked(path='Allum1', hook=print_progress),
+            solution=quail.SolutionPacked(path='Allum1'),
             console=True
         ),
         quail.builder.Builder()
@@ -26,7 +26,7 @@ if quail.helper.OS_WINDOWS:
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
-            solution=quail.SolutionPacked(path='OpenHardwareMonitor', hook=print_progress),
+            solution=quail.SolutionPacked(path='OpenHardwareMonitor'),
             console=True
         ),
         quail.builder.Builder(
