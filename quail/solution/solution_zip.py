@@ -4,9 +4,8 @@ import zipfile
 import tempfile
 import shutil
 import sys
+from .. import helper
 from .solution_base import SolutionBase
-from . import helper
-
 
 class SolutionZip(SolutionBase):
     ''' Zip solution

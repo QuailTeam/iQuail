@@ -22,7 +22,7 @@ if quail.helper.OS_LINUX:
 if quail.helper.OS_WINDOWS:
     solution_path = ['OpenHardwareMonitor']
     quail.run(
-        quail.SolutionLocal(['OpenHardwareMonitor'])
+        quail.SolutionLocal(['OpenHardwareMonitor']),
         quail.InstallerGui(
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',

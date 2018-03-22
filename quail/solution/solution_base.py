@@ -1,7 +1,7 @@
 
 import os
 import shutil
-from . import builder
+from .. import builder
 
 
 class SolutionBase(builder.BuilderAction):

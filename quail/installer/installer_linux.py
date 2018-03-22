@@ -3,9 +3,9 @@ import configparser
 import pathlib
 import os.path
 import shutil
+from ..constants import Constants
+from .. import helper
 from .installer_base import InstallerBase
-from .constants import Constants
-from . import helper
 
 
 class InstallerLinux(InstallerBase):

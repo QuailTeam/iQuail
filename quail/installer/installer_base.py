@@ -1,11 +1,11 @@
 import os
 import pathlib
 import shutil
-from . import helper
-from .constants import Constants
+from .. import helper
+from ..constants import Constants
 
 class InstallerBase:
-    '''Register application for the OS'''
+    '''Register application on the OS'''
     def __init__(self,
                  name,
                  binary,

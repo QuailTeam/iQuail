@@ -1,5 +1,5 @@
 
-from .helper import *
+from ..helper import *
 
 if OS_LINUX:
     from .installer_linux import InstallerLinux

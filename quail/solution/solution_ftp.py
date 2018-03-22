@@ -3,7 +3,7 @@ import os
 import tempfile
 import shutil
 from .solution_base import SolutionBase
-from . import helper
+from .. import helper
 
 
 class FtpWalk:

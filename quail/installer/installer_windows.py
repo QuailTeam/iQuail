@@ -8,9 +8,9 @@ import tempfile
 from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
 from contextlib import suppress
+from ..constants import Constants
+from .. import helper
 from .installer_base import InstallerBase
-from .constants import Constants
-from . import helper
 
 
 def _on_rmtree_error(function, path, excinfo):

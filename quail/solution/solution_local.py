@@ -1,7 +1,7 @@
 import shutil
 import os
 from .solution_base import SolutionBase
-from . import helper
+from .. import helper
 
 
 class SolutionLocal(SolutionBase):

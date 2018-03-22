@@ -1,9 +1,9 @@
 
 
 import os
+from ..builder.cmd_zip import CmdZip
+from .. import helper
 from .solution_zip import SolutionZip
-from .builder.cmd_zip import CmdZip
-from . import helper
 
 class SolutionPacked(SolutionZip):
     def __init__(self, path, *args, **kwargs):
