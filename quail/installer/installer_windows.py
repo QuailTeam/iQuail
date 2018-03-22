@@ -23,6 +23,10 @@ def on_rmtree_error(function, path, excinfo):
         raise
 
 def delete_atexit(to_delete):
+    '''On windows we can't remove binaries being run.
+    This function will remove a file or folder at exit
+    to be able to delete itself
+    '''
     def _delete_from_tmp():
         if not (os.path.exists(to_delete) or os.path.isfile(to_delete)):
             return
@@ -106,7 +110,7 @@ class InstallerWindows(InstallerBase):
         with suppress(FileNotFoundError):
             shutil.rmtree(self._start_menu_path)
         self._unset_reg_uninstall()
-        delete_atexit(helper.get_script())
+        delete_atexit(self.get_install_path(helper.get_script_name()))
 
     def registered(self):
         if not super().registered():

@@ -3,6 +3,7 @@ import configparser
 import pathlib
 import os.path
 import shutil
+from contextlib import suppress
 from ..constants import Constants
 from .. import helper
 from .installer_base import InstallerBase
@@ -43,7 +44,8 @@ class InstallerLinux(InstallerBase):
         self._write_desktop(self._desktop(dest), app_config)
 
     def delete_shortcut(self, dest):
-        os.remove(self._desktop(dest))
+        with suppress(FileNotFoundError):
+            os.remove(self._desktop(dest))
 
     def is_shortcut(self, dest):
         # TODO: abs shortcut path & add desktop var

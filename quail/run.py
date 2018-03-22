@@ -3,6 +3,7 @@ import sys
 import argparse
 import shutil
 import os
+from contextlib import suppress
 from .constants import Constants
 from . import helper
 from .builder import Builder
@@ -19,7 +20,11 @@ def parse_args():
                         action="store_true")
     parser.add_argument(Constants.ARGUMENT_RM,
                         type=str,
-                        help="remove folder")
+                        help="""remove file or folder:
+                        if file is passed as arguement and the file's directory
+                        is empty, the directory will be removed
+                        (this function is used by quail for windows uninstall)
+                        """)
     return parser.parse_args()
 
 
@@ -32,6 +37,8 @@ def run(solution, installer, builder=Builder()):
             shutil.rmtree(args.quail_rm)
         except NotADirectoryError:
             os.remove(args.quail_rm)
+            with suppress(OSError):
+                os.rmdir(os.path.dirname(args.quail_rm))
     elif args.quail_build and helper.running_from_script():
         builder.register(solution)
         builder.build()
