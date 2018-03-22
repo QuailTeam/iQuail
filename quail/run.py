@@ -2,6 +2,7 @@
 import sys
 import argparse
 import shutil
+import os
 from .constants import Constants
 from . import helper
 from .builder import Builder
@@ -27,7 +28,10 @@ def run(solution, installer, builder=Builder()):
     args = parse_args()
     manager = Manager(installer, solution)
     if args.quail_rm:
-        shutil.rmtree(args.quail_rm)
+        try:
+            shutil.rmtree(args.quail_rm)
+        except NotADirectoryError:
+            os.remove(args.quail_rm)
     elif args.quail_build and helper.running_from_script():
         builder.register(solution)
         builder.build()

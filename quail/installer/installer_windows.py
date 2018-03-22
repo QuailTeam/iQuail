@@ -13,7 +13,7 @@ from .. import helper
 from .installer_base import InstallerBase
 
 
-def _on_rmtree_error(function, path, excinfo):
+def on_rmtree_error(function, path, excinfo):
     '''function to ignore if windows can't remove quail binary
     On windows we can't remove binaries being run
     quail binary will be removed at exit with _delete_itself when uninstalling
@@ -22,16 +22,15 @@ def _on_rmtree_error(function, path, excinfo):
             (function == os.rmdir and path == helper.get_script_path())):
         raise
 
-
-def _delete_itself():
-    if not os.path.exists(helper.get_script()):
-        return
-    tmpdir = tempfile.mkdtemp()
-    shutil.copy2(helper.get_script(), tmpdir)
-    newscript = os.path.join(tmpdir, helper.get_script_name())
-    os.execl(newscript, newscript, "--quail_rm", helper.get_script_path())
-    # TODO: remove only quail executable
-
+def delete_atexit(to_delete):
+    def _delete_from_tmp():
+        if not (os.path.exists(to_delete) or os.path.isfile(to_delete)):
+            return
+        tmpdir = tempfile.mkdtemp()
+        shutil.copy2(helper.get_script(), tmpdir)
+        newscript = os.path.join(tmpdir, helper.get_script_name())
+        os.execl(newscript, newscript, "--quail_rm", to_delete)
+    atexit.register(_delete_from_tmp)
 
 class InstallerWindows(InstallerBase):
 
@@ -102,12 +101,12 @@ class InstallerWindows(InstallerBase):
         self.add_shortcut(self._start_menu_shortcut, **shortcut_config)
 
     def unregister(self):
-        super().unregister(_on_rmtree_error)
+        super().unregister(on_rmtree_error)
         self.delete_shortcut(self._desktop_shortcut)
         with suppress(FileNotFoundError):
             shutil.rmtree(self._start_menu_path)
         self._unset_reg_uninstall()
-        atexit.register(_delete_itself)
+        delete_atexit(helper.get_script())
 
     def registered(self):
         if not super().registered():
