@@ -19,6 +19,7 @@ class Manager:
         # TODO: solution remove
 
     def is_installed(self):
+        # TODO: check solution installed
         return self._installer.is_installed()
 
     def run(self):

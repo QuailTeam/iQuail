@@ -62,5 +62,4 @@ class InstallerBase:
         shutil.rmtree(self.get_install_path(), False, on_error)
 
     def is_installed(self):
-        # TODO: check binary exists
-        return os.path.exists(self.get_install_path())
+        return os.path.isfile(self.get_install_path(helper.get_script()))
