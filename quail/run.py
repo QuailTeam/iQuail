@@ -34,7 +34,7 @@ def run(solution, installer, builder=Builder()):
     elif args.quail_uninstall:
         manager.uninstall()
     else:
-        if installer.is_installed():
+        if manager.is_installed():
             manager.run()
         else:
             manager.install()

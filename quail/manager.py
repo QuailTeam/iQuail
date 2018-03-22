@@ -12,15 +12,15 @@ class Manager:
     def install(self):
         with self._solution as solution:
             solution.get_all()
-        self._installer.install()
+        self._installer.register()
 
     def uninstall(self):
-        self._installer.uninstall()
+        self._installer.unregister()
         # TODO: solution remove
 
     def is_installed(self):
         # TODO: check solution installed
-        return self._installer.is_installed()
+        return self._installer.registered()
 
     def run(self):
         binary = self._installer.get_install_path(self._installer.binary)

@@ -15,7 +15,7 @@ class InstallerLinux(InstallerBase):
         self._launch_shortcut = self.name
         self._uninstall_shortcut = "%s_uninstall" % (self.name)
 
-    def _get_desktop_path(self, name):
+    def _desktop(self, name):
         return os.path.join(str(pathlib.Path.home()),
                             ".local", "share", "applications",
                             "%s.desktop" % (name))
@@ -40,16 +40,17 @@ class InstallerLinux(InstallerBase):
             'Terminal': 'true' if console else 'false',
             'Type': 'Application'
         }
-        self._write_desktop(self._get_desktop_path(dest), app_config)
+        self._write_desktop(self._desktop(dest), app_config)
 
     def delete_shortcut(self, dest):
-        os.remove(self._get_desktop_path(dest))
+        os.remove(self._desktop(dest))
 
-    def registered(self, dest):
-        return os.path.isfile(self._get_desktop_path(dest))
+    def is_shortcut(self, dest):
+        # TODO: abs shortcut path & add desktop var
+        return os.path.isfile(self._desktop(dest))
 
-    def install(self):
-        super().install()
+    def register(self):
+        super().register()
         binary = self.get_install_path(helper.get_script_name())
         self.add_shortcut(dest=self._launch_shortcut,
                           name=self.name,
@@ -66,12 +67,16 @@ class InstallerLinux(InstallerBase):
                           console=self.console
                           )
 
-    def uninstall(self):
-        super().uninstall()
+    def unregister(self):
+        super().unregister()
         self.delete_shortcut(self._launch_shortcut)
         self.delete_shortcut(self._uninstall_shortcut)
 
-    def is_installed(self):
-        if super().is_installed() and self.registered(self._launch_shortcut):
-            return True
-        return False
+    def registered(self):
+        if not super().registered():
+            return False
+        if not self.is_shortcut(self._launch_shortcut):
+            return False
+        if not self.is_shortcut(self._uninstall_shortcut):
+            return False
+        return True

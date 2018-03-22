@@ -49,7 +49,7 @@ class InstallerBase:
         '''Get file from install path'''
         return os.path.join(self._install_path, *args)
 
-    def install(self):
+    def register(self):
         os.makedirs(self.get_install_path(), 0o777, True)
         # install script and module:
         shutil.copy2(helper.get_script(), self.get_install_path())
@@ -57,9 +57,9 @@ class InstallerBase:
             shutil.copytree(helper.get_module_path(),
                             os.path.join(self.get_install_path(), "quail"))
 
-    def uninstall(self, on_error=None):
+    def unregister(self, on_error=None):
         # TODO: remove only binary and lib
         shutil.rmtree(self.get_install_path(), False, on_error)
 
-    def is_installed(self):
+    def registered(self):
         return os.path.isfile(self.get_install_path(helper.get_script()))

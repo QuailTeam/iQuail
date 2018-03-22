@@ -19,7 +19,7 @@ class InstallerGui(Installer):
                                      command=self._run_install)
         self.button_install.pack(side="left", padx=2, pady=2)
 
-    def install(self):
+    def register(self):
         self._init_gui()
         self.tk.protocol("WM_DELETE_WINDOW", self._on_closing)
         self.tk.mainloop()
@@ -35,5 +35,5 @@ class InstallerGui(Installer):
     def _run_install(self):
         if self._thread is not None:
             return
-        self._thread = Thread(target=super().install)
+        self._thread = Thread(target=super().register)
         self._thread.start()
