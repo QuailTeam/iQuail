@@ -84,7 +84,6 @@ class SolutionFtp(SolutionBase):
         return open(path, 'wb')
 
     def get_file(self, relpath):
-        print("Downloading %s" % (relpath))
         real_path = self._files[os.path.dirname(relpath)][0]
         name = os.path.basename(relpath)
         old_directory = self._ftp.pwd()

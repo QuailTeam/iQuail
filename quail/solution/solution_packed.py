@@ -17,5 +17,5 @@ class SolutionPacked(SolutionZip):
 
 
     def builder_cmds(self):
-        # TODO: super()
-        return [CmdZip(self._path, self._zip_name)]
+        cmds = super().builder_cmds() + [CmdZip(self._path, self._zip_name)]
+        return cmds
