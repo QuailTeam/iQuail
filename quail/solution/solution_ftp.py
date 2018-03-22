@@ -79,7 +79,7 @@ class SolutionFtp(SolutionBase):
             yield (relpath, value[1], value[2])
 
     def _open_file(self, relpath):
-        path = os.path.join(self._dest, relpath)
+        path = self._dest(relpath)
         os.makedirs(os.path.dirname(path), 0o777, True)
         return open(path, 'wb')
 
@@ -93,4 +93,4 @@ class SolutionFtp(SolutionBase):
         self._ftp.retrbinary("RETR %s" % (name), f.write)
         f.close()
         self._ftp.cwd(old_directory)
-        return os.path.join(self._dest, relpath)
+        return self._dest(relpath)

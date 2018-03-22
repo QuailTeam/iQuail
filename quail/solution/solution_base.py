@@ -19,9 +19,9 @@ class SolutionBase(builder.BuilderAction):
         self.__dest = dest
         self.__hook = hook
 
-    @property
-    def _dest(self):
-        return self.__dest
+    def _dest(self, *args):
+        '''Get destination path'''
+        return os.path.join(self.__dest, *args)
 
     def _update_progress(self, percent):
         ''' This function will be called to update solution progression
@@ -73,12 +73,12 @@ class SolutionBase(builder.BuilderAction):
         ''' Download solution to dest folder
         (open & setup the solution before using download)
         '''
-        if os.path.exists(self._dest):
-            shutil.rmtree(self._dest)
-        os.makedirs(self._dest, 0o777, True)
+        if os.path.exists(self._dest()):
+            shutil.rmtree(self._dest())
+        os.makedirs(self._dest(), 0o777, True)
         for root, dirs, files in self.walk():
             for sdir in dirs:
-                os.makedirs(os.path.join(self._dest, root, sdir),
+                os.makedirs(self._dest(root, sdir),
                             0o777, True)
             for sfile in files:
                 self.get_file(os.path.join(root, sfile))

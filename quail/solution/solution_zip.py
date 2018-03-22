@@ -49,4 +49,4 @@ class SolutionZip(SolutionBase):
 
     def get_file(self, relpath):
         return shutil.copy2(os.path.join(self._src, relpath),
-                            os.path.join(self._dest, relpath))
+                            self._dest(relpath))
