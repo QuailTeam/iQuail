@@ -58,14 +58,14 @@ class InstallerWindows(InstallerBase):
 
     def _set_reg_uninstall(self):
         uninstall_path = "%s %s" % (
-            self.get_install_path(helper.get_script_name()),
+            self._get_install_launcher(),
             Constants.ARGUMENT_UNINSTALL)
         if helper.running_from_script():
             uninstall_path = sys.executable + ' ' + uninstall_path
         values = [
             ('DisplayName', winreg.REG_SZ, self.name),
-            ('InstallLocation', winreg.REG_SZ, self.get_install_path()),
-            ('DisplayIcon', winreg.REG_SZ, self.get_install_path(self.icon)),
+            ('InstallLocation', winreg.REG_SZ, self._get_install_path()),
+            ('DisplayIcon', winreg.REG_SZ, self._get_solution_icon()),
             ('Publisher', winreg.REG_SZ, self.publisher),
             ('UninstallString', winreg.REG_SZ, uninstall_path),
             ('NoRepair', winreg.REG_DWORD, 1),
@@ -96,9 +96,9 @@ class InstallerWindows(InstallerBase):
         super().register()
         self._set_reg_uninstall()
         shortcut_config = {
-            "binary": self.get_install_path(helper.get_script_name()),
-            "icon": self.get_install_path(self.icon),
-            "workpath": self.get_install_path()
+            "binary": self._get_install_launcher(),
+            "icon": self._get_solution_icon(),
+            "workpath": self.get_solution_path()
         }
         self.add_shortcut(self._desktop_shortcut, **shortcut_config)
         os.makedirs(self._start_menu_path, 0o777, True)
@@ -110,7 +110,7 @@ class InstallerWindows(InstallerBase):
         with suppress(FileNotFoundError):
             shutil.rmtree(self._start_menu_path)
         self._unset_reg_uninstall()
-        delete_atexit(self.get_install_path(helper.get_script_name()))
+        delete_atexit(self._get_install_launcher())
 
     def registered(self):
         if not super().registered():

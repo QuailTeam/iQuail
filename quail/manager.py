@@ -7,7 +7,7 @@ class Manager:
     def __init__(self, installer, solution):
         self._installer = installer
         self._solution = solution
-        self._solution.setup(self._installer.get_install_path())
+        self._solution.setup(self._installer.get_solution_path())
 
     def install(self):
         with self._solution as solution:
@@ -23,7 +23,7 @@ class Manager:
         return self._installer.registered()
 
     def run(self):
-        binary = self._installer.get_install_path(self._installer.binary)
+        binary = self._installer.get_solution_path(self._installer.binary)
         if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
             os.chmod(binary, 0o755)
         os.system(binary + " " + " ".join(sys.argv[1:]))

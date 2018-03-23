@@ -53,19 +53,19 @@ class InstallerLinux(InstallerBase):
 
     def register(self):
         super().register()
-        binary = self.get_install_path(helper.get_script_name())
+        binary = self._get_install_launcher()
         self.add_shortcut(dest=self._launch_shortcut,
                           name=self.name,
-                          workpath=self.get_install_path(),
+                          workpath=self.get_solution_path(),
                           binary=binary,
-                          icon=self.get_install_path(self.icon),
+                          icon=self._get_solution_icon(),
                           console=self.console
                           )
         self.add_shortcut(dest=self._uninstall_shortcut,
                           name="Uninstall " + self.name,
-                          workpath=self.get_install_path(),
+                          workpath=self.get_solution_path(),
                           binary=binary + " " + Constants.ARGUMENT_UNINSTALL,
-                          icon=self.get_install_path(self.icon),
+                          icon=self._get_solution_icon(),
                           console=self.console
                           )
 

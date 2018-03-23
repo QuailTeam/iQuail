@@ -4,8 +4,10 @@ import shutil
 from .. import helper
 from ..constants import Constants
 
+
 class InstallerBase:
     '''Register application on the OS'''
+
     def __init__(self,
                  name,
                  binary,
@@ -19,13 +21,21 @@ class InstallerBase:
         self._console = console
         self._install_path = self.build_install_path()
 
+    def _get_install_launcher(self):
+        '''Get quail executable install path'''
+        return self._get_install_path(helper.get_script_name())
+
+    def _get_solution_icon(self):
+        '''Get solution's icon'''
+        return self._get_install_path(self._icon)
+
+    def _get_install_path(self, *args):
+        '''Get install path'''
+        return os.path.join(self._install_path, *args)
+
     @property
     def name(self):
         return self._name
-
-    @property
-    def icon(self):
-        return self._icon
 
     @property
     def binary(self):
@@ -45,21 +55,23 @@ class InstallerBase:
         '''
         return os.path.join(str(pathlib.Path.home()), '.quail', self.name)
 
-    def get_install_path(self, *args):
-        '''Get file from install path'''
-        return os.path.join(self._install_path, *args)
+    def get_solution_path(self, *args):
+        '''Get solution path'''
+        return os.path.join(self._install_path, 'solution', *args)
 
     def register(self):
-        os.makedirs(self.get_install_path(), 0o777, True)
+        os.makedirs(self._get_install_path(), 0o777, True)
         # install script and module:
-        shutil.copy2(helper.get_script(), self.get_install_path())
+        shutil.copy2(helper.get_script(), self._get_install_launcher())
         if helper.running_from_script():
             shutil.copytree(helper.get_module_path(),
-                            os.path.join(self.get_install_path(), "quail"))
+                            os.path.join(self._get_install_path(), "quail"))
 
     def unregister(self, on_error=None):
-        # TODO: remove only binary and lib
-        shutil.rmtree(self.get_install_path(), False, on_error)
+        # TODO: remove only binary
+        shutil.rmtree(self._get_install_path(), False, on_error)
+        if helper.running_from_script():
+            shutil.rmtree(os.path.join(self._get_install_path(), "quail"))
 
     def registered(self):
-        return os.path.isfile(self.get_install_path(helper.get_script()))
+        return os.path.isfile(self._get_install_launcher())
