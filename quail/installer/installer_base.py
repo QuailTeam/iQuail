@@ -20,6 +20,7 @@ class InstallerBase:
         self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path()
+        self._solution_path = os.path.join(self._install_path, 'solution')
 
     def _get_install_launcher(self):
         '''Get quail executable install path'''
@@ -27,7 +28,7 @@ class InstallerBase:
 
     def _get_solution_icon(self):
         '''Get solution's icon'''
-        return self._get_install_path(self._icon)
+        return self.get_solution_path(self._icon)
 
     def _get_install_path(self, *args):
         '''Get install path'''
@@ -57,7 +58,7 @@ class InstallerBase:
 
     def get_solution_path(self, *args):
         '''Get solution path'''
-        return os.path.join(self._install_path, 'solution', *args)
+        return os.path.join(self._solution_path, *args)
 
     def register(self):
         os.makedirs(self._get_install_path(), 0o777, True)
@@ -65,13 +66,13 @@ class InstallerBase:
         shutil.copy2(helper.get_script(), self._get_install_launcher())
         if helper.running_from_script():
             shutil.copytree(helper.get_module_path(),
-                            os.path.join(self._get_install_path(), "quail"))
+                            self._get_install_path("quail"))
 
     def unregister(self, on_error=None):
         # TODO: remove only binary
         shutil.rmtree(self._get_install_path(), False, on_error)
         if helper.running_from_script():
-            shutil.rmtree(os.path.join(self._get_install_path(), "quail"))
+            shutil.rmtree(self._get_install_path("quail"))
 
     def registered(self):
         return os.path.isfile(self._get_install_launcher())
