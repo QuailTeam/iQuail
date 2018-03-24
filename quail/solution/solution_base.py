@@ -58,6 +58,6 @@ class SolutionBase(ABC, builder.BuilderAction):
         pass
 
     @abstractmethod
-    def get_file(self, relpath):
+    def retrieve_file(self, relpath):
         ''' Retrieve file from solution and returns file path'''
         pass

@@ -11,8 +11,8 @@ class Solutioner:
         return os.path.join(self._dest, *args)
 
     def _retrieve_file(self, relpath):
-        tmpfile = self._solution.get_file(relpath)
-        shutil.copy2(tmpfile, self.dest(os.path.dirname(relpath)))
+        tmpfile = self._solution.retrieve_file(relpath)
+        shutil.move(tmpfile, self.dest(os.path.dirname(relpath)))
 
     def install(self):
         ''' Download solution to dest folder

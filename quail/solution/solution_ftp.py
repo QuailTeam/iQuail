@@ -88,7 +88,7 @@ class SolutionFtp(SolutionBase):
         os.makedirs(os.path.dirname(path), 0o777, True)
         return open(path, 'wb')
 
-    def get_file(self, relpath):
+    def retrieve_file(self, relpath):
         real_path = self._files[os.path.dirname(relpath)][0]
         name = os.path.basename(relpath)
         old_directory = self._ftp.pwd()

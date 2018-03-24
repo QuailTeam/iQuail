@@ -28,5 +28,5 @@ class SolutionLocal(SolutionBase):
         for root, dirs, files in os.walk(self._src):
             yield (os.path.relpath(root, self._src), dirs, files)
 
-    def get_file(self, relpath):
+    def retrieve_file(self, relpath):
         return os.path.join(self._src, relpath)
