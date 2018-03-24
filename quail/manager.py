@@ -1,26 +1,27 @@
 
+from .solution.solutioner import Solutioner
 import stat
 import os
 import sys
 
+
 class Manager:
     def __init__(self, installer, solution):
         self._installer = installer
-        self._solution = solution
-        self._solution.setup(self._installer.get_solution_path())
+        self._solutioner = Solutioner(solution,
+                                      self._installer.get_solution_path())
 
     def install(self):
-        with self._solution as solution:
-            solution.get_all()
+        self._solutioner.install()
         self._installer.register()
 
     def uninstall(self):
+        self._solutioner.uninstall()
         self._installer.unregister()
-        # TODO: solution remove
 
     def is_installed(self):
         # TODO: check solution installed
-        return self._installer.registered()
+        return self._solutioner.installed() and self._installer.registered()
 
     def run(self):
         binary = self._installer.get_solution_path(self._installer.binary)

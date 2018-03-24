@@ -58,13 +58,14 @@ class SolutionFtp(SolutionBase):
         self._port = port
 
     def open(self):
+        self._tmpdir = tempfile.mkdtemp()
         self._ftp = FTP()
         try:
             self._ftp.connect(self._host, self._port)
             self._ftp.login()
-        except TimeoutError:
+        except:
             self.close()
-            return False
+            raise
         self._walk = FtpWalk(self._ftp, *self._path)
         self._files = {}
         for w in self._walk.walk():
@@ -73,13 +74,17 @@ class SolutionFtp(SolutionBase):
 
     def close(self):
         self._ftp.close()
+        shutil.rmtree(self._tmpdir)
 
     def walk(self):
         for relpath, value in self._files.items():
             yield (relpath, value[1], value[2])
 
-    def _open_file(self, relpath):
-        path = self._dest(relpath)
+    def _get_tmp_path(self, relpath):
+        return os.path.join(self._tmpdir, relpath)
+
+    def _open_tmp_file(self, relpath):
+        path = self._get_tmp_path(relpath)
         os.makedirs(os.path.dirname(path), 0o777, True)
         return open(path, 'wb')
 
@@ -88,8 +93,8 @@ class SolutionFtp(SolutionBase):
         name = os.path.basename(relpath)
         old_directory = self._ftp.pwd()
         self._ftp.cwd(real_path)
-        f = self._open_file(relpath)
+        f = self._open_tmp_file(relpath)
         self._ftp.retrbinary("RETR %s" % (name), f.write)
         f.close()
         self._ftp.cwd(old_directory)
-        return self._dest(relpath)
+        return self._get_tmp_path(relpath)

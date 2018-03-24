@@ -18,7 +18,8 @@ class SolutionLocal(SolutionBase):
         return True
 
     def open(self):
-        return os.path.exists(self._src)
+        if not os.path.exists(self._src):
+            raise FileNotFoundError
 
     def close(self):
         pass
@@ -28,5 +29,4 @@ class SolutionLocal(SolutionBase):
             yield (os.path.relpath(root, self._src), dirs, files)
 
     def get_file(self, relpath):
-        return shutil.copy2(os.path.join(self._src, relpath),
-                            self._dest(relpath))
+        return os.path.join(self._src, relpath)

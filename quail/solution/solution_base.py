@@ -13,32 +13,21 @@ class SolutionBase(ABC, builder.BuilderAction):
     - from local directory
     - over network
     '''
+    def __init__(self):
+        self._hook = None
 
-    def setup(self, dest, hook=None):
-        '''hook(integer) will be called to update progression status
-        '''
-        self.__dest = dest
-        self.__hook = hook
-
-    def _dest(self, *args):
-        '''Get destination path'''
-        return os.path.join(self.__dest, *args)
+    def set_hook(hook):
+        '''set progression hook'''
+        self._hook = hook
 
     def _update_progress(self, percent):
         ''' This function will be called to update solution progression
         while downloading.
         It will call
         '''
-        if self.__hook:
-            self.__hook(percent)
-
-    def __enter__(self):
-        if not self.open():
-            raise AssertionError("Can't access solution")
-        return self
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        self.close()
+        if self._hook:
+            self._hook(percent)
+        print(str(percent) + '%')
 
     @abstractmethod
     def local(self):
@@ -70,21 +59,5 @@ class SolutionBase(ABC, builder.BuilderAction):
 
     @abstractmethod
     def get_file(self, relpath):
-        ''' Download file to dest folder
-        (open & setup the solution before using download)'''
+        ''' Retrieve file from solution and returns file path'''
         pass
-
-
-    def get_all(self):
-        ''' Download solution to dest folder
-        (open & setup the solution before using download)
-        '''
-        if os.path.exists(self._dest()):
-            shutil.rmtree(self._dest())
-        os.makedirs(self._dest(), 0o777, True)
-        for root, dirs, files in self.walk():
-            for sdir in dirs:
-                os.makedirs(self._dest(root, sdir),
-                            0o777, True)
-            for sfile in files:
-                self.get_file(os.path.join(root, sfile))

@@ -28,7 +28,7 @@ class SolutionZip(SolutionBase):
 
     def open(self):
         if not os.path.exists(self._zip_name):
-            return False
+            raise FileNotFoundError
         self._src = tempfile.mkdtemp()
         zip_ref = zipfile.ZipFile(self._zip_name, 'r')
         uncompress_size = sum((file.file_size for file in zip_ref.infolist()))
@@ -38,7 +38,6 @@ class SolutionZip(SolutionBase):
             self._update_progress(extracted_size * 100 / uncompress_size)
             zip_ref.extract(file, self._src)
         zip_ref.close()
-        return True
 
     def close(self):
         shutil.rmtree(self._src)
@@ -48,5 +47,4 @@ class SolutionZip(SolutionBase):
             yield (os.path.relpath(root, self._src), dirs, files)
 
     def get_file(self, relpath):
-        return shutil.copy2(os.path.join(self._src, relpath),
-                            self._dest(relpath))
+        return os.path.join(self._src, relpath)
