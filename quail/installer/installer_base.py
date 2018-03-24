@@ -94,7 +94,13 @@ class InstallerBase(ABC):
     def unregister(self):
         if helper.running_from_script():
             shutil.rmtree(self._get_install_path("quail"), ignore_errors=True)
-        delete_atexit(self._get_install_launcher())
+            with suppress(FileNotFoundError):
+                os.remove(self._get_install_launcher())
+            with suppress(OSError):
+                os.rmdir(self._get_install_path())
+        else:
+            # Assuming we can't remove our own binary
+            delete_atexit(self._get_install_launcher())
 
     @abstractmethod
     def registered(self):

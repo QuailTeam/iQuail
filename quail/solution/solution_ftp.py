@@ -57,6 +57,9 @@ class SolutionFtp(SolutionBase):
         self._host = host
         self._port = port
 
+    def local(self):
+        return False
+
     def open(self):
         self._tmpdir = tempfile.mkdtemp()
         self._ftp = FTP()
