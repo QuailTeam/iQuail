@@ -1,10 +1,30 @@
 import os
 import pathlib
 import shutil
+import atexit
+import tempfile
+import sys
+from contextlib import suppress
 from abc import ABC, abstractmethod
 from .. import helper
 from ..constants import Constants
 
+def delete_atexit(to_delete):
+    '''On windows we can't remove binaries being run.
+    This function will remove a file or folder at exit
+    to be able to delete itself
+    '''
+    def _delete_from_tmp():
+        if not (os.path.exists(to_delete) or os.path.isfile(to_delete)):
+            return
+        tmpdir = tempfile.mkdtemp()
+        newscript = shutil.copy2(helper.get_script(), tmpdir)
+        args = (newscript, "--quail_rm", to_delete)
+        if helper.running_from_script():
+            os.execl(sys.executable, sys.executable, *args)
+        else:
+            os.execl(newscript, *args)
+    atexit.register(_delete_from_tmp)
 
 class InstallerBase(ABC):
     '''Register application on the OS'''
@@ -63,7 +83,7 @@ class InstallerBase(ABC):
 
     @abstractmethod
     def register(self):
-        os.makedirs(self._get_install_path(), 0o777, True)
+        os.makedirs(self._get_install_path(), exist_ok=True)
         # install script and module:
         shutil.copy2(helper.get_script(), self._get_install_launcher())
         if helper.running_from_script():
@@ -71,11 +91,10 @@ class InstallerBase(ABC):
                             self._get_install_path("quail"))
 
     @abstractmethod
-    def unregister(self, on_error=None):
-        # TODO: remove only binary
-        shutil.rmtree(self._get_install_path(), False, on_error)
+    def unregister(self):
         if helper.running_from_script():
-            shutil.rmtree(self._get_install_path("quail"))
+            shutil.rmtree(self._get_install_path("quail"), ignore_errors=True)
+        delete_atexit(self._get_install_launcher())
 
     @abstractmethod
     def registered(self):

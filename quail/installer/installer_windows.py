@@ -3,8 +3,6 @@ import os
 import sys
 import winreg
 import shutil
-import atexit
-import tempfile
 from win32com.shell import shell, shellcon
 from win32com.client import Dispatch
 from contextlib import suppress
@@ -22,20 +20,6 @@ def on_rmtree_error(function, path, excinfo):
             (function == os.rmdir and path == helper.get_script_path())):
         raise
 
-def delete_atexit(to_delete):
-    '''On windows we can't remove binaries being run.
-    This function will remove a file or folder at exit
-    to be able to delete itself
-    '''
-    def _delete_from_tmp():
-        if not (os.path.exists(to_delete) or os.path.isfile(to_delete)):
-            return
-        tmpdir = tempfile.mkdtemp()
-        shutil.copy2(helper.get_script(), tmpdir)
-        newscript = os.path.join(tmpdir, helper.get_script_name())
-        os.execl(newscript, newscript, "--quail_rm", to_delete)
-    atexit.register(_delete_from_tmp)
-
 class InstallerWindows(InstallerBase):
 
     def __init__(self, *args, **kwargs):
@@ -43,7 +27,8 @@ class InstallerWindows(InstallerBase):
         self._uninstall_reg_key = os.path.join(
             'SOFTWARE', 'Microsoft', 'Windows', 'CurrentVersion', 'Uninstall',
             self.name)
-        # use this instead? https://msdn.microsoft.com/fr-fr/library/0ea7b5xe(v=vs.84).aspx
+        # use this instead?
+        # https://msdn.microsoft.com/fr-fr/library/0ea7b5xe(v=vs.84).aspx
         shortcut_name = self.name + '.lnk'
         self._desktop_shortcut = os.path.join(
             shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, 0, 0),
@@ -76,7 +61,8 @@ class InstallerWindows(InstallerBase):
             winreg.SetValueEx(key_handler, reg_name, 0, reg_type, reg_value)
 
     def _unset_reg_uninstall(self):
-        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, self._uninstall_reg_key)
+        with suppress(FileNotFoundError):
+            winreg.DeleteKey(winreg.HKEY_CURRENT_USER, self._uninstall_reg_key)
 
     def add_shortcut(self, dest, binary, icon, workpath=None):
         if not workpath:
@@ -105,12 +91,11 @@ class InstallerWindows(InstallerBase):
         self.add_shortcut(self._start_menu_shortcut, **shortcut_config)
 
     def unregister(self):
-        super().unregister(on_rmtree_error)
+        super().unregister()
         self.delete_shortcut(self._desktop_shortcut)
         with suppress(FileNotFoundError):
             shutil.rmtree(self._start_menu_path)
         self._unset_reg_uninstall()
-        delete_atexit(self._get_install_launcher())
 
     def registered(self):
         if not super().registered():
