@@ -1,11 +1,12 @@
 import os
 import pathlib
 import shutil
+from abc import ABC, abstractmethod
 from .. import helper
 from ..constants import Constants
 
 
-class InstallerBase:
+class InstallerBase(ABC):
     '''Register application on the OS'''
 
     def __init__(self,
@@ -60,6 +61,7 @@ class InstallerBase:
         '''Get solution path'''
         return os.path.join(self._solution_path, *args)
 
+    @abstractmethod
     def register(self):
         os.makedirs(self._get_install_path(), 0o777, True)
         # install script and module:
@@ -68,11 +70,13 @@ class InstallerBase:
             shutil.copytree(helper.get_module_path(),
                             self._get_install_path("quail"))
 
+    @abstractmethod
     def unregister(self, on_error=None):
         # TODO: remove only binary
         shutil.rmtree(self._get_install_path(), False, on_error)
         if helper.running_from_script():
             shutil.rmtree(self._get_install_path("quail"))
 
+    @abstractmethod
     def registered(self):
         return os.path.isfile(self._get_install_launcher())

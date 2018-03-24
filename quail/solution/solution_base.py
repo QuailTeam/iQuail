@@ -1,10 +1,11 @@
 
 import os
 import shutil
+from abc import ABC, abstractmethod
 from .. import builder
 
 
-class SolutionBase(builder.BuilderAction):
+class SolutionBase(ABC, builder.BuilderAction):
     ''' The goal of this interface is to be able to resolve solution files
     comming from anywhere.
     current goals are:
@@ -39,34 +40,39 @@ class SolutionBase(builder.BuilderAction):
     def __exit__(self, exception_type, exception_value, traceback):
         self.close()
 
+    @abstractmethod
     def local(self):
         '''returns True if solution is stored locally,
         and if there is any corruption, it will not try again
         '''
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def open(self):
         '''Open solution if needed
         (planned for unzipping, connecting to network, etc)
         return False if failed to open
         '''
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def close(self):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def walk(self):
         '''Iter files
         returns iterator,
         iter file solution relative path
         same output as os.walk
         '''
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def get_file(self, relpath):
         ''' Download file to dest folder
         (open & setup the solution before using download)'''
-        raise NotImplementedError
+        pass
 
 
     def get_all(self):
