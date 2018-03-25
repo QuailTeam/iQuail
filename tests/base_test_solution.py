@@ -22,8 +22,10 @@ class BaseTestSolution(BaseTestCase):
         solution.open()
         try:
             res = []
-            for x in solution.walk():
-                res.append(x)
-            self.assertListEqual(res, expected)
+            for (root, dirs, files) in solution.walk():
+                dirs = sorted(dirs)
+                files = sorted(files)
+                res.append((root, dirs, files))
+            self.assertListEqual(sorted(res), expected)
         finally:
             solution.close()
