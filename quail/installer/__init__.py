@@ -1,3 +1,3 @@
 
 from .installer import Installer
-from .installer_gui import InstallerGui
+# from .installer_gui import InstallerGui

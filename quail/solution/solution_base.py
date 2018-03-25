@@ -16,7 +16,7 @@ class SolutionBase(ABC, builder.BuilderAction):
     def __init__(self):
         self._hook = None
 
-    def set_hook(hook):
+    def set_hook(self, hook):
         '''set progression hook'''
         self._hook = hook
 
@@ -27,7 +27,6 @@ class SolutionBase(ABC, builder.BuilderAction):
         '''
         if self._hook:
             self._hook(percent)
-        print(str(percent) + '%')
 
     @abstractmethod
     def local(self):
