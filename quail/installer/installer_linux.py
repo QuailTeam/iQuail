@@ -13,8 +13,8 @@ class InstallerLinux(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._launch_shortcut = self.name
-        self._uninstall_shortcut = "%s_uninstall" % (self.name)
+        self._launch_shortcut = self._desktop(self.name)
+        self._uninstall_shortcut = self._desktop("%s_uninstall" % (self.name))
 
     def _desktop(self, name):
         return os.path.join(str(pathlib.Path.home()),
@@ -23,6 +23,7 @@ class InstallerLinux(InstallerBase):
 
     def _write_desktop(self, filename, app_config):
         '''Write desktop entry'''
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         config = configparser.ConfigParser()
         config.optionxform = str
         config['Desktop Entry'] = app_config
@@ -41,15 +42,15 @@ class InstallerLinux(InstallerBase):
             'Terminal': 'true' if console else 'false',
             'Type': 'Application'
         }
-        self._write_desktop(self._desktop(dest), app_config)
+        self._write_desktop(dest, app_config)
 
     def delete_shortcut(self, dest):
         with suppress(FileNotFoundError):
-            os.remove(self._desktop(dest))
+            os.remove(dest)
 
     def is_shortcut(self, dest):
         # TODO: abs shortcut path & add desktop var
-        return os.path.isfile(self._desktop(dest))
+        return os.path.isfile(dest)
 
     def register(self):
         super().register()
