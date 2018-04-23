@@ -24,8 +24,8 @@ def get_script_path():
 
 
 def running_from_script():
-    '''check if being run from script
-    and not builded in standalone binary'''
+    """check if being run from script
+    and not builded in standalone binary"""
     if getattr(sys, 'frozen', False):
         return False
     return True

@@ -6,9 +6,9 @@ from .. import helper
 
 
 class SolutionLocal(SolutionBase):
-    '''Install solution from local folder
+    """Install solution from local folder
     this solution is more for debugging purposes
-    '''
+    """
 
     def __init__(self, path, *args, **kwargs):
         super().__init__(*args, **kwargs)

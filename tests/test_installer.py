@@ -1,8 +1,8 @@
-
 import unittest.mock
 import os
 import quail
 from .base_test_case import BaseTestCase
+
 
 class TestInstaller(BaseTestCase):
 

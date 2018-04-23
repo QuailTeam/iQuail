@@ -22,7 +22,7 @@ class InstallerLinux(InstallerBase):
                             "%s.desktop" % (name))
 
     def _write_desktop(self, filename, app_config):
-        '''Write desktop entry'''
+        """Write desktop entry"""
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         config = configparser.ConfigParser()
         config.optionxform = str

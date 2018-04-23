@@ -29,7 +29,7 @@ def parse_args():
 
 
 def run(solution, installer, builder=Builder()):
-    '''run config'''
+    """run config"""
     args = parse_args()
     manager = Manager(installer, solution)
     if args.quail_rm:

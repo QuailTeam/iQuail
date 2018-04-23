@@ -5,16 +5,16 @@ class CmdBase:
         pass
 
     def get_build_params(self):
-        '''Additional build params for pyinstaller
-        '''
+        """Additional build params for pyinstaller
+        """
         return []
 
     def pre_build(self):
-        ''' Pre build commands
-        '''
+        """ Pre build commands
+        """
         pass
 
     def post_build(self):
-        ''' Post build commands
-        '''
+        """ Post build commands
+        """
         pass

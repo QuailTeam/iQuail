@@ -1,4 +1,3 @@
-
 import os
 import zipfile
 import tempfile
@@ -7,12 +6,13 @@ import sys
 from .. import helper
 from .solution_base import SolutionBase
 
+
 class SolutionZip(SolutionBase):
-    ''' Zip solution
+    """ Zip solution
     made to be embeded in the executable (with pyinstaller --add-data)
     limitations:
     max ram size / max tmp size
-    '''
+    """
 
     def __init__(self, zip_name, *args, **kwargs):
         super().__init__(*args, **kwargs)

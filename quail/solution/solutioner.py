@@ -1,6 +1,6 @@
-
 import shutil
 import os
+
 
 class Solutioner:
     def __init__(self, solution, dest):
@@ -15,9 +15,9 @@ class Solutioner:
         shutil.move(tmpfile, self.dest(os.path.dirname(relpath)))
 
     def install(self):
-        ''' Download solution to dest folder
+        """ Download solution to dest folder
         (open & setup the solution before using download)
-        '''
+        """
         self._solution.open()
         try:
             if os.path.exists(self.dest()):

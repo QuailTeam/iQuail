@@ -7,7 +7,7 @@ from .base_test_case import BaseTestCase
 
 class BaseTestSolution(BaseTestCase):
     def assertSolutionFile(self, solution, relpath, checksum):
-        '''Download file and verify checksum'''
+        """Download file and verify checksum"""
         solution.open()
         try:
             path = solution.retrieve_file(relpath)

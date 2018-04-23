@@ -9,11 +9,13 @@ from abc import ABC, abstractmethod
 from .. import helper
 from ..constants import Constants
 
+
 def delete_atexit(to_delete):
-    '''On windows we can't remove binaries being run.
+    """On windows we can't remove binaries being run.
     This function will remove a file or folder at exit
     to be able to delete itself
-    '''
+    """
+
     def _delete_from_tmp():
         if not (os.path.exists(to_delete) or os.path.isfile(to_delete)):
             return
@@ -24,10 +26,12 @@ def delete_atexit(to_delete):
             os.execl(sys.executable, sys.executable, *args)
         else:
             os.execl(newscript, *args)
+
     atexit.register(_delete_from_tmp)
 
+
 class InstallerBase(ABC):
-    '''Register application on the OS'''
+    """Register application on the OS"""
 
     def __init__(self,
                  name,
@@ -44,15 +48,15 @@ class InstallerBase(ABC):
         self._solution_path = os.path.join(self._install_path, 'solution')
 
     def _get_install_launcher(self):
-        '''Get quail executable install path'''
+        """Get quail executable install path"""
         return self._get_install_path(helper.get_script_name())
 
     def _get_solution_icon(self):
-        '''Get solution's icon'''
+        """Get solution's icon"""
         return self.get_solution_path(self._icon)
 
     def _get_install_path(self, *args):
-        '''Get install path'''
+        """Get install path"""
         return os.path.join(self._install_path, *args)
 
     @property
@@ -72,13 +76,13 @@ class InstallerBase(ABC):
         return self._console
 
     def build_install_path(self):
-        '''Build install path
+        """Build install path
         This function can be overriden to install files to somewhere else
-        '''
+        """
         return os.path.join(str(pathlib.Path.home()), '.quail', self.name)
 
     def get_solution_path(self, *args):
-        '''Get solution path'''
+        """Get solution path"""
         return os.path.join(self._solution_path, *args)
 
     @abstractmethod
