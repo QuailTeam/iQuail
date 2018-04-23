@@ -12,7 +12,7 @@ if quail.helper.OS_LINUX:
         quail.SolutionFtp('10.19.253.230',
                           ['pub', 'Allum1']),
         quail.Installer(
-            name='LolAllum1',
+            name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
             console=True

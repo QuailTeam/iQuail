@@ -10,7 +10,7 @@ if quail.helper.OS_LINUX:
     quail.run(
         quail.SolutionLocal(['Allum1']),
         quail.InstallerGui(
-            name='LolAllum1',
+            name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
             console=True

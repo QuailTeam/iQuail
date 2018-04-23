@@ -9,7 +9,7 @@ if quail.helper.OS_LINUX:
     solution_path = ['Allum1']
     quail.run(
         quail.InstallerGui(
-            name='LolAllum1',
+            name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
             solution=quail.SolutionZip('solution.zip'),
