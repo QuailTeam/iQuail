@@ -5,9 +5,10 @@ from .cmd_base import CmdBase
 
 
 class CmdZip(CmdBase):
-    ''' Zip a folder and add it to the executable
-    '''
+    """ Zip a folder and add it to the executable
+    """
     def __init__(self, path, zip_name, zip_clean=True):
+        super().__init__()
         if isinstance(path, list):
             self._path = os.path.join(*path)
         else:
