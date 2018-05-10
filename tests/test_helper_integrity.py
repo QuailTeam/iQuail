@@ -2,7 +2,7 @@
 import unittest
 import os
 import quail
-from .base_test_case import BaseTestCase
+from base_test_case import BaseTestCase
 
 
 class TestHelperIntegrity(BaseTestCase):
@@ -31,3 +31,8 @@ class TestHelperIntegrity(BaseTestCase):
         with open(self.tmp("2.txt"), "w") as f:
             f.write("test dataa")
         self.assertTrue(len(self.verifier.verify_all()) > 0)
+
+
+if __name__ == '__main__':
+	print("Test Helper Integrity")
+	unittest.main()

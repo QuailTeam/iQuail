@@ -5,11 +5,16 @@ import tempfile
 import shutil
 
 class BaseTestCase(unittest.TestCase):
-    def setUp(self):
-        self._tmpdir = tempfile.mkdtemp()
+	def setUp(self):
+		self._tmpdir = tempfile.mkdtemp()
 
-    def tearDown(self):
-        shutil.rmtree(self._tmpdir)
+	def tearDown(self):
+		shutil.rmtree(self._tmpdir)
 
-    def tmp(self, *path):
-        return os.path.join(self._tmpdir, *path)
+	def tmp(self, *path):
+		return os.path.join(self._tmpdir, *path)
+	
+    
+if __name__ == '__main__':
+	print("base test case")
+	unittest.main()
