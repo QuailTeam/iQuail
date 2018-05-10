@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument(Constants.ARGUMENT_RM,
                         type=str,
                         help="""remove file or folder:
-                        if file is passed as arguement and the file's directory
+                        if file is passed as argument and the file's directory
                         is empty, the directory will be removed
                         (this function is used by quail for windows uninstall)
                         """)
@@ -31,7 +31,7 @@ def parse_args():
 def run(solution, installer, builder=Builder()):
     """run config"""
     args = parse_args()
-    manager = Manager(installer, solution)
+    manager = Manager(installer, solution, builder)
     if args.quail_rm:
         try:
             shutil.rmtree(args.quail_rm)
@@ -39,9 +39,8 @@ def run(solution, installer, builder=Builder()):
             os.remove(args.quail_rm)
             with suppress(OSError):
                 os.rmdir(os.path.dirname(args.quail_rm))
-    elif args.quail_build and helper.running_from_script():
-        builder.register(solution)
-        builder.build()
+    elif args.quail_build:
+        manager.build()
     elif args.quail_uninstall:
         manager.uninstall()
     else:
