@@ -28,7 +28,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def run(solution, installer, ui, builder=Builder()):
+def run(solution, installer, builder=Builder(), ui=None):
     """run config"""
     args = parse_args()
     manager = Manager(installer, solution, builder, ui)

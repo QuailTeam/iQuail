@@ -28,8 +28,9 @@ class Manager:
             raise AssertionError("Can't build from an executable")
 
     def install(self):
-        self._ui.start()
-        self._solution.set_hook(self._ui.progress_callback)
+        if self._ui:
+            self._ui.start()
+            self._solution.set_hook(self._ui.progress_callback)
         self._solutioner.install()
         self._installer.register()
 

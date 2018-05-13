@@ -19,8 +19,8 @@ if quail.helper.OS_LINUX:
             binary='allum1',
             console=True
         ),
-        quail.UITkinter(),
-        quail.builder.Builder()
+        quail.builder.Builder(),
+        quail.UITkinter()
     )
 
 if quail.helper.OS_WINDOWS:
@@ -32,8 +32,8 @@ if quail.helper.OS_WINDOWS:
             binary='OpenHardwareMonitor.exe',
             console=True
         ),
-        quail.UITkinter(),
         quail.builder.Builder(
             quail.builder.CmdIcon('icon.ico')
-        )
+        ),
+        quail.UITkinter()
     )
