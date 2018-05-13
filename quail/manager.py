@@ -6,10 +6,11 @@ import sys
 
 
 class Manager:
-    def __init__(self, installer, solution, builder):
+    def __init__(self, installer, solution, builder, ui):
         self._installer = installer
         self._solution = solution
         self._builder = builder
+        self._ui = ui
         self.__solutioner = None
 
     @property
@@ -27,6 +28,8 @@ class Manager:
             raise AssertionError("Can't build from an executable")
 
     def install(self):
+        self._ui.start()
+        self._solution.set_hook(self._ui.progress_callback)
         self._solutioner.install()
         self._installer.register()
 

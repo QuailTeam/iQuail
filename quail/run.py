@@ -28,10 +28,10 @@ def parse_args():
     return parser.parse_args()
 
 
-def run(solution, installer, builder=Builder()):
+def run(solution, installer, ui, builder=Builder()):
     """run config"""
     args = parse_args()
-    manager = Manager(installer, solution, builder)
+    manager = Manager(installer, solution, builder, ui)
     if args.quail_rm:
         try:
             shutil.rmtree(args.quail_rm)
