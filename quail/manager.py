@@ -29,8 +29,8 @@ class Manager:
 
     def install(self):
         if self._ui:
-            self._ui.start()
             self._solution.set_hook(self._ui.progress_callback)
+            self._ui.start_install()
         self._solutioner.install()
         self._installer.register()
 
@@ -40,7 +40,7 @@ class Manager:
 
     def is_installed(self):
         # TODO: optimisation
-        return self._solutioner.installed() and self._installer.registered()
+        return self._solutioner.installed()  # and self._installer.registered()
 
     def run(self):
         binary = self._installer.get_solution_path(self._installer.binary)
