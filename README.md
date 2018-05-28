@@ -30,8 +30,7 @@ https://www.python.org/downloads/release/python-360/
 2. Install Tkinter (if its not already in python3) and PyInstaller
 ```python3 -m pip install PyInstaller```
 
-3. Run ```python3 setup.py install```
-or set PYTHONPATH to quail directory
+3. Run ```python3 setup.py install``` OR set PYTHONPATH to quail directory
 
 ## Using Quail
 If you find quail interesting and if you would like to use quail for your project,
