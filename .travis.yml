@@ -1,3 +1,11 @@
-language: python
+language: 
+  -python
 
-script: python3 -m unittest -v tests
+python:
+  -3
+
+install:
+  -pip install requirements.txt
+
+script: 
+  -python -m unittest -v tests
