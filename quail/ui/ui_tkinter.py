@@ -42,7 +42,8 @@ class UiTkinter(UiBase, threading.Thread):
         self._event_run_install = threading.Event()
         self._frames = {}
         self._title_font = None
-        super().__init__()
+        UiBase.__init__(self)
+        threading.Thread.__init__(self)
 
     def run(self):
         self._tk = tk.Tk()
@@ -65,7 +66,8 @@ class UiTkinter(UiBase, threading.Thread):
         self._tk.quit()
 
     def start_install(self):
-        super().start_install()
+        UiBase.start_install(self)
+        threading.Thread.start(self)
         self._event_run_install.wait()
 
     def progress_callback(self, float_progress):
