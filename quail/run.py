@@ -1,12 +1,13 @@
 
-import stat
 import sys
-import os
 import argparse
 import shutil
+import os
+from contextlib import suppress
 from .constants import Constants
 from . import helper
 from .builder import Builder
+from .manager import Manager
 
 
 def parse_args():
@@ -19,25 +20,31 @@ def parse_args():
                         action="store_true")
     parser.add_argument(Constants.ARGUMENT_RM,
                         type=str,
-                        help="remove folder")
+                        help="""remove file or folder:
+                        if file is passed as argument and the file's directory
+                        is empty, the directory will be removed
+                        (this function is used by quail for windows uninstall)
+                        """)
     return parser.parse_args()
 
 
-def run(installer, builder=Builder()):
-    '''run config'''
+def run(solution, installer, builder=Builder(), ui=None):
+    """run config"""
     args = parse_args()
-
+    manager = Manager(installer, solution, builder, ui)
     if args.quail_rm:
-        shutil.rmtree(args.quail_rm)
-    elif args.quail_build and helper.running_from_script():
-        builder.build()
+        try:
+            shutil.rmtree(args.quail_rm)
+        except NotADirectoryError:
+            os.remove(args.quail_rm)
+            with suppress(OSError):
+                os.rmdir(os.path.dirname(args.quail_rm))
+    elif args.quail_build:
+        manager.build()
     elif args.quail_uninstall:
-        installer.uninstall()
+        manager.uninstall()
     else:
-        if installer.is_installed():
-            binary = installer.get_install_path(installer.binary)
-            if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
-                os.chmod(binary, 0o755)
-            os.system(binary + " " + " ".join(sys.argv[1:]))
+        if manager.is_installed():
+            manager.run()
         else:
-            installer.install()
+            manager.install()

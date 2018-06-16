@@ -1,11 +1,6 @@
-
 # from .LinuxInstaller import LinuxInstaller
 from .run import run
-from .solution_local import SolutionLocal
-from .solution_ftp import SolutionFtp
-from .solution_zip import SolutionZip
-from .solution_github import SolutionGitHub
-from .installer import Installer
-from .installer_gui import InstallerGui
+from .solution import *
+from .installer import *
 from . import helper
 from . import builder

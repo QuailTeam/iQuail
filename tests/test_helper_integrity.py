@@ -1,5 +1,4 @@
 
-import unittest
 import os
 import quail
 from base_test_case import BaseTestCase

@@ -37,7 +37,7 @@ class IntegrityVerifier:
 
     @classmethod
     def get_file_checksum(self, relpath, checksums):
-        '''Get file checksum from path and checksum dict'''
+        """Get file checksum from path and checksum dict"""
         path_list = os.path.normpath(relpath).split(os.path.sep)
         for path in path_list:
             try:
@@ -48,11 +48,13 @@ class IntegrityVerifier:
             return checksums
         return None
 
-    @classmethod
     def _get_diff(self, base_checksums, new_checksums):
-        ''' returns different files
-        '''
-        def isdict(x): return isinstance(x, dict)
+        """ returns different files
+        """
+
+        def isdict(x):
+            return isinstance(x, dict)
+
         diff = []
 
         def get_diff_dir(base_checksums, new_checksums, path='.', ignore=False):
@@ -68,6 +70,7 @@ class IntegrityVerifier:
                 elif not (name in new_checksums
                           and new_checksums[name] == base_checksums[name]):
                     diff.append(pathname)
+
         get_diff_dir(base_checksums, new_checksums)
         return diff
 
@@ -81,11 +84,12 @@ class IntegrityVerifier:
                 elif child.is_dir():
                     checksums.update({basename: calc_checksums_dir(child)})
             return checksums
+
         return calc_checksums_dir(pathlib.Path(self._root))
 
     def dump(self):
-        '''compute checksums and store
-        '''
+        """compute checksums and store
+        """
         with suppress(FileNotFoundError):
             os.remove(self._checksums_file)
         checksums = self.calc_checksums()
@@ -93,14 +97,14 @@ class IntegrityVerifier:
             json.dump(checksums, file)
 
     def verify_file(self, relpath):
-        '''compute checksum of a file and compare it to stored checksums
-        returns false if file is corrupt'''
+        """compute checksum of a file and compare it to stored checksums
+        returns false if file is corrupt"""
         stored_checksum = self.get_file_checksum(relpath,
                                                  self.stored_checksums())
         checksum = checksum_file(os.path.join(self._root, relpath))
         return stored_checksum == checksum
 
     def verify_all(self):
-        '''compute checksums and compare it to stored checksums
-        returns a list of corrupt files'''
+        """compute checksums and compare it to stored checksums
+        returns a list of corrupt files"""
         return self._get_diff(self.stored_checksums(), self.calc_checksums())

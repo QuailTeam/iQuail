@@ -1,32 +1,18 @@
-
-import unittest
 import os
 import quail
-from base_test_case import BaseTestCase
-from quail import SolutionZip
+from .base_test_solution import BaseTestSolution
 
 
-class TestSolutionZip(unittest.TestCase):
-	
-	def __init__(self, *args, **kwargs):
-		super(TestSolutionZip, self).__init__(*args, **kwargs)
-		self.verifier = quail.SolutionZip("res/lol.zip", print)
-	
-	@classmethod
-	def setUpClass(cls):
-		pass
-		
-	def test_openZip(self):
-		pass
-		
-	def test_local(self):
-		self.assertTrue(self.verifier.local(), True)
+class TestSolutionZip(BaseTestSolution):
 
-	
-	def test_openZip(self):
-		self.assertTrue(self.verifier.open(), True)
-		self.verifier.close()
+    def test_unzip_1(self):
+        solution = quail.SolutionZip(self.testdata('Allum1.zip'))
+        self.assertSolutionFile(solution,
+                                'icon.jpeg',
+                                '4ab70bcb55ddd942b81485aeb04747531c265778280bf4ca89debbe84209ff41')
 
-if __name__ == '__main__':
-	print("Test Solution zip")
-	unittest.main()
+    def test_walk_1(self):
+        expected = [('.', ['subfolder'], ['allum1', 'icon.jpeg']),
+                    ('subfolder', [], ['testfile.txt'])]
+        solution = quail.SolutionZip(self.testdata('Allum1.zip'))
+        self.assertSolutionWalk(solution, expected)

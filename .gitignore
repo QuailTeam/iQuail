@@ -5,7 +5,8 @@ __pycache__/
 dist/
 build/
 *.spec
-.idea
+
+*.idea
 
 *.py[cod]
 *$py.class

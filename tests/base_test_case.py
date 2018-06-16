@@ -1,20 +1,25 @@
-
 import os
 import unittest
 import tempfile
 import shutil
 
+
 class BaseTestCase(unittest.TestCase):
-	def setUp(self):
-		self._tmpdir = tempfile.mkdtemp()
 
-	def tearDown(self):
-		shutil.rmtree(self._tmpdir)
+    def setUp(self):
+        self._testdata = os.path.join(os.path.dirname(__file__), 'testdata')
+        self._tmpdir = tempfile.mkdtemp()
 
-	def tmp(self, *path):
-		return os.path.join(self._tmpdir, *path)
-	
-    
+    def testdata(self, *args):
+        return os.path.join(self._testdata, *args)
+
+    def tearDown(self):
+        shutil.rmtree(self._tmpdir)
+
+    def tmp(self, *path):
+        return os.path.join(self._tmpdir, *path)
+
+
 if __name__ == '__main__':
-	print("base test case")
-	unittest.main()
+    print("base test case")
+    unittest.main()
