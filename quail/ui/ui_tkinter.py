@@ -26,7 +26,7 @@ class FrameInstalling(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        label = tk.Label(self, text="Installing...", font=controller._title_font)
+        label = tk.Label(self, text="Installing...", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
 
         self.progress_var = tk.IntVar()
@@ -43,6 +43,10 @@ class UITkinter(threading.Thread):
         self._title_font = None
         threading.Thread.__init__(self)
 
+    @property
+    def title_font(self):
+        return self._title_font
+
     def run(self):
         self._tk = tk.Tk()
         self._title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
@@ -51,9 +55,9 @@ class UITkinter(threading.Thread):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
-        for F in (FrameInstall, FrameInstalling):
-            page_name = F.__name__
-            frame = F(parent=container, controller=self)
+        for frame in (FrameInstall, FrameInstalling):
+            page_name = frame.__name__
+            frame = frame(parent=container, controller=self)
             self._frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
@@ -70,7 +74,7 @@ class UITkinter(threading.Thread):
     def progress_callback(self, float_progress):
         progress = int(float_progress)
         if 0 <= progress <= 100:
-            self._frames["FrameInstalling"].progress_var.set(int(progress))
+            self._frames["FrameInstalling"].progress_var.set(progress)
 
     def _show_frame(self, page_name):
         frame = self._frames[page_name]
