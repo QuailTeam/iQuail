@@ -1,4 +1,5 @@
 # Quail Overview
+[![Build Status](https://travis-ci.org/QuailTeam/Quail.svg?branch=master)](https://travis-ci.org/QuailTeam/Quail)
 
 Easy to use cross-platform installer & updater
 
@@ -27,10 +28,9 @@ Quail is currently in planning development stage, everything is subject to chang
 1. Install python 3.6
 https://www.python.org/downloads/release/python-360/
 2. Install Tkinter (if its not already in python3) and PyInstaller
-```python -m pip install PyInstaller```
+```python3 -m pip install PyInstaller```
 
-3. Run ```python setup.py install```
-or set PYTHONPATH to quail directory
+3. Run ```python3 setup.py install``` OR set PYTHONPATH to quail directory
 
 ## Using Quail
 If you find quail interesting and if you would like to use quail for your project,

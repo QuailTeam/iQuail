@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter.font import Font
 from tkinter import ttk
 import threading
+from .ui_base import UiBase
 
 
 class FrameInstall(tk.Frame):
@@ -35,12 +36,13 @@ class FrameInstalling(tk.Frame):
         self._progress_bar.pack()
 
 
-class UITkinter(threading.Thread):
+class UiTkinter(UiBase, threading.Thread):
     def __init__(self):
         self._tk = None
         self._event_run_install = threading.Event()
         self._frames = {}
         self._title_font = None
+        UiBase.__init__(self)
         threading.Thread.__init__(self)
 
     @property
@@ -67,8 +69,9 @@ class UITkinter(threading.Thread):
         self._tk.mainloop()
         self._tk.quit()
 
-    def start(self):
-        super().start()
+    def start_install(self):
+        UiBase.start_install(self)
+        threading.Thread.start(self)
         self._event_run_install.wait()
 
     def progress_callback(self, float_progress):
