@@ -17,7 +17,7 @@ def delete_atexit(to_delete):
     """
 
     def _delete_from_tmp():
-        if not (os.path.exists(to_delete) or os.path.isfile(to_delete)):
+        if not os.path.exists(to_delete) or os.path.isfile(to_delete):
             return
         tmpdir = tempfile.mkdtemp()
         newscript = shutil.copy2(helper.get_script(), tmpdir)

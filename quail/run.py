@@ -28,7 +28,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def run(solution, installer, builder=Builder(), ui=None):
+def run(solution, installer, builder=None, ui=None):
     """run config"""
     args = parse_args()
     manager = Manager(installer, solution, builder, ui)
@@ -40,6 +40,8 @@ def run(solution, installer, builder=Builder(), ui=None):
             with suppress(OSError):
                 os.rmdir(os.path.dirname(args.quail_rm))
     elif args.quail_build:
+        if not builder:
+            builder = Builder()
         manager.build()
     elif args.quail_uninstall:
         manager.uninstall()

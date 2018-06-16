@@ -7,7 +7,7 @@ from .base_test_case import BaseTestCase
 class TestInstaller(BaseTestCase):
 
     def test_install_uninstall(self):
-        testargs = [self.testdata('emptyfile')]
+        testargs = [self.path('emptyfile')]
         with unittest.mock.patch('sys.argv', testargs):
             installer = quail.Installer(
                 name='TestQuail',

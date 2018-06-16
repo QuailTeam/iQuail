@@ -10,7 +10,7 @@ class BaseTestCase(unittest.TestCase):
         self._testdata = os.path.join(os.path.dirname(__file__), 'testdata')
         self._tmpdir = tempfile.mkdtemp()
 
-    def testdata(self, *args):
+    def path(self, *args):
         return os.path.join(self._testdata, *args)
 
     def tearDown(self):
