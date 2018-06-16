@@ -6,6 +6,8 @@ dist/
 build/
 *.spec
 
+venv
+
 *.idea
 
 *.py[cod]

@@ -1,11 +1,13 @@
 import json
 import re
+import os
 import shutil
 import tempfile
 import urllib.request
 from pprint import pprint
 
 from .solution_base import SolutionBase
+from .solution_zip import SolutionZip
 
 
 class SolutionGitHub(SolutionBase):
@@ -16,7 +18,9 @@ class SolutionGitHub(SolutionBase):
     def __init__(self, zip_name, repo_url):
         super().__init__()
         self._path = None  # tmpdir
+        self._tags = None  # tags json
         self._parsed_github_url = None  # tuple (owner, name)
+        self._solution_zip = None
         self._repo_url = repo_url
         self._zip_name = zip_name
 
@@ -33,33 +37,52 @@ class SolutionGitHub(SolutionBase):
         return self._parsed_github_url
 
     def _get_tag_url(self):
-        # https://api.github.com/repos/rails/rails/tags
         return "https://api.github.com/repos/%s/%s/tags" % self._parse_github_url()
 
-    def _get_zip_url(self):
-        # https://github.com/cmderdev/cmder/releases/download/v1.3.6/cmder.zip
-        pass #WIP
+    def _get_zip_url(self, tag):
+        (owner, name) = self._parse_github_url()
+        return "https://github.com/%s/%s/releases/download/%s/%s" % (owner, name, tag, self._zip_name)
 
     def _get_tags(self):
+        if self._tags:
+            return self._tags
         response = urllib.request.urlopen(self._get_tag_url())
         data = response.read()
         encoding = response.info().get_content_charset("utf-8")
         tags = json.loads(data.decode(encoding))
-        pprint(tags)
+        self._tags = tags
+        return self._tags
+
+    def _get_last_tag(self):
+        if not self._get_tags():
+            raise AssertionError("No tags")
+        return self._get_tags()[0]
 
     def local(self):
         return False
 
     def open(self):
         self._path = tempfile.mkdtemp()
+        last_tag_name = self._get_last_tag()["name"]
+        zip_url = self._get_zip_url(last_tag_name)
+        print(zip_url)
 
-        return True
+        def hook(count, block_size, total_size):
+            self._update_progress(count / (total_size / block_size) * 100)
+
+        (zip_file, headers) = urllib.request.urlretrieve(zip_url,
+                                                         os.path.join(self._path, "solution.zip"),
+                                                         reporthook=hook)
+        self._solution_zip = SolutionZip(zip_file)
+        self._solution_zip.set_hook(self._hook)
+        return self._solution_zip.open()
 
     def close(self):
         shutil.rmtree(self._path)
+        self._solution_zip.close()
 
     def walk(self):
-        pass
+        return self._solution_zip.walk()
 
-    def retrieve_file(self, relpath):
-        pass
+    def retrieve_file(self, relative_path):
+        return self._solution_zip.retrieve_file(relative_path)
