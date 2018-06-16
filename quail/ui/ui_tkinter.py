@@ -37,6 +37,10 @@ class FrameInstalling(tk.Frame):
 
 
 class UiTkinter(UiBase, threading.Thread):
+    def exit_install(self):
+        # should be called when install is done
+        pass
+
     def __init__(self):
         self._tk = None
         self._event_run_install = threading.Event()

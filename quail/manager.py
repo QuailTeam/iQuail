@@ -33,6 +33,8 @@ class Manager:
             self._ui.start_install()
         self._solutioner.install()
         self._installer.register()
+        if self._ui:
+            self._ui.exit_install()
 
     def uninstall(self):
         self._solutioner.uninstall()
