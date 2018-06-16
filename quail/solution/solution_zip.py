@@ -14,8 +14,8 @@ class SolutionZip(SolutionBase):
     max ram size / max tmp size
     """
 
-    def __init__(self, zip_name, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, zip_name):
+        super().__init__()
         if not isinstance(zip_name, str):
             raise AssertionError("Expected string as zip file")
         if helper.running_from_script():

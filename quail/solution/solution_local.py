@@ -10,8 +10,8 @@ class SolutionLocal(SolutionBase):
     this solution is more for debugging purposes
     """
 
-    def __init__(self, path, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, path):
+        super().__init__()
         if isinstance(path, list):
             self._path = os.path.join(*path)
         else:

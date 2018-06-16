@@ -18,8 +18,3 @@ class BaseTestCase(unittest.TestCase):
 
     def tmp(self, *path):
         return os.path.join(self._tmpdir, *path)
-
-
-if __name__ == '__main__':
-    print("base test case")
-    unittest.main()

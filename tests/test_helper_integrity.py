@@ -1,7 +1,7 @@
 
 import os
 import quail
-from base_test_case import BaseTestCase
+from .base_test_case import BaseTestCase
 
 
 class TestHelperIntegrity(BaseTestCase):

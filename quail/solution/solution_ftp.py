@@ -49,13 +49,16 @@ class FtpWalk:
 
 
 class SolutionFtp(SolutionBase):
-    def __init__(self, host, path, port=21, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, host, path, port=21):
+        super().__init__()
         if not isinstance(path, list):
             raise AssertionError("Expected list as ftp path")
         self._path = path
         self._host = host
         self._port = port
+        self._tmpdir = None
+        self._ftp = None
+        self._files = None
 
     def local(self):
         return False
@@ -69,10 +72,10 @@ class SolutionFtp(SolutionBase):
         except:
             self.close()
             raise
-        self._walk = FtpWalk(self._ftp, *self._path)
+        walk = FtpWalk(self._ftp, *self._path)
         self._files = {}
-        for w in self._walk.walk():
-            self._files[os.path.relpath(w[0], self._walk.cwd())] = w
+        for w in walk.walk():
+            self._files[os.path.relpath(w[0], walk.cwd())] = w
         return True
 
     def close(self):
@@ -97,7 +100,7 @@ class SolutionFtp(SolutionBase):
         old_directory = self._ftp.pwd()
         self._ftp.cwd(real_path)
         f = self._open_tmp_file(relpath)
-        self._ftp.retrbinary("RETR %s" % (name), f.write)
+        self._ftp.retrbinary("RETR %s" % name, f.write)
         f.close()
         self._ftp.cwd(old_directory)
         return self._get_tmp_path(relpath)
