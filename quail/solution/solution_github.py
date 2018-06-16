@@ -17,7 +17,6 @@ class SolutionGitHub(SolutionBase):
 
     def __init__(self, zip_name, repo_url):
         super().__init__()
-        self._path = None  # tmpdir
         self._tags = None  # tags json
         self._parsed_github_url = None  # tuple (owner, name)
         self._solution_zip = None
@@ -62,7 +61,6 @@ class SolutionGitHub(SolutionBase):
         return False
 
     def open(self):
-        self._path = tempfile.mkdtemp()
         last_tag_name = self._get_last_tag()["name"]
         zip_url = self._get_zip_url(last_tag_name)
         print(zip_url)
@@ -71,14 +69,12 @@ class SolutionGitHub(SolutionBase):
             self._update_progress(count / (total_size / block_size) * 100)
 
         (zip_file, headers) = urllib.request.urlretrieve(zip_url,
-                                                         os.path.join(self._path, "solution.zip"),
                                                          reporthook=hook)
         self._solution_zip = SolutionZip(zip_file)
         self._solution_zip.set_hook(self._hook)
         return self._solution_zip.open()
 
     def close(self):
-        shutil.rmtree(self._path)
         self._solution_zip.close()
 
     def walk(self):
