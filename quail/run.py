@@ -1,4 +1,3 @@
-
 import sys
 import argparse
 import shutil
@@ -31,6 +30,8 @@ def parse_args():
 def run(solution, installer, builder=None, ui=None):
     """run config"""
     args = parse_args()
+    if not builder:
+        builder = Builder()
     manager = Manager(installer, solution, builder, ui)
     if args.quail_rm:
         try:
@@ -40,8 +41,6 @@ def run(solution, installer, builder=None, ui=None):
             with suppress(OSError):
                 os.rmdir(os.path.dirname(args.quail_rm))
     elif args.quail_build:
-        if not builder:
-            builder = Builder()
         manager.build()
     elif args.quail_uninstall:
         manager.uninstall()
