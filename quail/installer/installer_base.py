@@ -38,41 +38,57 @@ class InstallerBase(ABC):
                  binary,
                  icon,
                  publisher='Quail',
-                 console=False):
+                 console=False,
+                 launch_with_quail=True):
+        self._launch_with_quail = launch_with_quail
         self._name = name
-        self._binary = binary
+        self._binary_name = binary
         self._icon = icon
         self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path()
         self._solution_path = os.path.join(self._install_path, 'solution')
 
-    def _get_install_launcher(self):
-        """Get quail executable install path"""
-        return self._get_install_path(helper.get_script_name())
-
-    def _get_solution_icon(self):
+    def get_solution_icon(self):
         """Get solution's icon"""
         return self.get_solution_path(self._icon)
 
-    def _get_install_path(self, *args):
-        """Get install path"""
-        return os.path.join(self._install_path, *args)
+    @property
+    def launch_with_quail(self):
+        """Use quail to launch the binary
+        (otherwise the shortcuts will launch the binary directly)
+        """
+        return self._launch_with_quail
+
+    def quail_binary(self):
+        """Get quail executable install path"""
+        return self.get_install_path(helper.get_script_name())
 
     @property
-    def name(self):
-        return self._name
+    def launcher_binary(self):
+        """Binary which will be launched by the main shortcut"""
+        if self.launch_with_quail:
+            return self.binary
+        return self.quail_binary()
 
     @property
     def binary(self):
-        return self._binary
+        """Binary name (which must be at the root directory of your solution"""
+        return self.get_solution_path(self._binary_name)
+
+    @property
+    def name(self):
+        """Name of the program to be installed"""
+        return self._name
 
     @property
     def publisher(self):
+        """Information about who published the program"""
         return self._publisher
 
     @property
     def console(self):
+        """Launch solution in console mode"""
         return self._console
 
     def build_install_path(self):
@@ -85,27 +101,31 @@ class InstallerBase(ABC):
         """Get solution path"""
         return os.path.join(self._solution_path, *args)
 
+    def get_install_path(self, *args):
+        """Get install path"""
+        return os.path.join(self._install_path, *args)
+
     @abstractmethod
     def register(self):
-        os.makedirs(self._get_install_path(), exist_ok=True)
+        os.makedirs(self.get_install_path(), exist_ok=True)
         # install script and module:
-        shutil.copy2(helper.get_script(), self._get_install_launcher())
+        shutil.copy2(helper.get_script(), self.quail_binary())
         if helper.running_from_script():
             shutil.copytree(helper.get_module_path(),
-                            self._get_install_path("quail"))
+                            self.get_install_path("quail"))
 
     @abstractmethod
     def unregister(self):
         if helper.running_from_script():
-            shutil.rmtree(self._get_install_path("quail"), ignore_errors=True)
+            shutil.rmtree(self.get_install_path("quail"), ignore_errors=True)
             with suppress(FileNotFoundError):
-                os.remove(self._get_install_launcher())
+                os.remove(self.quail_binary())
             with suppress(OSError):
-                os.rmdir(self._get_install_path())
+                os.rmdir(self.get_install_path())
         else:
             # Assuming we can't remove our own binary
-            delete_atexit(self._get_install_launcher())
+            delete_atexit(self.quail_binary())
 
     @abstractmethod
     def registered(self):
-        return os.path.isfile(self._get_install_launcher())
+        return os.path.isfile(self.quail_binary())
