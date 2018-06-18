@@ -60,6 +60,7 @@ class InstallerBase(ABC):
         """
         return self._launch_with_quail
 
+    @property
     def quail_binary(self):
         """Get quail executable install path"""
         return self.get_install_path(helper.get_script_name())
@@ -69,7 +70,7 @@ class InstallerBase(ABC):
         """Binary which will be launched by the main shortcut"""
         if self.launch_with_quail:
             return self.binary
-        return self.quail_binary()
+        return self.quail_binary
 
     @property
     def binary(self):
@@ -109,7 +110,7 @@ class InstallerBase(ABC):
     def register(self):
         os.makedirs(self.get_install_path(), exist_ok=True)
         # install script and module:
-        shutil.copy2(helper.get_script(), self.quail_binary())
+        shutil.copy2(helper.get_script(), self.quail_binary)
         if helper.running_from_script():
             shutil.copytree(helper.get_module_path(),
                             self.get_install_path("quail"))
@@ -119,13 +120,13 @@ class InstallerBase(ABC):
         if helper.running_from_script():
             shutil.rmtree(self.get_install_path("quail"), ignore_errors=True)
             with suppress(FileNotFoundError):
-                os.remove(self.quail_binary())
+                os.remove(self.quail_binary)
             with suppress(OSError):
                 os.rmdir(self.get_install_path())
         else:
             # Assuming we can't remove our own binary
-            delete_atexit(self.quail_binary())
+            delete_atexit(self.quail_binary)
 
     @abstractmethod
     def registered(self):
-        return os.path.isfile(self.quail_binary())
+        return os.path.isfile(self.quail_binary)

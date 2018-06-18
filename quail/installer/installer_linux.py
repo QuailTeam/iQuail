@@ -54,18 +54,17 @@ class InstallerLinux(InstallerBase):
 
     def register(self):
         super().register()
-        binary = self.launcher_binary
         self.add_shortcut(dest=self._launch_shortcut,
                           name=self.name,
                           workpath=self.get_solution_path(),
-                          binary=binary,
+                          binary=self.launcher_binary,
                           icon=self.get_solution_icon(),
                           console=self.console
                           )
         self.add_shortcut(dest=self._uninstall_shortcut,
                           name="Uninstall " + self.name,
                           workpath=self.get_solution_path(),
-                          binary=binary + " " + Constants.ARGUMENT_UNINSTALL,
+                          binary=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
                           icon=self.get_solution_icon(),
                           console=self.console
                           )
