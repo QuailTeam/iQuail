@@ -17,7 +17,8 @@ if quail.helper.OS_LINUX:
             name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
-            console=True
+            console=True,
+            launch_with_quail=False
         ),
         builder=quail.builder.Builder(),
         ui=quail.UiTkinter()
@@ -30,7 +31,8 @@ if quail.helper.OS_WINDOWS:
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
-            console=True
+            console=True,
+            launch_with_quail=False
         ),
         builder=quail.builder.Builder(
             quail.builder.CmdIcon('icon.ico')

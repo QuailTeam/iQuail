@@ -69,8 +69,8 @@ class InstallerBase(ABC):
     def launcher_binary(self):
         """Binary which will be launched by the main shortcut"""
         if self.launch_with_quail:
-            return self.binary
-        return self.quail_binary
+            return self.quail_binary
+        return self.binary
 
     @property
     def binary(self):
