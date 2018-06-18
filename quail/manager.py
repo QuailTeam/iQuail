@@ -13,6 +13,11 @@ class Manager:
         self._ui = ui
         self.__solutioner = None
 
+    def _chmod_binary(self):
+        binary = self._installer.binary
+        if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
+            os.chmod(binary, 0o755)
+
     @property
     def _solutioner(self):
         if self.__solutioner is None:
@@ -33,6 +38,7 @@ class Manager:
             self._ui.start_install()
         self._solutioner.install()
         self._installer.register()
+        self._chmod_binary()
         if self._ui:
             self._ui.exit_install()
 
@@ -46,6 +52,5 @@ class Manager:
 
     def run(self):
         binary = self._installer.binary
-        if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
-            os.chmod(binary, 0o755)
+        self._chmod_binary()  # We never know ...
         os.system(binary + " " + " ".join(sys.argv[1:]))
