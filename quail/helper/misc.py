@@ -1,15 +1,37 @@
 import os
 import sys
+import copy
 import ctypes
 import platform
-
 
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
 
 
+def cache_result(func):
+    """ Decorator to save the return value of a function
+    Function will be only run once.
+    WARNING:
+    - The cached return value will be copied with copy.copy
+    - Only shallow copy, not deep copy
+    - Use this if you know what you are doing!
+    """
+    cache_attr = "___cache_result"
+
+    def wrapper(self, *args, **kwargs):
+        if not hasattr(self, cache_attr):
+            setattr(self, cache_attr, {})
+        cache = getattr(self, cache_attr)
+        if func.__name__ not in cache:
+            cache[func.__name__] = func(self, *args, **kwargs)
+        return copy.copy(cache[func.__name__])
+
+    return wrapper
+
+
 def get_module_path():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
 
 def get_script():
     return os.path.realpath(sys.argv[0])

@@ -16,6 +16,7 @@ class SolutionZip(SolutionBase):
 
     def __init__(self, zip_name):
         super().__init__()
+        self._src = None
         if not isinstance(zip_name, str):
             raise AssertionError("Expected string as zip file")
         if helper.running_from_script():
@@ -41,6 +42,7 @@ class SolutionZip(SolutionBase):
 
     def close(self):
         shutil.rmtree(self._src)
+        self._src = None
 
     def walk(self):
         for root, dirs, files in os.walk(self._src):

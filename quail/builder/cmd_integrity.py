@@ -4,8 +4,8 @@ from .cmd_base import CmdBase
 
 
 class CmdIntegrity(CmdBase):
-    ''' Zip a folder and add it to the executable
-    '''
+    """ Zip a folder and add it to the executable
+    """
     def __init__(self, path):
         super().__init__()
         if not isinstance(path, list):

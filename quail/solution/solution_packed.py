@@ -5,14 +5,14 @@ from .solution_zip import SolutionZip
 
 
 class SolutionPacked(SolutionZip):
-    def __init__(self, path, *args, **kwargs):
+    def __init__(self, path):
         if isinstance(path, list):
             self._path = os.path.join(*path)
         else:
             self._path = path
         self._path = os.path.abspath(self._path)
         self._zip_name = 'solution.zip'
-        super().__init__(zip_name=self._zip_name, *args, **kwargs)
+        super().__init__(zip_name=self._zip_name)
 
     def builder_cmds(self):
         cmds = super().builder_cmds() + [CmdZip(self._path, self._zip_name)]

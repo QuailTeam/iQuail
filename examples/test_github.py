@@ -6,7 +6,7 @@ if not quail.helper.OS_WINDOWS:
     raise AssertionError("This test solution is windows only")
 
 quail.run(
-    solution=quail.SolutionGitHub("cmder.zip", "https://github.com/cmderdev/cmder"),
+    solution=quail.SolutionGitHub("cmder_mini.zip", "https://github.com/cmderdev/cmder"),
     installer=quail.Installer(
         name='Cmder',
         icon='Cmder.exe',
