@@ -1,8 +1,9 @@
-from .solution.solutioner import Solutioner
-from . import helper
-import stat
 import os
+import stat
 import sys
+
+from . import helper
+from .solution.solutioner import Solutioner
 
 
 class Manager:
@@ -11,19 +12,13 @@ class Manager:
         self._solution = solution
         self._builder = builder
         self._ui = ui
-        self.__solutioner = None
+        self._solutioner = Solutioner(self._solution,
+                                      self._installer.get_solution_path())
 
     def _chmod_binary(self):
         binary = self._installer.binary
         if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
             os.chmod(binary, 0o755)
-
-    @property
-    def _solutioner(self):
-        if self.__solutioner is None:
-            self.__solutioner = Solutioner(self._solution,
-                                           self._installer.get_solution_path())
-        return self.__solutioner
 
     def build(self):
         if helper.running_from_script():
@@ -52,5 +47,5 @@ class Manager:
 
     def run(self):
         binary = self._installer.binary
-        self._chmod_binary()  # We never know ...
+        self._chmod_binary()
         os.system(binary + " " + " ".join(sys.argv[1:]))

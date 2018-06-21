@@ -76,7 +76,6 @@ class SolutionFtp(SolutionBase):
         self._files = {}
         for w in walk.walk():
             self._files[os.path.relpath(w[0], walk.cwd())] = w
-        return True
 
     def close(self):
         self._ftp.close()

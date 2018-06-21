@@ -16,8 +16,8 @@ class SolutionLocal(SolutionBase):
             self._path = os.path.join(*path)
         else:
             self._path = path
-
         self._path = os.path.abspath(self._path)
+        self._tmp = None
 
     def local(self):
         return True

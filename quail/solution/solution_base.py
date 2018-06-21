@@ -44,14 +44,13 @@ class SolutionBase(ABC, builder.BuilderAction):
 
     @abstractmethod
     def open(self):
-        """Open solution if needed
-        (planned for unzipping, connecting to network, etc)
-        return False if failed to open
+        """Open solution
         """
         pass
 
     @abstractmethod
     def close(self):
+        """Close solution"""
         pass
 
     @abstractmethod
