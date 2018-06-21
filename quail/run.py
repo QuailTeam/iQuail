@@ -34,12 +34,7 @@ def run(solution, installer, builder=None, ui=None):
         builder = Builder()
     manager = Manager(installer, solution, builder, ui)
     if args.quail_rm:
-        try:
-            shutil.rmtree(args.quail_rm)
-        except NotADirectoryError:
-            os.remove(args.quail_rm)
-            with suppress(OSError):
-                os.rmdir(os.path.dirname(args.quail_rm))
+        shutil.rmtree(args.quail_rm)
     elif args.quail_build:
         manager.build()
     elif args.quail_uninstall:

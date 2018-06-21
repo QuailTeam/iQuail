@@ -10,18 +10,16 @@ from .. import helper
 from ..constants import Constants
 
 
-def delete_atexit(to_delete):
+def delete_atexit(path_to_delete):
     """On windows we can't remove binaries being run.
     This function will remove a file or folder at exit
     to be able to delete itself
     """
-
+    assert os.path.isdir(path_to_delete)
     def _delete_from_tmp():
-        if not os.path.exists(to_delete) or os.path.isfile(to_delete):
-            return
         tmpdir = tempfile.mkdtemp()
         newscript = shutil.copy2(helper.get_script(), tmpdir)
-        args = (newscript, "--quail_rm", to_delete)
+        args = (newscript, "--quail_rm", path_to_delete)
         if helper.running_from_script():
             os.execl(sys.executable, sys.executable, *args)
         else:
@@ -94,7 +92,7 @@ class InstallerBase(ABC):
 
     def build_install_path(self):
         """Build install path
-        This function can be overriden to install files to somewhere else
+        This function can be overridden to install files to somewhere else
         """
         return os.path.join(str(pathlib.Path.home()), '.quail', self.name)
 
@@ -117,15 +115,7 @@ class InstallerBase(ABC):
 
     @abstractmethod
     def unregister(self):
-        if helper.running_from_script():
-            shutil.rmtree(self.get_install_path("quail"), ignore_errors=True)
-            with suppress(FileNotFoundError):
-                os.remove(self.quail_binary)
-            with suppress(OSError):
-                os.rmdir(self.get_install_path())
-        else:
-            # Assuming we can't remove our own binary
-            delete_atexit(self.quail_binary)
+        delete_atexit(self.get_install_path())
 
     @abstractmethod
     def registered(self):
