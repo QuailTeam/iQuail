@@ -12,9 +12,10 @@ quail.run(
         icon='Cmder.exe',
         binary='Cmder.exe',
         console=False,
-        launch_with_quail=False
+        launch_with_quail=False,
     ),
     builder=quail.builder.Builder(
         quail.builder.CmdIcon('icon.ico'),
-    )
+    ),
+    controller=quail.ControllerTkinter()
 )

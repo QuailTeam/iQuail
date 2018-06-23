@@ -5,87 +5,81 @@ import threading
 from .controller_base import ControllerBase
 
 
-class FrameInstall(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-
-        label = tk.Label(self, text="Run the installation by clicking the Button", font=controller._title_font)
-        label.pack(side="top", fill="x", pady=10)
-
-        button = tk.Button(self, text="Install",
-                           command=self._run_install)
-        button.pack()
-
-    def _run_install(self):
-        self.controller._show_frame("FrameInstalling")
-        self.controller._event_run_install.set()
-
-
 class FrameInstalling(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, manager):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        manager.set_solution_hook(self.progress_callback)
 
         label = tk.Label(self, text="Installing...", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
 
         self.progress_var = tk.IntVar()
-        self._progress_bar = ttk.Progressbar(self, orient=tk.HORIZONTAL, length=100, mode='determinate',
+        self._progress_bar = ttk.Progressbar(self,
+                                             orient=tk.HORIZONTAL,
+                                             length=100,
+                                             mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack()
-
-
-class ControllerTkinter(ControllerBase, threading.Thread):
-    def exit_install(self):
-        # should be called when install is done
-        pass
-
-    def __init__(self):
-        self._tk = None
-        self._event_run_install = threading.Event()
-        self._frames = {}
-        self._title_font = None
-        ControllerBase.__init__(self)
-        threading.Thread.__init__(self)
-
-    @property
-    def title_font(self):
-        return self._title_font
-
-    def run(self):
-        self._tk = tk.Tk()
-        self._title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
-        container = tk.Frame()
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-
-        for frame in (FrameInstall, FrameInstalling):
-            page_name = frame.__name__
-            frame = frame(parent=container, controller=self)
-            self._frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
-
-        self._show_frame("FrameInstall")
-
-        self._tk.protocol("WM_DELETE_WINDOW", self._on_closing)
-        self._tk.mainloop()
-        self._tk.quit()
-
-    def start_install(self):
-        ControllerBase.start_install(self)
-        threading.Thread.start(self)
-        self._event_run_install.wait()
+        self._thread = threading.Thread(target=manager.install)
+        self._thread.start()
 
     def progress_callback(self, float_progress):
         progress = int(float_progress)
         if 0 <= progress <= 100:
-            self._frames["FrameInstalling"].progress_var.set(progress)
+            self.progress_var.set(progress)
 
-    def _show_frame(self, page_name):
-        frame = self._frames[page_name]
-        frame.tkraise()
 
-    def _on_closing(self):
-        self._tk.destroy()
+class FrameInstall(tk.Frame):
+    def __init__(self, parent, controller, manager):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        label = tk.Label(self,
+                         text="%s installer\nWould you like to install this program?" % manager.get_name(),
+                         font=controller.title_font)
+        label.pack(side="top", fill="x", pady=10, padx=10)
+
+        button = tk.Button(self,
+                           text="Install!",
+                           command=self._run_install)
+        button.pack()
+
+    def _run_install(self):
+        self.controller.switch_frame(FrameInstalling)
+
+
+class ControllerTkinter(ControllerBase):
+    def __init__(self):
+        self._tk = None
+        self._base_frame = None
+        self._frame = None
+        self._manager = None
+        self.title_font = None
+        # self.window = tk.Tk()
+
+    def switch_frame(self, frame_class, **kwargs):
+        assert self._manager is not None
+        if self._frame is not None:
+            self._frame.destroy()
+        self._frame = frame_class(parent=self._base_frame,
+                                  controller=self,
+                                  manager=self._manager,
+                                  **kwargs)
+        self._frame.grid(row=0, column=0, sticky="nsew")
+        self._frame.tkraise()
+
+    def start_install(self, manager):
+        self._manager = manager
+        self._tk = tk.Tk()
+        self.title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
+        self._base_frame = tk.Frame()
+        self._base_frame.pack(side="top", fill="both", expand=True)
+        self._base_frame.grid_rowconfigure(0, weight=1)
+        self._base_frame.grid_columnconfigure(0, weight=1)
+
+        self.switch_frame(FrameInstall)
+        self._tk.mainloop()
+
+    def start_uninstall(self, manager):
+        manager.uninstall()

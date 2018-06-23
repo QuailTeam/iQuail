@@ -11,11 +11,15 @@ class Manager:
         self._installer = installer
         self._solution = solution
         self._builder = builder
+        self._install_finished_hook = None
         self._solutioner = Solutioner(self._solution,
                                       self._installer.get_solution_path())
 
     def set_solution_hook(self, hook):
         self._solution.set_hook(hook)
+
+    def set_install_finished_hook(self, hook):
+        self._install_finished_hook = hook
 
     def get_name(self):
         return self._installer.name
@@ -40,6 +44,8 @@ class Manager:
         self._solutioner.install()
         self._installer.register()
         self._chmod_binary()
+        if self._install_finished_hook:
+            self._install_finished_hook()
 
     def uninstall(self):
         self._solutioner.uninstall()
