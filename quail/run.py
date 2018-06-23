@@ -7,7 +7,7 @@ from .constants import Constants
 from . import helper
 from .builder import Builder
 from .manager import Manager
-
+from .controller import ControllerConsole
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -27,20 +27,22 @@ def parse_args():
     return parser.parse_args()
 
 
-def run(solution, installer, builder=None, ui=None):
+def run(solution, installer, builder=None, controller=None):
     """run config"""
     args = parse_args()
     if not builder:
         builder = Builder()
-    manager = Manager(installer, solution, builder, ui)
+    if not controller:
+        controller = ControllerConsole()
+    manager = Manager(installer, solution, builder)
     if args.quail_rm:
         shutil.rmtree(args.quail_rm)
     elif args.quail_build:
         manager.build()
     elif args.quail_uninstall:
-        manager.uninstall()
+        controller.start_uninstall(manager)
     else:
         if manager.is_installed():
             manager.run()
         else:
-            manager.install()
+            controller.start_install(manager)

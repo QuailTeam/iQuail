@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter.font import Font
 from tkinter import ttk
 import threading
-from .ui_base import UiBase
+from .controller_base import ControllerBase
 
 
 class FrameInstall(tk.Frame):
@@ -36,7 +36,7 @@ class FrameInstalling(tk.Frame):
         self._progress_bar.pack()
 
 
-class UiTkinter(UiBase, threading.Thread):
+class ControllerTkinter(ControllerBase, threading.Thread):
     def exit_install(self):
         # should be called when install is done
         pass
@@ -46,7 +46,7 @@ class UiTkinter(UiBase, threading.Thread):
         self._event_run_install = threading.Event()
         self._frames = {}
         self._title_font = None
-        UiBase.__init__(self)
+        ControllerBase.__init__(self)
         threading.Thread.__init__(self)
 
     @property
@@ -74,7 +74,7 @@ class UiTkinter(UiBase, threading.Thread):
         self._tk.quit()
 
     def start_install(self):
-        UiBase.start_install(self)
+        ControllerBase.start_install(self)
         threading.Thread.start(self)
         self._event_run_install.wait()
 

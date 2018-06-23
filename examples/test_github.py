@@ -16,6 +16,5 @@ quail.run(
     ),
     builder=quail.builder.Builder(
         quail.builder.CmdIcon('icon.ico'),
-    ),
-    ui=quail.UiConsole()
+    )
 )

@@ -21,7 +21,7 @@ if quail.helper.OS_LINUX:
             launch_with_quail=False
         ),
         builder=quail.builder.Builder(),
-        ui=quail.UiTkinter()
+        controller=quail.ControllerTkinter()
     )
 
 if quail.helper.OS_WINDOWS:
@@ -37,5 +37,5 @@ if quail.helper.OS_WINDOWS:
         builder=quail.builder.Builder(
             quail.builder.CmdIcon('icon.ico')
         ),
-        ui=quail.UiTkinter()
+        controller=quail.ControllerTkinter()
     )
