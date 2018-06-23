@@ -5,11 +5,33 @@ import threading
 from .controller_base import ControllerBase
 
 
+class FrameInstallFinished(tk.Frame):
+    def __init__(self, parent, controller, manager):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        label = tk.Label(self,
+                         text="%s successfully installed!" % manager.get_name(),
+                         font=controller.title_font)
+        label.pack(side="top", fill="x", pady=10, padx=10)
+
+        button = tk.Button(self,
+                           text="exit",
+                           command=self._exit)
+        button.pack()
+
+    def _exit(self):
+        self.controller.tk.quit()
+
+
 class FrameInstalling(tk.Frame):
     def __init__(self, parent, controller, manager):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.manager = manager
         manager.set_solution_hook(self.progress_callback)
+        manager.set_install_finished_hook(self.install_finished_callback)
+        manager.set_install_part_1_hook(self.solution_finished_callback)
 
         label = tk.Label(self, text="Installing...", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
@@ -21,13 +43,19 @@ class FrameInstalling(tk.Frame):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack()
-        self._thread = threading.Thread(target=manager.install)
+        self._thread = threading.Thread(target=manager.install_part_1)
         self._thread.start()
 
     def progress_callback(self, float_progress):
         progress = int(float_progress)
         if 0 <= progress <= 100:
             self.progress_var.set(progress)
+
+    def solution_finished_callback(self):
+        self.controller.tk.after(0, self.manager.install_part_2)
+
+    def install_finished_callback(self):
+        self.controller.switch_frame(FrameInstallFinished)
 
 
 class FrameInstall(tk.Frame):
@@ -51,7 +79,7 @@ class FrameInstall(tk.Frame):
 
 class ControllerTkinter(ControllerBase):
     def __init__(self):
-        self._tk = None
+        self.tk = None
         self._base_frame = None
         self._frame = None
         self._manager = None
@@ -71,7 +99,7 @@ class ControllerTkinter(ControllerBase):
 
     def start_install(self, manager):
         self._manager = manager
-        self._tk = tk.Tk()
+        self.tk = tk.Tk()
         self.title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
         self._base_frame = tk.Frame()
         self._base_frame.pack(side="top", fill="both", expand=True)
@@ -79,7 +107,7 @@ class ControllerTkinter(ControllerBase):
         self._base_frame.grid_columnconfigure(0, weight=1)
 
         self.switch_frame(FrameInstall)
-        self._tk.mainloop()
+        self.tk.mainloop()
 
     def start_uninstall(self, manager):
         manager.uninstall()
