@@ -95,6 +95,7 @@ class Manager:
 
     def update(self):
         self._solutioner.update()
+        self._set_solution_installed_version()
         if self._install_part_solution_hook:
             self._install_part_solution_hook()
 
