@@ -14,7 +14,7 @@ class SolutionBase(ABC, builder.BuilderAction):
     - over network
     """
     def __init__(self):
-        self._hook = None
+        self._progress_hook = None
 
     def __enter__(self):
         self.open()
@@ -23,17 +23,17 @@ class SolutionBase(ABC, builder.BuilderAction):
     def __exit__(self, type, value, traceback):
         self.close()
 
-    def set_hook(self, hook):
+    def set_progress_hook(self, hook):
         """set progression hook"""
-        self._hook = hook
+        self._progress_hook = hook
 
     def _update_progress(self, percent):
         """ This function will be called to update solution progression
         while downloading.
         It will call
         """
-        if self._hook:
-            self._hook(percent)
+        if self._progress_hook:
+            self._progress_hook(percent)
 
     def get_version_string(self):
         """ return version string of a solution

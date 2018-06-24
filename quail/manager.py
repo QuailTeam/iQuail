@@ -24,10 +24,17 @@ class Manager:
         if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
             os.chmod(binary, 0o755)
 
-    def set_solution_hook(self, hook):
+    def _set_solution_installed_version(self):
+        version = self.get_solution_version()
+        if version is None:
+            return
+        with open(self._get_version_file_path(), "w") as f:
+            f.write(version)
+
+    def set_solution_progress_hook(self, hook):
         """Set solution update progress hook
         """
-        self._solution.set_hook(hook)
+        self._solution.set_progress_hook(hook)
 
     def set_install_part_solution_hook(self, hook):
         """Set install part 1 finished hook
@@ -57,16 +64,11 @@ class Manager:
             raise AssertionError("Can't build from an executable")
 
     def get_solution_version(self):
+        """Get version from solution"""
         return self._solution.get_version_string()
 
-    def _set_solution_installed_version(self):
-        version = self.get_solution_version()
-        if version is None:
-            return
-        with open(self._get_version_file_path(), "w") as f:
-            f.write(version)
-
     def get_installed_version(self):
+        """Get installed version"""
         if not os.path.isfile(self._get_version_file_path()):
             return None
         with open(self._get_version_file_path(), "r") as f:
@@ -86,18 +88,12 @@ class Manager:
             self._install_part_solution_hook()
 
     def install_part_register(self):
-        """part 1 of the installation will install the solution
+        """part 1 of the installation will register the solution
         """
         self._installer.register()
         self._chmod_binary()
         if self._install_part_register_hook:
             self._install_part_register_hook()
-
-    def update(self):
-        self._solutioner.update()
-        self._set_solution_installed_version()
-        if self._install_part_solution_hook:
-            self._install_part_solution_hook()
 
     def install(self):
         """Installation process was split in multiple parts
@@ -109,17 +105,25 @@ class Manager:
         self.install_part_solution()
         self.install_part_register()
 
+    def update(self):
+        """Update process"""
+        self._solutioner.update()
+        self._set_solution_installed_version()
+        if self._install_part_solution_hook:
+            self._install_part_solution_hook()
+
     def uninstall(self):
-        """ Uninstall
+        """ Uninstall process
         """
         self._solutioner.uninstall()
         self._installer.unregister()
 
     def is_installed(self):
-        # TODO: optimisation
+        """Check if solution is installed"""
         return self._solutioner.installed()  # and self._installer.registered()
 
     def run(self):
+        """Run solution"""
         binary = self._installer.binary
         self._chmod_binary()
         os.system(binary + " " + " ".join(sys.argv[1:]))

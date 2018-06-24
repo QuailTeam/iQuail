@@ -8,7 +8,7 @@ class ControllerConsole(ControllerBase):
             sys.stdout.write(" %d %% updating ...\r" % progress)
             sys.stdout.flush()
 
-        manager.set_solution_hook(progress_callback)
+        manager.set_solution_progress_hook(progress_callback)
         print("[*] New version available: %s" % manager.get_solution_version())
         manager.update()
         print("[*] Update successful!")
@@ -18,7 +18,7 @@ class ControllerConsole(ControllerBase):
             sys.stdout.write(" %d %% installing ...\r" % progress)
             sys.stdout.flush()
 
-        manager.set_solution_hook(progress_callback)
+        manager.set_solution_progress_hook(progress_callback)
         print("[*] Installing %s" % manager.get_name())
         manager.install()
         print("[*] Installation successful!")

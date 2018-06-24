@@ -68,7 +68,7 @@ class SolutionGitHub(SolutionBase):
         (zip_file, headers) = urllib.request.urlretrieve(zip_url,
                                                          reporthook=hook)
         self._solution_zip = SolutionZip(zip_file)
-        self._solution_zip.set_hook(self._hook)
+        self._solution_zip.set_progress_hook(self._progress_hook)
         return self._solution_zip.open()
 
     def close(self):
