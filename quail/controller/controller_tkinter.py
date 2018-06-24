@@ -18,7 +18,7 @@ class FrameInstallFinished(tk.Frame):
         button = tk.Button(self,
                            text="exit",
                            command=self._exit)
-        button.pack()
+        button.pack(side="bottom", padx=20, pady=20)
 
     def _exit(self):
         self.controller.tk.quit()
@@ -71,7 +71,7 @@ class FrameInstall(tk.Frame):
         button = tk.Button(self,
                            text="Install!",
                            command=self._run_install)
-        button.pack(padx=20, pady=20)
+        button.pack(side="bottom", padx=20, pady=20)
 
     def _run_install(self):
         self.controller.switch_frame(FrameInstalling)

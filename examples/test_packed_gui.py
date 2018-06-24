@@ -20,7 +20,9 @@ if quail.helper.OS_LINUX:
             console=True,
             launch_with_quail=False
         ),
-        builder=quail.builder.Builder(),
+        builder=quail.builder.Builder(
+            quail.builder.CmdNoconsole()
+        ),
         controller=quail.ControllerTkinter()
     )
 
@@ -35,7 +37,8 @@ if quail.helper.OS_WINDOWS:
             launch_with_quail=False
         ),
         builder=quail.builder.Builder(
-            quail.builder.CmdIcon('icon.ico')
+            quail.builder.CmdIcon('icon.ico'),
+            quail.builder.CmdNoconsole()
         ),
         controller=quail.ControllerTkinter()
     )
