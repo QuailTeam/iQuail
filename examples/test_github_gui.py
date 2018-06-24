@@ -15,6 +15,8 @@ quail.run(
         launch_with_quail=False,
     ),
     builder=quail.builder.Builder(
-        quail.builder.CmdIcon('icon.ico')
-    )
+        quail.builder.CmdIcon('icon.ico'),
+        quail.builder.CmdNoconsole()
+    ),
+    controller=quail.ControllerTkinter()
 )
