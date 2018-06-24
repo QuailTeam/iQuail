@@ -3,6 +3,16 @@ from .controller_base import ControllerBase
 
 
 class ControllerConsole(ControllerBase):
+    def start_update(self, manager):
+        def progress_callback(progress):
+            sys.stdout.write(" %d %% updating ...\r" % progress)
+            sys.stdout.flush()
+
+        manager.set_solution_hook(progress_callback)
+        print("[*] New version available: %s" % manager.get_solution_version())
+        manager.update()
+        print("[*] Update successful!")
+
     def start_install(self, manager):
         def progress_callback(progress):
             sys.stdout.write(" %d %% installing ...\r" % progress)

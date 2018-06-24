@@ -35,6 +35,11 @@ class Solutioner:
     def installed(self):
         return os.path.exists(self.dest())
 
+    def update(self):
+        # TODO: uninstall will be a waste of time on future solution types
+        self.uninstall()
+        self.install()
+
     def uninstall(self):
         if self.installed():
             shutil.rmtree(self.dest())

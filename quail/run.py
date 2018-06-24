@@ -43,6 +43,8 @@ def run(solution, installer, builder=None, controller=None):
         controller.start_uninstall(manager)
     else:
         if manager.is_installed():
+            if manager.new_version_available():
+                controller.start_update(manager)
             manager.run()
         else:
             controller.start_install(manager)

@@ -35,6 +35,13 @@ class SolutionBase(ABC, builder.BuilderAction):
         if self._hook:
             self._hook(percent)
 
+    def get_version_string(self):
+        """ return version string of a solution
+        This function is meant to be overridden
+        by default returns None
+        """
+        return None
+
     @abstractmethod
     def local(self):
         """returns True if solution is stored locally,

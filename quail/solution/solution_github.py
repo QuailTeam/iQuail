@@ -52,6 +52,9 @@ class SolutionGitHub(SolutionBase):
             raise AssertionError("No tags")
         return self._get_tags()[0]
 
+    def get_version_string(self):
+        return self._get_last_tag()["name"]
+
     def local(self):
         return False
 

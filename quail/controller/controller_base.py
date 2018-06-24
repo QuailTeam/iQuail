@@ -13,3 +13,8 @@ class ControllerBase(ABC):
         """ Start uninstall
         """
         pass
+
+    @abstractmethod
+    def start_update(self, manager):
+        """ Start update"""
+        pass
