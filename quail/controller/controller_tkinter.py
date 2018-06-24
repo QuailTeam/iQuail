@@ -42,7 +42,7 @@ class FrameInstalling(tk.Frame):
                                              length=100,
                                              mode='determinate',
                                              variable=self.progress_var)
-        self._progress_bar.pack()
+        self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
         self._thread = threading.Thread(target=manager.install_part_1)
         self._thread.start()
 
@@ -71,7 +71,7 @@ class FrameInstall(tk.Frame):
         button = tk.Button(self,
                            text="Install!",
                            command=self._run_install)
-        button.pack()
+        button.pack(padx=20, pady=20)
 
     def _run_install(self):
         self.controller.switch_frame(FrameInstalling)
@@ -100,6 +100,9 @@ class ControllerTkinter(ControllerBase):
     def start_install(self, manager):
         self._manager = manager
         self.tk = tk.Tk()
+        self.tk.minsize(width=500, height=200)
+        self.tk.maxsize(width=500, height=200)
+        self.tk.title("%s installer" % manager.get_name())
         self.title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
         self._base_frame = tk.Frame()
         self._base_frame.pack(side="top", fill="both", expand=True)
