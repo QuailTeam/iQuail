@@ -18,6 +18,9 @@ class Builder:
         params = [helper.get_script(),
                   "--onefile",
                   "--exclude-module", "PyInstaller"]
+        if helper.OS_WINDOWS:
+            # upx slows down the launch time
+            params.append("--noupx")
         return params
 
     def get_build_params(self):

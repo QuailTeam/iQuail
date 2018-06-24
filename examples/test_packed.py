@@ -7,7 +7,7 @@ import platform
 
 
 def print_progress(percent):
-    print("%s%%" % (percent))
+    print("%s%%" % percent)
 
 
 if quail.helper.OS_LINUX:
