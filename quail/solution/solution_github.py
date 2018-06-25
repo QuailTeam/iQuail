@@ -63,7 +63,8 @@ class SolutionGitHub(SolutionBase):
         zip_url = self._get_zip_url(last_tag_name)
 
         def hook(count, block_size, total_size):
-            self._update_progress(count / (total_size / block_size) * 100)
+            self._update_progress(percent=count / (total_size / block_size) * 100,
+                                  status="downloading")
 
         (zip_file, headers) = urllib.request.urlretrieve(zip_url,
                                                          reporthook=hook)

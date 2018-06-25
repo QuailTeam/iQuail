@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter.font import Font
 from tkinter import ttk
 import threading
+
+from quail.solution.solution_base import SolutionProgress
 from .controller_base import ControllerBase
 
 
@@ -32,8 +34,8 @@ class FrameUpdating(tk.Frame):
         manager.set_solution_progress_hook(self.progress_callback)
         manager.set_install_part_solution_hook(self.solution_finished_callback)
 
-        label = tk.Label(self, text="Updating...", font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
+        self._label = tk.Label(self, text="Updating...", font=controller.title_font)
+        self._label.pack(side="top", fill="x", pady=10)
 
         self.progress_var = tk.IntVar()
         self._progress_bar = ttk.Progressbar(self,
@@ -45,8 +47,10 @@ class FrameUpdating(tk.Frame):
         self._thread = threading.Thread(target=manager.update)
         self._thread.start()
 
-    def progress_callback(self, float_progress):
-        progress = int(float_progress)
+    def progress_callback(self, progress: SolutionProgress):
+        self._label.configure(text=progress.status.capitalize() + " ...")
+        self._label.update()
+        progress = int(progress.percent)
         if 0 <= progress <= 100:
             self.progress_var.set(progress)
 
@@ -63,8 +67,8 @@ class FrameInstalling(tk.Frame):
         manager.set_install_part_register_hook(self.install_finished_callback)
         manager.set_install_part_solution_hook(self.solution_finished_callback)
 
-        label = tk.Label(self, text="Installing...", font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
+        self._label = tk.Label(self, text="Installing...", font=controller.title_font)
+        self._label.pack(side="top", fill="x", pady=10)
 
         self.progress_var = tk.IntVar()
         self._progress_bar = ttk.Progressbar(self,
@@ -76,8 +80,10 @@ class FrameInstalling(tk.Frame):
         self._thread = threading.Thread(target=manager.install_part_solution)
         self._thread.start()
 
-    def progress_callback(self, float_progress):
-        progress = int(float_progress)
+    def progress_callback(self, progress: SolutionProgress):
+        self._label.configure(text=progress.status.capitalize() + " ...")
+        self._label.update()
+        progress = int(progress.percent)
         if 0 <= progress <= 100:
             self.progress_var.set(progress)
 

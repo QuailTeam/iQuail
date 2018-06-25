@@ -11,7 +11,8 @@ quail.run(
         name='Cmder',
         icon='Cmder.exe',
         binary='Cmder.exe',
-        console=False
+        console=False,
+        launch_with_quail=False
     ),
     builder=quail.builder.Builder(
         quail.builder.CmdIcon('icon.ico'),

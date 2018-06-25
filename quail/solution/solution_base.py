@@ -1,18 +1,28 @@
-
 import os
 import shutil
+import typing
 from abc import ABC, abstractmethod
 from .. import builder
 
 
+class SolutionProgress:
+    """Class returned in callback to notify progress
+    (see SolutionBase._update_progress
+    """
+    def __init__(self, percent, status):
+        self.percent = percent
+        self.status = status
+
+
 class SolutionBase(ABC, builder.BuilderAction):
     """ The goal of this interface is to be able to resolve solution files
-    comming from anywhere.
+    coming from anywhere.
     current goals are:
     - from builtin data (added with pyinstaller)
     - from local directory
     - over network
     """
+
     def __init__(self):
         self._progress_hook = None
 
@@ -27,13 +37,13 @@ class SolutionBase(ABC, builder.BuilderAction):
         """set progression hook"""
         self._progress_hook = hook
 
-    def _update_progress(self, percent):
+    def _update_progress(self, percent, status="loading"):
         """ This function will be called to update solution progression
         while downloading.
         It will call
         """
         if self._progress_hook:
-            self._progress_hook(percent)
+            self._progress_hook(SolutionProgress(percent, status))
 
     def get_version_string(self):
         """ return version string of a solution

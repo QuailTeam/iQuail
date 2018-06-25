@@ -1,24 +1,23 @@
 import sys
+
+from quail.solution.solution_base import SolutionProgress
 from .controller_base import ControllerBase
+
+
+def _progress_callback(progress: SolutionProgress):
+    sys.stdout.write(" %d %% %s ...\r" % (progress.percent, progress.status))
+    sys.stdout.flush()
 
 
 class ControllerConsole(ControllerBase):
     def start_update(self, manager):
-        def progress_callback(progress):
-            sys.stdout.write(" %d %% updating ...\r" % progress)
-            sys.stdout.flush()
-
-        manager.set_solution_progress_hook(progress_callback)
+        manager.set_solution_progress_hook(_progress_callback)
         print("[*] New version available: %s" % manager.get_solution_version())
         manager.update()
         print("[*] Update successful!")
 
     def start_install(self, manager):
-        def progress_callback(progress):
-            sys.stdout.write(" %d %% installing ...\r" % progress)
-            sys.stdout.flush()
-
-        manager.set_solution_progress_hook(progress_callback)
+        manager.set_solution_progress_hook(_progress_callback)
         print("[*] Installing %s" % manager.get_name())
         manager.install()
         print("[*] Installation successful!")
