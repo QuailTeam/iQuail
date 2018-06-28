@@ -1,4 +1,5 @@
 import os
+import signal
 import stat
 import sys
 import typing
@@ -12,6 +13,7 @@ class Manager:
         self._installer = installer
         self._solution = solution
         self._builder = builder
+        self._pid = None  # pid of the running solution
         self._install_part_register_hook = None
         self._install_part_solution_hook = None
         self._solutioner = Solutioner(self._solution,
@@ -108,6 +110,7 @@ class Manager:
 
     def update(self):
         """Update process"""
+        # TODO: kill solution here
         self._solutioner.update()
         self._set_solution_installed_version()
         if self._install_part_solution_hook:
@@ -127,4 +130,5 @@ class Manager:
         """Run solution"""
         binary = self._installer.binary
         self._chmod_binary()
-        os.system(binary + " " + " ".join(sys.argv[1:]))
+        binary_args = [os.path.basename(binary)] + sys.argv[1:]
+        self._pid = os.spawnl(os.P_NOWAIT, binary, *binary_args)

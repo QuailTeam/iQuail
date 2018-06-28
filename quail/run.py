@@ -45,6 +45,8 @@ def run(solution, installer, builder=None, controller=None):
         if manager.is_installed():
             if manager.new_version_available():
                 controller.start_update(manager)
-            manager.run()
+            else:
+                # TODO: launch solution first and kill it on update
+                manager.run()
         else:
             controller.start_install(manager)

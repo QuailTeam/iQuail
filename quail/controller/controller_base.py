@@ -18,3 +18,4 @@ class ControllerBase(ABC):
     def start_update(self, manager):
         """ Start update"""
         pass
+
