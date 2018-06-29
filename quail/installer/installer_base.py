@@ -110,6 +110,8 @@ class InstallerBase(ABC):
         # install script and module:
         shutil.copy2(helper.get_script(), self.quail_binary)
         if helper.running_from_script():
+            with suppress(Exception):
+                shutil.rmtree(self.get_install_path("quail"))
             shutil.copytree(helper.get_module_path(),
                             self.get_install_path("quail"))
 

@@ -13,7 +13,6 @@ class Manager:
         self._installer = installer
         self._solution = solution
         self._builder = builder
-        self._pid = None  # pid of the running solution
         self._install_part_register_hook = None
         self._install_part_solution_hook = None
         self._solutioner = Solutioner(self._solution,
@@ -131,4 +130,4 @@ class Manager:
         binary = self._installer.binary
         self._chmod_binary()
         binary_args = [os.path.basename(binary)] + sys.argv[1:]
-        self._pid = os.spawnl(os.P_NOWAIT, binary, *binary_args)
+        os.execl(binary, *binary_args)
