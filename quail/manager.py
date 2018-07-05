@@ -129,5 +129,6 @@ class Manager:
         """Run solution"""
         binary = self._installer.binary
         self._chmod_binary()
-        binary_args = [os.path.basename(binary)] + sys.argv[1:]
+        args = list(filter(lambda x: "--quail" not in x, sys.argv[1:]))
+        binary_args = [os.path.basename(binary)] + args
         os.execl(binary, *binary_args)

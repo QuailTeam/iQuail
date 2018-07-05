@@ -9,8 +9,9 @@ from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
 
+
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(add_help=helper.running_from_script())
     parser.add_argument(Constants.ARGUMENT_UNINSTALL,
                         help="uninstall program",
                         action="store_true")
@@ -24,12 +25,12 @@ def parse_args():
                         is empty, the directory will be removed
                         (this function is used by quail for windows uninstall)
                         """)
-    return parser.parse_args()
+    return parser.parse_known_args()
 
 
 def run(solution, installer, builder=None, controller=None):
     """run config"""
-    args = parse_args()
+    (args, unknown) = parse_args()
     if not builder:
         builder = Builder()
     if not controller:
