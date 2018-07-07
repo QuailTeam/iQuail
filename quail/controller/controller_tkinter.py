@@ -94,7 +94,7 @@ class FrameInstalling(tk.Frame):
         self.controller.switch_frame(FrameInstallFinished)
 
 
-class FrameInstall(tk.Frame):
+class FrameAskInstall(tk.Frame):
     def __init__(self, parent, controller, manager):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -111,6 +111,27 @@ class FrameInstall(tk.Frame):
 
     def _run_install(self):
         self.controller.switch_frame(FrameInstalling)
+
+
+class FrameAskUninstall(tk.Frame):
+    def __init__(self, parent, controller, manager):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.manager = manager
+
+        label = tk.Label(self,
+                         text="%s installer\nWould you like to uninstall this program?" % manager.get_name(),
+                         font=controller.title_font)
+        label.pack(side="top", fill="x", pady=10, padx=10)
+
+        button = tk.Button(self,
+                           text="Uninstall!",
+                           command=self._run_uninstall)
+        button.pack(side="bottom", padx=20, pady=20)
+
+    def _run_uninstall(self):
+        self.manager.uninstall()
+        self.controller.tk.quit()
 
 
 class ControllerTkinter(ControllerBase):
@@ -133,6 +154,12 @@ class ControllerTkinter(ControllerBase):
         self._base_frame.grid_rowconfigure(0, weight=1)
         self._base_frame.grid_columnconfigure(0, weight=1)
 
+    def _start_tk(self, frame, title):
+        self._init_tkinter()
+        self.tk.title(title)
+        self.switch_frame(frame)
+        self.tk.mainloop()
+
     def switch_frame(self, frame_class, **kwargs):
         assert self._manager is not None
         if self._frame is not None:
@@ -146,17 +173,15 @@ class ControllerTkinter(ControllerBase):
 
     def start_install(self, manager):
         self._manager = manager
-        self._init_tkinter()
-        self.tk.title("%s installer" % self._manager.get_name())
-        self.switch_frame(FrameInstall)
-        self.tk.mainloop()
+        self._start_tk(FrameAskInstall,
+                       "%s installer" % self._manager.get_name())
 
     def start_uninstall(self, manager):
-        manager.uninstall()
+        self._manager = manager
+        self._start_tk(FrameAskUninstall,
+                       "%s uninstall" % self._manager.get_name())
 
     def start_update(self, manager):
         self._manager = manager
-        self._init_tkinter()
-        self.tk.title("%s update" % self._manager.get_name())
-        self.switch_frame(FrameUpdating)
-        self.tk.mainloop()
+        self._start_tk(FrameUpdating,
+                       "%s update" % self._manager.get_name())

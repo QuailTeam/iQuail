@@ -59,6 +59,7 @@ class Manager:
         return self._solutioner
 
     def build(self):
+        """Build binary"""
         if helper.running_from_script():
             self._builder.register(self._solution)
             self._builder.build()
@@ -76,7 +77,7 @@ class Manager:
         with open(self._get_version_file_path(), "r") as f:
             return f.readline()
 
-    def new_version_available(self):
+    def is_new_version_available(self):
         """Check if new version is available
         """
         return self.get_installed_version() != self.get_solution_version()
