@@ -9,7 +9,7 @@ class CmdIntegrity(CmdBase):
     def __init__(self, path):
         super().__init__()
         if not isinstance(path, list):
-            raise AssertionError("Expected list as path")
+            raise TypeError("Expected list as path")
         self._path = os.path.abspath(os.path.join(*path))
 
     def pre_build(self):

@@ -29,7 +29,7 @@ class SolutionGitHub(SolutionBase):
         """
         rep = re.findall(r"github\.com/(.*?)/(.*?)$", self._repo_url)
         if not rep:
-            raise AssertionError("Invalid github url")
+            raise ValueError("Invalid github url")
         return rep[0]
 
     def _get_tag_url(self):

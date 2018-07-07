@@ -18,7 +18,7 @@ class SolutionZip(SolutionBase):
         super().__init__()
         self._src = None
         if not isinstance(zip_name, str):
-            raise AssertionError("Expected string as zip file")
+            raise TypeError("Expected string as zip file")
         if helper.running_from_script():
             self._zip_name = os.path.abspath(zip_name)
         else:
