@@ -11,23 +11,7 @@ from .. import helper
 from ..constants import Constants
 
 
-def delete_atexit(path_to_delete):
-    """On windows we can't remove binaries being run.
-    This function will remove a file or folder at exit
-    to be able to delete itself
-    """
-    assert os.path.isdir(path_to_delete)
 
-    def _delete_from_tmp():
-        tmpdir = tempfile.mkdtemp()
-        newscript = shutil.copy2(helper.get_script(), tmpdir)
-        args = (newscript, "--quail_rm", path_to_delete)
-        if helper.running_from_script():
-            os.execl(sys.executable, sys.executable, *args)
-        else:
-            os.execl(newscript, *args)
-
-    atexit.register(_delete_from_tmp)
 
 
 class InstallerBase(ABC):
@@ -119,10 +103,7 @@ class InstallerBase(ABC):
 
     @abstractmethod
     def unregister(self):
-        if misc.running_from_script():
-            shutil.rmtree(self.get_install_path())
-        else:
-            delete_atexit(self.get_install_path())
+        misc.self_remove_directory(self.get_install_path())
 
     @abstractmethod
     def registered(self):

@@ -1,8 +1,11 @@
+import atexit
 import os
+import shutil
 import sys
 import copy
 import ctypes
 import platform
+import tempfile
 
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
@@ -51,6 +54,36 @@ def running_from_script():
     if getattr(sys, 'frozen', False):
         return False
     return True
+
+
+def _delete_atexit(path_to_delete):
+    """On windows we can't remove binaries being run.
+    This function will remove a file or folder at exit
+    to be able to delete itself
+    """
+    assert os.path.isdir(path_to_delete)
+
+    def _delete_from_tmp():
+        tmpdir = tempfile.mkdtemp()
+        newscript = shutil.copy2(get_script(), tmpdir)
+        args = (newscript, "--quail_rm", path_to_delete)
+        if running_from_script():
+            os.execl(sys.executable, sys.executable, *args)
+        else:
+            os.execl(newscript, *args)
+
+    atexit.register(_delete_from_tmp)
+
+
+def self_remove_directory(directory):
+    """Remove directory but if we are running from a compiled binary
+    it will remove the directory only when exiting.
+    This function was made for windows, because we can't remove ourself on windows
+    """
+    if running_from_script():
+        shutil.rmtree(directory)
+    else:
+        _delete_atexit(directory)
 
 
 def rerun_as_admin():
