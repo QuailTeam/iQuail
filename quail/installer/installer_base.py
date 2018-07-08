@@ -6,6 +6,7 @@ import tempfile
 import sys
 from contextlib import suppress
 from abc import ABC, abstractmethod
+from ..helper import misc
 from .. import helper
 from ..constants import Constants
 
@@ -16,6 +17,7 @@ def delete_atexit(path_to_delete):
     to be able to delete itself
     """
     assert os.path.isdir(path_to_delete)
+
     def _delete_from_tmp():
         tmpdir = tempfile.mkdtemp()
         newscript = shutil.copy2(helper.get_script(), tmpdir)
@@ -117,7 +119,10 @@ class InstallerBase(ABC):
 
     @abstractmethod
     def unregister(self):
-        delete_atexit(self.get_install_path())
+        if misc.running_from_script():
+            shutil.rmtree(self.get_install_path())
+        else:
+            delete_atexit(self.get_install_path())
 
     @abstractmethod
     def registered(self):
