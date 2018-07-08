@@ -64,7 +64,7 @@ class FrameInstalling(tk.Frame):
         self.controller = controller
         self.manager = manager
         manager.set_solution_progress_hook(self.progress_callback)
-        manager.set_install_part_register_hook(self.install_finished_callback)
+        manager.set_install_finished_hook(self.install_finished_callback)
         manager.set_install_part_solution_hook(self.solution_finished_callback)
 
         self._label = tk.Label(self, text="Installing...", font=controller.title_font)

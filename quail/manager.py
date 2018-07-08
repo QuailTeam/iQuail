@@ -13,7 +13,7 @@ class Manager:
         self._installer = installer
         self._solution = solution
         self._builder = builder
-        self._install_part_register_hook = None
+        self._install_finished_hook = None
         self._install_part_solution_hook = None
         self._solutioner = Solutioner(self._solution,
                                       self._installer.get_solution_path())
@@ -44,11 +44,11 @@ class Manager:
         """
         self._install_part_solution_hook = hook
 
-    def set_install_part_register_hook(self, hook):
+    def set_install_finished_hook(self, hook):
         """Set install finished hook
         this hook will be called when the installation process is done
         """
-        self._install_part_register_hook = hook
+        self._install_finished_hook = hook
 
     def get_name(self):
         """Get solution name"""
@@ -91,12 +91,12 @@ class Manager:
             self._install_part_solution_hook()
 
     def install_part_register(self):
-        """part 1 of the installation will register the solution
+        """this part of the installation will register the solution
         """
         self._installer.register()
         self._chmod_binary()
-        if self._install_part_register_hook:
-            self._install_part_register_hook()
+        if self._install_finished_hook:
+            self._install_finished_hook()
 
     def install(self):
         """Installation process was split in multiple parts
