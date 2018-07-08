@@ -3,6 +3,7 @@ import os
 import tempfile
 from .solution_base import SolutionBase
 from .. import helper
+from ..errors import *
 
 
 class SolutionLocal(SolutionBase):
@@ -17,24 +18,31 @@ class SolutionLocal(SolutionBase):
         else:
             self._path = path
         self._path = os.path.abspath(self._path)
+
         self._tmp = None
 
     def local(self):
         return True
 
     def open(self):
+        if not os.path.isdir(self._path):
+            raise SolutionUnreachableError("Solution local: no directory error")
         self._tmp = tempfile.mkdtemp()
 
     def close(self):
-        shutil.rmtree(self._tmp, ignore_errors=True)
+        if self._tmp:
+            shutil.rmtree(self._tmp, ignore_errors=True)
 
     def walk(self):
         for root, dirs, files in os.walk(self._path):
             yield (os.path.relpath(root, self._path), dirs, files)
 
-    def retrieve_file(self, relpath):
-        os.makedirs(os.path.join(self._tmp, os.path.dirname(relpath)),
+    def retrieve_file(self, relative_path):
+        src = os.path.join(self._path, relative_path)
+        if not os.path.isfile(src):
+            raise SolutionUnreachableError("File not found on solution: " + relative_path)
+        os.makedirs(os.path.join(self._tmp, os.path.dirname(relative_path)),
                     exist_ok=True)
-        res = shutil.copy2(os.path.join(self._path, relpath),
-                           os.path.join(self._tmp, relpath))
+        res = shutil.copy2(src,
+                           os.path.join(self._tmp, relative_path))
         return res

@@ -6,6 +6,7 @@ import tempfile
 import urllib.request
 from pprint import pprint
 
+from ..errors import *
 from ..helper import cache_result
 from .solution_base import SolutionBase
 from .solution_zip import SolutionZip
@@ -41,15 +42,18 @@ class SolutionGitHub(SolutionBase):
 
     @cache_result
     def _get_tags(self):
-        response = urllib.request.urlopen(self._get_tag_url())
-        data = response.read()
-        encoding = response.info().get_content_charset("utf-8")
-        tags = json.loads(data.decode(encoding))
+        try:
+            response = urllib.request.urlopen(self._get_tag_url())
+            data = response.read()
+            encoding = response.info().get_content_charset("utf-8")
+            tags = json.loads(data.decode(encoding))
+        except Exception as e:
+            raise SolutionUnreachableError("SolutionGithub get tag", str(e))
         return tags
 
     def _get_last_tag(self):
         if not self._get_tags():
-            raise AssertionError("No tags")
+            raise SolutionUnreachableError("No tags")
         return self._get_tags()[0]
 
     def get_version_string(self):
@@ -65,15 +69,18 @@ class SolutionGitHub(SolutionBase):
         def hook(count, block_size, total_size):
             self._update_progress(percent=count / (total_size / block_size) * 100,
                                   status="downloading")
-
-        (zip_file, headers) = urllib.request.urlretrieve(zip_url,
-                                                         reporthook=hook)
+        try:
+            (zip_file, headers) = urllib.request.urlretrieve(zip_url,
+                                                             reporthook=hook)
+        except Exception as e:
+            raise SolutionUnreachableError("Solution github retrieve error", str(e))
         self._solution_zip = SolutionZip(zip_file)
         self._solution_zip.set_progress_hook(self._progress_hook)
         return self._solution_zip.open()
 
     def close(self):
-        self._solution_zip.close()
+        if self._solution_zip:
+            self._solution_zip.close()
 
     def walk(self):
         return self._solution_zip.walk()

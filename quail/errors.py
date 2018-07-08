@@ -1,3 +1,3 @@
-class SolutionUnreachable(Exception):
+class SolutionUnreachableError(Exception):
     """Raised if solution is not reachable"""
     pass

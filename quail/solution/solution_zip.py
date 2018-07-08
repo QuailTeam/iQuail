@@ -3,6 +3,7 @@ import zipfile
 import tempfile
 import shutil
 import sys
+from ..errors import *
 from .. import helper
 from .solution_base import SolutionBase
 
@@ -16,7 +17,7 @@ class SolutionZip(SolutionBase):
 
     def __init__(self, zip_name):
         super().__init__()
-        self._src = None
+        self._tmp = None
         if not isinstance(zip_name, str):
             raise TypeError("Expected string as zip file")
         if helper.running_from_script():
@@ -28,9 +29,9 @@ class SolutionZip(SolutionBase):
         return True
 
     def open(self):
-        if not os.path.exists(self._zip_name):
-            raise FileNotFoundError
-        self._src = tempfile.mkdtemp()
+        if not os.path.isfile(self._zip_name):
+            raise SolutionUnreachableError
+        self._tmp = tempfile.mkdtemp()
         zip_ref = zipfile.ZipFile(self._zip_name, 'r')
         uncompress_size = sum((file.file_size for file in zip_ref.infolist()))
         extracted_size = 0
@@ -38,16 +39,20 @@ class SolutionZip(SolutionBase):
             extracted_size += file.file_size
             self._update_progress(percent=extracted_size * 100 / uncompress_size,
                                   status="unzipping")
-            zip_ref.extract(file, self._src)
+            zip_ref.extract(file, self._tmp)
         zip_ref.close()
 
     def close(self):
-        shutil.rmtree(self._src)
-        self._src = None
+        if self._tmp:
+            shutil.rmtree(self._tmp)
+            self._tmp = None
 
     def walk(self):
-        for root, dirs, files in os.walk(self._src):
-            yield (os.path.relpath(root, self._src), dirs, files)
+        for root, dirs, files in os.walk(self._tmp):
+            yield (os.path.relpath(root, self._tmp), dirs, files)
 
-    def retrieve_file(self, relpath):
-        return os.path.join(self._src, relpath)
+    def retrieve_file(self, relative_path):
+        src = os.path.join(self._tmp, relative_path)
+        if not os.path.isfile(src):
+            raise SolutionUnreachableError("File not found: " + relative_path)
+        return src
