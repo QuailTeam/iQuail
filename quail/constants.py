@@ -5,3 +5,4 @@ class Constants:
     ARGUMENT_RM = "--quail_rm"
     CHECKSUMS_FILE = ".integrity.json"
     INTEGRITY_IGNORE_FILE = ".integrity_ignore"
+

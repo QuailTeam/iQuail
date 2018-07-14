@@ -1,4 +1,3 @@
-
 import os
 import quail
 from .base_test_case import BaseTestCase
@@ -19,7 +18,6 @@ class TestHelperIntegrity(BaseTestCase):
         self.verifier.dump()
         self.assertTrue(len(self.verifier.verify_all()) == 0)
 
-
     def test_verify_basic_corrupt(self):
         os.mkdir(self.tmp("test"))
         with open(self.tmp("test", "1.txt"), "w") as f:
@@ -30,8 +28,3 @@ class TestHelperIntegrity(BaseTestCase):
         with open(self.tmp("2.txt"), "w") as f:
             f.write("test dataa")
         self.assertTrue(len(self.verifier.verify_all()) > 0)
-
-
-if __name__ == '__main__':
-	print("Test Helper Integrity")
-	unittest.main()

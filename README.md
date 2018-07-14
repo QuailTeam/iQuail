@@ -10,37 +10,40 @@ Today you can deploy a simple solution in less than 10 lines
 Quail is currently in planning development stage, everything is subject to change
 
 ## Current features
-* Install and uninstall an application on Windows and Linux (launch shortcut / uninstall registery)
+* Install and uninstall an application on Windows and Linux (Add launch shortcut and register program on the system)
 * Decompress or download a solution
+* Building standalone offline installer
+* Building installer which uses github release feature to deploy/update solutions
+* Tkinter user interface
 * Scriptable actions
-* Standalone executable
-* Using github release feature to deploy/update solutions
-* Cool user interface
+
+## Installation
+1. Install python 3.6
+https://www.python.org/downloads/release/python-360/
+2. Install Tkinter (if its not already in python3)
+3. Install PyInstaller
+```python3 -m pip install PyInstaller```
+
+4. Run ```python3 setup.py install``` OR set PYTHONPATH to quail directory
+
+## Using Quail
+Currently everything is subject to change, this is the main reason why there is no documentation yet,
+
+You can still begin learning by [examples](examples)
+
+To build a quail installer run ```quail_script.py --quail_build```
 
 ## Short time goals
 * Integrity verification and updating only modified data
 * Building a versioning server
 * Using quail to update solutions which already have an installer .msi / .deb / setup.exe / .rpm  files
-* Options to suggest or force updates at launch
 * Scriptable GUI (for install, update, uninstall)
+* Mac OS support
 
-
-## Installation
-1. Install python 3.6
-https://www.python.org/downloads/release/python-360/
-2. Install Tkinter (if its not already in python3) and PyInstaller
-```python3 -m pip install PyInstaller```
-
-3. Run ```python3 setup.py install``` OR set PYTHONPATH to quail directory
-
-## Using Quail
+## Support
 If you find quail interesting and if you would like to use quail for your project,
 feel free to contact us by email: quail_2020@labeip.epitech.eu or by creating a github issue
 we will be happy to help you and make quail meet your needs.
-
-Currently everything is subject to change, this is the main reason why there is no documentation yet,
-You can still begin learning by [examples](examples)
-To build a quail installer run ```quail_script.py --quail_build```
 
 
 ## License
