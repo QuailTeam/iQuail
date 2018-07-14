@@ -20,7 +20,8 @@ Quail is currently in planning development stage, everything is subject to chang
 ## Installation
 1. Install python 3.6
 https://www.python.org/downloads/release/python-360/
-2. Install Tkinter (if its not already in python3)
+2. Install Tkinter (if its not already in python3) on debian/ubuntu:
+```sudo apt-get install python3-tk``` on fedora ```sudo dnf install python3-tk```
 3. Install PyInstaller
 ```python3 -m pip install PyInstaller```
 
