@@ -52,8 +52,7 @@ class InstallerLinux(InstallerBase):
         # TODO: abs shortcut path & add desktop var
         return os.path.isfile(dest)
 
-    def register(self):
-        super().register()
+    def _register(self):
         self.add_shortcut(dest=self._launch_shortcut,
                           name=self.name,
                           workpath=self.get_solution_path(),
@@ -69,14 +68,11 @@ class InstallerLinux(InstallerBase):
                           console=self.console
                           )
 
-    def unregister(self):
-        super().unregister()
+    def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)
         self.delete_shortcut(self._uninstall_shortcut)
 
-    def registered(self):
-        if not super().registered():
-            return False
+    def _registered(self):
         if not self.is_shortcut(self._launch_shortcut):
             return False
         if not self.is_shortcut(self._uninstall_shortcut):

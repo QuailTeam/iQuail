@@ -11,9 +11,6 @@ from .. import helper
 from ..constants import Constants
 
 
-
-
-
 class InstallerBase(ABC):
     """Register application on the OS"""
 
@@ -90,8 +87,9 @@ class InstallerBase(ABC):
         """Get install path"""
         return os.path.join(self._install_path, *args)
 
-    @abstractmethod
     def register(self):
+        """Register application for the OS"""
+        self._register()
         os.makedirs(self.get_install_path(), exist_ok=True)
         # install script and module:
         shutil.copy2(helper.get_script(), self.quail_binary)
@@ -101,10 +99,21 @@ class InstallerBase(ABC):
             shutil.copytree(helper.get_module_path(),
                             self.get_install_path("quail"))
 
-    @abstractmethod
     def unregister(self):
+        self._unregister()
         misc.self_remove_directory(self.get_install_path())
 
-    @abstractmethod
     def registered(self):
-        return os.path.isfile(self.quail_binary)
+        return os.path.isfile(self.quail_binary) and self._unregister()
+
+    @abstractmethod
+    def _register(self):
+        pass
+
+    @abstractmethod
+    def _unregister(self):
+        pass
+
+    @abstractmethod
+    def _registered(self):
+        pass

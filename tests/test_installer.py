@@ -14,8 +14,8 @@ class TestInstaller(BaseTestCase):
                 icon='noicon',
                 binary='emptyfile'
             )
-            self.assertFalse(installer.registered())
-            installer.register()
-            self.assertTrue(installer.registered())
-            installer.unregister()
-            self.assertFalse(installer.registered())
+            self.assertFalse(installer._registered())
+            installer._register()
+            self.assertTrue(installer._registered())
+            installer._unregister()
+            self.assertFalse(installer._registered())

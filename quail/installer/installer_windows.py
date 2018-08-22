@@ -78,8 +78,7 @@ class InstallerWindows(InstallerBase):
         with suppress(FileNotFoundError):
             os.remove(dest)
 
-    def register(self):
-        super().register()
+    def _register(self):
         self._set_reg_uninstall()
         shortcut_config = {
             "binary": self.launcher_binary,
@@ -90,16 +89,13 @@ class InstallerWindows(InstallerBase):
         os.makedirs(self._start_menu_path, 0o777, True)
         self.add_shortcut(self._start_menu_shortcut, **shortcut_config)
 
-    def unregister(self):
-        super().unregister()
+    def _unregister(self):
         self.delete_shortcut(self._desktop_shortcut)
         with suppress(FileNotFoundError):
             shutil.rmtree(self._start_menu_path)
         self._unset_reg_uninstall()
 
-    def registered(self):
-        if not super().registered():
-            return False
+    def _registered(self):
         try:
             winreg.OpenKey(winreg.HKEY_CURRENT_USER, self._uninstall_reg_key)
             return True
