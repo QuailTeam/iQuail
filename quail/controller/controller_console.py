@@ -10,29 +10,29 @@ def _progress_callback(progress: SolutionProgress):
 
 
 class ControllerConsole(ControllerBase):
-    def start_update(self, manager):
-        manager.set_solution_progress_hook(_progress_callback)
-        print("[*] New version available: %s" % manager.get_solution_version())
-        manager.update()
+    def start_update(self):
+        self.manager.set_solution_progress_hook(_progress_callback)
+        print("[*] New version available: %s" % self.manager.get_solution_version())
+        self.manager.update()
         print("[*] Update successful!")
 
-    def start_install(self, manager):
-        manager.set_solution_progress_hook(_progress_callback)
-        print("[*] Installing %s" % manager.get_name())
-        manager.install()
+    def start_install(self):
+        self.manager.set_solution_progress_hook(_progress_callback)
+        print("[*] Installing %s" % self.manager.get_name())
+        self.manager.install()
         print("[*] Installation successful!")
         self.press_to_exit()
 
-    def start_uninstall(self, manager):
-        rep = input("[*] Would you like to uninstall %s? (y/n): " % manager.get_name())
+    def start_uninstall(self):
+        rep = input("[*] Would you like to uninstall %s? (y/n): " % self.manager.get_name())
         if rep == 'y' or rep == 'Y':
-            print("[*] Uninstalling %s ..." % manager.get_name())
+            print("[*] Uninstalling %s ..." % self.manager.get_name())
             try:
-                manager.uninstall()
-                print("[*] %s successfully removed!" % manager.get_name())
+                self.manager.uninstall()
+                print("[*] %s successfully removed!" % self.manager.get_name())
                 self.press_to_exit()
             except:
-                print("[*] Unknown error while uninstalling %s" % manager.get_name())
+                print("[*] Unknown error while uninstalling %s" % self.manager.get_name())
                 self.press_to_exit()
 
     def press_to_exit(self):

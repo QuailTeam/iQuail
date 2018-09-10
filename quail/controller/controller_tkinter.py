@@ -140,7 +140,6 @@ class ControllerTkinter(ControllerBase):
         self.tk = None
         self._base_frame = None
         self._frame = None
-        self._manager = None
         self.title_font = None
         # self.window = tk.Tk()
 
@@ -161,27 +160,24 @@ class ControllerTkinter(ControllerBase):
         self.tk.mainloop()
 
     def switch_frame(self, frame_class, **kwargs):
-        assert self._manager is not None
+        assert self.manager is not None
         if self._frame is not None:
             self._frame.destroy()
         self._frame = frame_class(parent=self._base_frame,
                                   controller=self,
-                                  manager=self._manager,
+                                  manager=self.manager,
                                   **kwargs)
         self._frame.grid(row=0, column=0, sticky="nsew")
         self._frame.tkraise()
 
-    def start_install(self, manager):
-        self._manager = manager
+    def start_install(self):
         self._start_tk(FrameAskInstall,
-                       "%s installer" % self._manager.get_name())
+                       "%s installer" % self.manager.get_name())
 
-    def start_uninstall(self, manager):
-        self._manager = manager
+    def start_uninstall(self):
         self._start_tk(FrameAskUninstall,
-                       "%s uninstall" % self._manager.get_name())
+                       "%s uninstall" % self.manager.get_name())
 
-    def start_update(self, manager):
-        self._manager = manager
+    def start_update(self):
         self._start_tk(FrameUpdating,
-                       "%s update" % self._manager.get_name())
+                       "%s update" % self.manager.get_name())

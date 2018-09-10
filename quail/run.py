@@ -36,18 +36,19 @@ def run(solution, installer, builder=None, controller=None):
     if not controller:
         controller = ControllerConsole()
     manager = Manager(installer, solution, builder)
+    controller.setup(manager)
     if args.quail_rm:
         shutil.rmtree(args.quail_rm)
     elif args.quail_build:
         manager.build()
     elif args.quail_uninstall:
-        controller.start_uninstall(manager)
+        controller.start_uninstall()
     else:
         if manager.is_installed():
             if manager.is_new_version_available():
-                controller.start_update(manager)
+                controller.start_update()
                 return
             # TODO: launch solution first and kill it on update
             manager.run()
         else:
-            controller.start_install(manager)
+            controller.start_install()
