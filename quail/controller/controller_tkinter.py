@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter.font import Font
 from tkinter import ttk
+from tkinter.messagebox import showinfo, showerror
 import threading
 
 from quail.solution.solution_base import SolutionProgress
@@ -135,7 +136,6 @@ class FrameAskUninstall(tk.Frame):
 
 
 class ControllerTkinter(ControllerBase):
-
     def __init__(self):
         self.tk = None
         self._base_frame = None
@@ -170,14 +170,17 @@ class ControllerTkinter(ControllerBase):
         self._frame.grid(row=0, column=0, sticky="nsew")
         self._frame.tkraise()
 
-    def start_install(self):
+    def _display_unhandled_error(self, stage, traceback_info):
+        showerror("Error during %s" % stage, traceback_info.traceback_str)
+
+    def _start_install(self):
         self._start_tk(FrameAskInstall,
                        "%s installer" % self.manager.get_name())
 
-    def start_uninstall(self):
+    def _start_uninstall(self):
         self._start_tk(FrameAskUninstall,
                        "%s uninstall" % self.manager.get_name())
 
-    def start_update(self):
+    def _start_update(self):
         self._start_tk(FrameUpdating,
                        "%s update" % self.manager.get_name())
