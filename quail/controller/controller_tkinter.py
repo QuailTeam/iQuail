@@ -21,8 +21,8 @@ class TkFrameBase(tk.Frame):
         but if an error happen while the thread is running
         the error will be sent to the controller (and in the main thread)"""
         def display_unhandled_error(exception):
-            self.controller._display_unhandled_error(self.__class__.__name__,
-                                                     TracebackInfo(exception))
+            self.controller.display_unhandled_error(self.__class__.__name__,
+                                                    TracebackInfo(exception))
 
         def target_wrapper():
             try:
@@ -187,7 +187,7 @@ class ControllerTkinter(ControllerBase):
         self._frame.grid(row=0, column=0, sticky="nsew")
         self._frame.tkraise()
 
-    def _display_unhandled_error(self, stage, traceback_info):
+    def display_unhandled_error(self, stage, traceback_info):
         showerror("Error during %s" % stage, traceback_info.traceback_str)
 
     def _start_install(self):

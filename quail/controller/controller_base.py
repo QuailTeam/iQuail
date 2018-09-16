@@ -29,23 +29,23 @@ class ControllerBase(ABC):
     def start_install(self):
         ret = run_get_traceback(self._start_install)
         if isinstance(ret, TracebackInfo):
-            self._display_unhandled_error("install", ret)
+            self.display_unhandled_error("install", ret)
 
     def start_uninstall(self):
         """ Start uninstall
         """
         ret = run_get_traceback(self._start_uninstall)
         if isinstance(ret, TracebackInfo):
-            self._display_unhandled_error("uninstall", ret)
+            self.display_unhandled_error("uninstall", ret)
 
     def start_update(self):
         """ Start update"""
         ret = run_get_traceback(self._start_update)
         if isinstance(ret, TracebackInfo):
-            self._display_unhandled_error("update", ret)
+            self.display_unhandled_error("update", ret)
 
     @abstractmethod
-    def _display_unhandled_error(self, stage, traceback_info):
+    def display_unhandled_error(self, stage, traceback_info):
         pass
 
     @abstractmethod
