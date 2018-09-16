@@ -8,13 +8,19 @@ from quail.solution.solution_base import SolutionProgress
 from .controller_base import ControllerBase
 
 
-class FrameInstallFinished(tk.Frame):
-    def __init__(self, parent, controller, manager):
+class TkFrameBase(tk.Frame):
+    def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        assert isinstance(controller, ControllerTkinter)
         self.controller = controller
+        self.manager = controller.manager
 
+
+class FrameInstallFinished(TkFrameBase):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
         label = tk.Label(self,
-                         text="%s successfully installed!" % manager.get_name(),
+                         text="%s successfully installed!" % self.manager.get_name(),
                          font=controller.title_font)
         label.pack(side="top", fill="x", pady=10, padx=10)
 
@@ -27,11 +33,10 @@ class FrameInstallFinished(tk.Frame):
         self.controller.tk.quit()
 
 
-class FrameUpdating(tk.Frame):
-    def __init__(self, parent, controller, manager):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-        self.manager = manager
+class FrameUpdating(TkFrameBase):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        manager = self.manager
         manager.set_solution_progress_hook(self.progress_callback)
         manager.set_install_part_solution_hook(self.solution_finished_callback)
 
@@ -59,11 +64,10 @@ class FrameUpdating(tk.Frame):
         self.controller.tk.quit()
 
 
-class FrameInstalling(tk.Frame):
-    def __init__(self, parent, controller, manager):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-        self.manager = manager
+class FrameInstalling(TkFrameBase):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        manager = self.manager
         manager.set_solution_progress_hook(self.progress_callback)
         manager.set_install_finished_hook(self.install_finished_callback)
         manager.set_install_part_solution_hook(self.solution_finished_callback)
@@ -95,10 +99,10 @@ class FrameInstalling(tk.Frame):
         self.controller.switch_frame(FrameInstallFinished)
 
 
-class FrameAskInstall(tk.Frame):
-    def __init__(self, parent, controller, manager):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
+class FrameAskInstall(TkFrameBase):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        manager = self.manager
 
         label = tk.Label(self,
                          text="%s installer\nWould you like to install this program?" % manager.get_name(),
@@ -114,11 +118,10 @@ class FrameAskInstall(tk.Frame):
         self.controller.switch_frame(FrameInstalling)
 
 
-class FrameAskUninstall(tk.Frame):
-    def __init__(self, parent, controller, manager):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-        self.manager = manager
+class FrameAskUninstall(TkFrameBase):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        manager = self.manager
 
         label = tk.Label(self,
                          text="%s installer\nWould you like to uninstall this program?" % manager.get_name(),
@@ -165,7 +168,6 @@ class ControllerTkinter(ControllerBase):
             self._frame.destroy()
         self._frame = frame_class(parent=self._base_frame,
                                   controller=self,
-                                  manager=self.manager,
                                   **kwargs)
         self._frame.grid(row=0, column=0, sticky="nsew")
         self._frame.tkraise()
