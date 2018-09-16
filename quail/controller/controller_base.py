@@ -1,13 +1,6 @@
 import traceback
 from abc import ABC, abstractmethod
-
-
-class TracebackInfo:
-    def __init__(self, exception):
-        self.exception = exception
-        self.traceback = traceback.format_tb(self.exception.__traceback__)
-        assert isinstance(self.traceback, list)
-        self.traceback_str = map(lambda x: "".join(x), self.traceback)
+from ..helper.traceback_info import TracebackInfo
 
 
 def run_get_traceback(function_to_run, *args, **kwargs):

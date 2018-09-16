@@ -6,6 +6,7 @@ import threading
 
 from quail.solution.solution_base import SolutionProgress
 from .controller_base import ControllerBase
+from ..helper.traceback_info import TracebackInfo
 
 
 class TkFrameBase(tk.Frame):
@@ -14,6 +15,22 @@ class TkFrameBase(tk.Frame):
         assert isinstance(controller, ControllerTkinter)
         self.controller = controller
         self.manager = controller.manager
+
+    def start_thread(self, target):
+        """Same as threading.Thread().start()
+        but if an error happen while the thread is running
+        the error will be sent to the controller (and in the main thread)"""
+        def display_unhandled_error(exception):
+            self.controller._display_unhandled_error(self.__class__.__name__,
+                                                     TracebackInfo(exception))
+
+        def target_wrapper():
+            try:
+                target()
+            except Exception as e:
+                self.controller.tk.after(0, display_unhandled_error, e)
+        thread = threading.Thread(target=target_wrapper)
+        thread.start()
 
 
 class FrameInstallFinished(TkFrameBase):
@@ -50,8 +67,7 @@ class FrameUpdating(TkFrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        self._thread = threading.Thread(target=manager.update)
-        self._thread.start()
+        self.start_thread(target=manager.update)
 
     def progress_callback(self, progress: SolutionProgress):
         self._label.configure(text=progress.status.capitalize() + " ...")
@@ -82,8 +98,7 @@ class FrameInstalling(TkFrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        self._thread = threading.Thread(target=manager.install_part_solution)
-        self._thread.start()
+        self.start_thread(target=manager.install_part_solution)
 
     def progress_callback(self, progress: SolutionProgress):
         self._label.configure(text=progress.status.capitalize() + " ...")
