@@ -9,9 +9,10 @@ from .controller_base import ControllerBase
 from ..helper.traceback_info import ExceptionInfo
 
 
-class TkFrameBase(tk.Frame):
+class FrameBase(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
+        #tk.Frame.__init__(self, parent)
         assert isinstance(controller, ControllerTkinter)
         self.controller = controller
         self.manager = controller.manager
@@ -34,16 +35,17 @@ class TkFrameBase(tk.Frame):
 
         return wrapper
 
-    def my_start_thread(self, func, exception_handler=None):
-        """Same as threading.Thread().start()
-        but decorate func with self.hook_exceptions before running the thread
+    def tk_thread(self, func, exception_handler=None):
+        """Same as threading.Thread()
+        but decorate func with self.hook_exceptions
+        (Otherwise the exceptions which happen within a thread would be ignored)
         """
         target = self.hook_exceptions(func, exception_handler)
         thread = threading.Thread(target=target)
-        thread.start()
+        return thread
 
 
-class FrameInstallFinished(TkFrameBase):
+class FrameInstallFinished(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         label = tk.Label(self,
@@ -60,7 +62,7 @@ class FrameInstallFinished(TkFrameBase):
         self.controller.tk.quit()
 
 
-class FrameUpdating(TkFrameBase):
+class FrameUpdating(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         manager = self.manager
@@ -77,7 +79,8 @@ class FrameUpdating(TkFrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        self.my_start_thread(manager.update)
+        thread = self.tk_thread(manager.update)
+        thread.start()
 
     def progress_callback(self, progress: SolutionProgress):
         self._label.configure(text=progress.status.capitalize() + " ...")
@@ -90,7 +93,7 @@ class FrameUpdating(TkFrameBase):
         self.controller.tk.quit()
 
 
-class FrameInstalling(TkFrameBase):
+class FrameInstalling(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         manager = self.manager
@@ -108,7 +111,8 @@ class FrameInstalling(TkFrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        self.my_start_thread(manager.install_part_solution)
+        thread = self.tk_thread(manager.install_part_solution)
+        thread.start()
 
     def progress_callback(self, progress: SolutionProgress):
         self._label.configure(text=progress.status.capitalize() + " ...")
@@ -124,7 +128,7 @@ class FrameInstalling(TkFrameBase):
         self.controller.switch_frame(FrameInstallFinished)
 
 
-class FrameAskInstall(TkFrameBase):
+class FrameAskInstall(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         manager = self.manager
@@ -143,7 +147,7 @@ class FrameAskInstall(TkFrameBase):
         self.controller.switch_frame(FrameInstalling)
 
 
-class FrameAskUninstall(TkFrameBase):
+class FrameAskUninstall(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         manager = self.manager

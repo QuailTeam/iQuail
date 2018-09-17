@@ -46,6 +46,7 @@ class ControllerBase(ABC):
 
     @abstractmethod
     def exception_hook(self, traceback_info):
+        """All unhandled exceptions should be sent there"""
         pass
 
     @abstractmethod
