@@ -17,6 +17,12 @@ class TkFrameBase(tk.Frame):
         self.manager = controller.manager
 
     def hook_exceptions(self, func, exception_handler=None):
+        """Decorator: Hook exceptions from a function
+        If the function raises something, it will call exception_handler
+        in the main tk thread with the exception as parameter
+        By default the exception_handler will call self.controller.exception_hook
+        """
+        assert callable(func)
         if exception_handler is None:
             exception_handler = self.controller.exception_hook
 
@@ -28,11 +34,9 @@ class TkFrameBase(tk.Frame):
 
         return wrapper
 
-    def start_thread(self, func, exception_handler=None):
+    def my_start_thread(self, func, exception_handler=None):
         """Same as threading.Thread().start()
-        but if an error happen while the thread is running
-        the error will be sent to the exception_handler
-        exception_handler is by default self.controller.exception_hook
+        but decorate func with self.hook_exceptions before running the thread
         """
         target = self.hook_exceptions(func, exception_handler)
         thread = threading.Thread(target=target)
@@ -73,7 +77,7 @@ class FrameUpdating(TkFrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        self.start_thread(manager.update)
+        self.my_start_thread(manager.update)
 
     def progress_callback(self, progress: SolutionProgress):
         self._label.configure(text=progress.status.capitalize() + " ...")
@@ -104,7 +108,7 @@ class FrameInstalling(TkFrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        self.start_thread(manager.install_part_solution)
+        self.my_start_thread(manager.install_part_solution)
 
     def progress_callback(self, progress: SolutionProgress):
         self._label.configure(text=progress.status.capitalize() + " ...")
@@ -168,6 +172,10 @@ class ControllerTkinter(ControllerBase):
         # self.window = tk.Tk()
 
     def _init_tkinter(self):
+        def report_callback_exception(tk, exc, val, tb):
+            self.exception_hook(exc)
+
+        tk.Tk.report_callback_exception = report_callback_exception
         self.tk = tk.Tk()
         self.tk.minsize(width=500, height=200)
         self.tk.maxsize(width=500, height=200)
@@ -195,6 +203,7 @@ class ControllerTkinter(ControllerBase):
 
     def exception_hook(self, exception):
         showerror("Fatal exception", ExceptionInfo(exception).traceback_str)
+        self.tk.quit()
 
     def _start_install(self):
         self._start_tk(FrameAskInstall,
