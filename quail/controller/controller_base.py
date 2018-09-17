@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 from ..helper.traceback_info import ExceptionInfo
 
 
-def run_get_exception_info(function_to_run, *args, **kwargs):
-    """ Run function and returns TracebackInfo if an exception have been raised
+def run_return_exception(function_to_run, *args, **kwargs):
+    """ Run function and returns exception if an exception have been raised
     """
     try:
         return function_to_run(*args, **kwargs)
     except Exception as e:
-        return ExceptionInfo(e)
+        return e
 
 
 class ControllerBase(ABC):
@@ -27,25 +27,25 @@ class ControllerBase(ABC):
         return self.__manager
 
     def start_install(self):
-        ret = run_get_exception_info(self._start_install)
-        if isinstance(ret, ExceptionInfo):
-            self.exception_callback(ret)
+        ret = run_return_exception(self._start_install)
+        if isinstance(ret, Exception):
+            self.exception_hook(ret)
 
     def start_uninstall(self):
         """ Start uninstall
         """
-        ret = run_get_exception_info(self._start_uninstall)
-        if isinstance(ret, ExceptionInfo):
-            self.exception_callback(ret)
+        ret = run_return_exception(self._start_uninstall)
+        if isinstance(ret, Exception):
+            self.exception_hook(ret)
 
     def start_update(self):
         """ Start update"""
-        ret = run_get_exception_info(self._start_update)
-        if isinstance(ret, ExceptionInfo):
-            self.exception_callback(ret)
+        ret = run_return_exception(self._start_update)
+        if isinstance(ret, Exception):
+            self.exception_hook(ret)
 
     @abstractmethod
-    def exception_callback(self, traceback_info):
+    def exception_hook(self, traceback_info):
         pass
 
     @abstractmethod

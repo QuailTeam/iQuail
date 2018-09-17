@@ -16,27 +16,25 @@ class TkFrameBase(tk.Frame):
         self.controller = controller
         self.manager = controller.manager
 
-    def callback_on_exception(self, func, exception_handler=None):
-        def display_unhandled_error(exception):
-            self.controller.exception_callback(ExceptionInfo(exception))
-
+    def hook_exceptions(self, func, exception_handler=None):
         if exception_handler is None:
-            exception_handler = display_unhandled_error
+            exception_handler = self.controller.exception_hook
 
-        def target_wrapper():
+        def wrapper():
             try:
                 return func()
             except Exception as e:
                 self.controller.tk.after(0, exception_handler, e)
 
-        return target_wrapper
+        return wrapper
 
     def start_thread(self, func, exception_handler=None):
         """Same as threading.Thread().start()
         but if an error happen while the thread is running
         the error will be sent to the exception_handler
+        exception_handler is by default self.controller.exception_hook
         """
-        target = self.callback_on_exception(func, exception_handler)
+        target = self.hook_exceptions(func, exception_handler)
         thread = threading.Thread(target=target)
         thread.start()
 
@@ -195,8 +193,8 @@ class ControllerTkinter(ControllerBase):
         self._frame.grid(row=0, column=0, sticky="nsew")
         self._frame.tkraise()
 
-    def exception_callback(self, traceback_info):
-        showerror("Fatal exception", traceback_info.traceback_str)
+    def exception_hook(self, exception):
+        showerror("Fatal exception", ExceptionInfo(exception).traceback_str)
 
     def _start_install(self):
         self._start_tk(FrameAskInstall,

@@ -1,7 +1,8 @@
 import sys
 
-from quail.solution.solution_base import SolutionProgress
 from .controller_base import ControllerBase
+from ..solution.solution_base import SolutionProgress
+from ..helper.traceback_info import ExceptionInfo
 
 
 def _progress_callback(progress: SolutionProgress):
@@ -10,9 +11,9 @@ def _progress_callback(progress: SolutionProgress):
 
 
 class ControllerConsole(ControllerBase):
-    def exception_callback(self, stage, traceback_info):
-        print("[*] Unhandled error during %s" % stage, file=sys.stderr)
-        for line in traceback_info.traceback:
+    def exception_hook(self, exception):
+        print("[*] Fatal exception", file=sys.stderr)
+        for line in ExceptionInfo(exception).traceback:
             print(line, file=sys.stderr, end="")
 
     def _start_update(self):
