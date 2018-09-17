@@ -1,15 +1,15 @@
-import traceback
 from abc import ABC, abstractmethod
-from ..helper.traceback_info import TracebackInfo
+
+from ..helper.traceback_info import ExceptionInfo
 
 
-def run_get_traceback(function_to_run, *args, **kwargs):
+def run_get_exception_info(function_to_run, *args, **kwargs):
     """ Run function and returns TracebackInfo if an exception have been raised
     """
     try:
         return function_to_run(*args, **kwargs)
     except Exception as e:
-        return TracebackInfo(e)
+        return ExceptionInfo(e)
 
 
 class ControllerBase(ABC):
@@ -27,25 +27,25 @@ class ControllerBase(ABC):
         return self.__manager
 
     def start_install(self):
-        ret = run_get_traceback(self._start_install)
-        if isinstance(ret, TracebackInfo):
-            self.display_unhandled_error("install", ret)
+        ret = run_get_exception_info(self._start_install)
+        if isinstance(ret, ExceptionInfo):
+            self.exception_callback(ret)
 
     def start_uninstall(self):
         """ Start uninstall
         """
-        ret = run_get_traceback(self._start_uninstall)
-        if isinstance(ret, TracebackInfo):
-            self.display_unhandled_error("uninstall", ret)
+        ret = run_get_exception_info(self._start_uninstall)
+        if isinstance(ret, ExceptionInfo):
+            self.exception_callback(ret)
 
     def start_update(self):
         """ Start update"""
-        ret = run_get_traceback(self._start_update)
-        if isinstance(ret, TracebackInfo):
-            self.display_unhandled_error("update", ret)
+        ret = run_get_exception_info(self._start_update)
+        if isinstance(ret, ExceptionInfo):
+            self.exception_callback(ret)
 
     @abstractmethod
-    def display_unhandled_error(self, stage, traceback_info):
+    def exception_callback(self, traceback_info):
         pass
 
     @abstractmethod

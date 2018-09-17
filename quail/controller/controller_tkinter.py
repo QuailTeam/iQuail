@@ -6,7 +6,7 @@ import threading
 
 from quail.solution.solution_base import SolutionProgress
 from .controller_base import ControllerBase
-from ..helper.traceback_info import TracebackInfo
+from ..helper.traceback_info import ExceptionInfo
 
 
 class TkFrameBase(tk.Frame):
@@ -16,20 +16,28 @@ class TkFrameBase(tk.Frame):
         self.controller = controller
         self.manager = controller.manager
 
-    def start_thread(self, target):
-        """Same as threading.Thread().start()
-        but if an error happen while the thread is running
-        the error will be sent to the controller (and in the main thread)"""
+    def callback_on_exception(self, func, exception_handler=None):
         def display_unhandled_error(exception):
-            self.controller.display_unhandled_error(self.__class__.__name__,
-                                                    TracebackInfo(exception))
+            self.controller.exception_callback(ExceptionInfo(exception))
+
+        if exception_handler is None:
+            exception_handler = display_unhandled_error
 
         def target_wrapper():
             try:
-                target()
+                return func()
             except Exception as e:
-                self.controller.tk.after(0, display_unhandled_error, e)
-        thread = threading.Thread(target=target_wrapper)
+                self.controller.tk.after(0, exception_handler, e)
+
+        return target_wrapper
+
+    def start_thread(self, func, exception_handler=None):
+        """Same as threading.Thread().start()
+        but if an error happen while the thread is running
+        the error will be sent to the exception_handler
+        """
+        target = self.callback_on_exception(func, exception_handler)
+        thread = threading.Thread(target=target)
         thread.start()
 
 
@@ -67,7 +75,7 @@ class FrameUpdating(TkFrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        self.start_thread(target=manager.update)
+        self.start_thread(manager.update)
 
     def progress_callback(self, progress: SolutionProgress):
         self._label.configure(text=progress.status.capitalize() + " ...")
@@ -98,7 +106,7 @@ class FrameInstalling(TkFrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        self.start_thread(target=manager.install_part_solution)
+        self.start_thread(manager.install_part_solution)
 
     def progress_callback(self, progress: SolutionProgress):
         self._label.configure(text=progress.status.capitalize() + " ...")
@@ -187,8 +195,8 @@ class ControllerTkinter(ControllerBase):
         self._frame.grid(row=0, column=0, sticky="nsew")
         self._frame.tkraise()
 
-    def display_unhandled_error(self, stage, traceback_info):
-        showerror("Error during %s" % stage, traceback_info.traceback_str)
+    def exception_callback(self, traceback_info):
+        showerror("Fatal exception", traceback_info.traceback_str)
 
     def _start_install(self):
         self._start_tk(FrameAskInstall,

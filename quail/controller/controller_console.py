@@ -10,7 +10,7 @@ def _progress_callback(progress: SolutionProgress):
 
 
 class ControllerConsole(ControllerBase):
-    def display_unhandled_error(self, stage, traceback_info):
+    def exception_callback(self, stage, traceback_info):
         print("[*] Unhandled error during %s" % stage, file=sys.stderr)
         for line in traceback_info.traceback:
             print(line, file=sys.stderr, end="")

@@ -1,7 +1,9 @@
 import traceback
 
 
-class TracebackInfo:
+class ExceptionInfo:
+    """This class is just an helper to get information about an exception
+    """
     def __init__(self, exception):
         self.exception = exception
         self.traceback = traceback.format_tb(self.exception.__traceback__)
