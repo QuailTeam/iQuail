@@ -12,7 +12,6 @@ from ..helper.traceback_info import ExceptionInfo
 class FrameBase(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
-        #tk.Frame.__init__(self, parent)
         assert isinstance(controller, ControllerTkinter)
         self.controller = controller
         self.manager = controller.manager
