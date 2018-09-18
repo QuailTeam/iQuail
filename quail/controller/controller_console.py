@@ -11,25 +11,25 @@ def _progress_callback(progress: SolutionProgress):
 
 
 class ControllerConsole(ControllerBase):
-    def exception_hook(self, exception):
+    def _excepthook(self, exception_info):
         print("[*] Fatal exception", file=sys.stderr)
-        for line in ExceptionInfo(exception).traceback:
+        for line in exception_info.traceback:
             print(line, file=sys.stderr, end="")
 
-    def _start_update(self):
+    def start_update(self):
         self.manager.set_solution_progress_hook(_progress_callback)
         print("[*] New version available: %s" % self.manager.get_solution_version())
         self.manager.update()
         print("[*] Update successful!")
 
-    def _start_install(self):
+    def start_install(self):
         self.manager.set_solution_progress_hook(_progress_callback)
         print("[*] Installing %s" % self.manager.get_name())
         self.manager.install()
         print("[*] Installation successful!")
         self.press_to_exit()
 
-    def _start_uninstall(self):
+    def start_uninstall(self):
         rep = input("[*] Would you like to uninstall %s? (y/n): " % self.manager.get_name())
         if rep == 'y' or rep == 'Y':
             print("[*] Uninstalling %s ..." % self.manager.get_name())

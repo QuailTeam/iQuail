@@ -1,7 +1,8 @@
 import tkinter as tk
+import sys
 from tkinter.font import Font
 from tkinter import ttk
-from tkinter.messagebox import showinfo, showerror
+from tkinter.messagebox import showinfo, showerror, askretrycancel
 import threading
 
 from quail.solution.solution_base import SolutionProgress
@@ -23,14 +24,16 @@ class FrameBase(tk.Frame):
         By default the exception_handler will call self.controller.exception_hook
         """
         assert callable(func)
+
         if exception_handler is None:
-            exception_handler = self.controller.exception_hook
+            exception_handler = self.controller.excepthook
 
         def wrapper():
             try:
                 return func()
             except Exception as e:
-                self.controller.tk.after(0, exception_handler, e)
+                exctype, value, tb = sys.exc_info()
+                self.controller.tk.after(0, exception_handler, exctype, value, tb)
 
         return wrapper
 
@@ -175,10 +178,7 @@ class ControllerTkinter(ControllerBase):
         # self.window = tk.Tk()
 
     def _init_tkinter(self):
-        def report_callback_exception(tk, exc, val, tb):
-            self.exception_hook(exc)
-
-        tk.Tk.report_callback_exception = report_callback_exception
+        tk.Tk.report_callback_exception = self.excepthook
         self.tk = tk.Tk()
         self.tk.minsize(width=500, height=200)
         self.tk.maxsize(width=500, height=200)
@@ -204,18 +204,18 @@ class ControllerTkinter(ControllerBase):
         self._frame.grid(row=0, column=0, sticky="nsew")
         self._frame.tkraise()
 
-    def exception_hook(self, exception):
-        showerror("Fatal exception", ExceptionInfo(exception).traceback_str)
+    def _excepthook(self, exception_info):
+        showerror("Fatal exception", exception_info.traceback_str)
         self.tk.quit()
 
-    def _start_install(self):
+    def start_install(self):
         self._start_tk(FrameAskInstall,
                        "%s installer" % self.manager.get_name())
 
-    def _start_uninstall(self):
+    def start_uninstall(self):
         self._start_tk(FrameAskUninstall,
                        "%s uninstall" % self.manager.get_name())
 
-    def _start_update(self):
+    def start_update(self):
         self._start_tk(FrameUpdating,
                        "%s update" % self.manager.get_name())
