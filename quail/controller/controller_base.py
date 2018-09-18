@@ -19,7 +19,7 @@ class ControllerBase(ABC):
         return self.__manager
 
     def excepthook(self, exctype, value, tb):
-        self._excepthook(ExceptionInfo(value))
+        self._excepthook(ExceptionInfo(exctype, value, tb))
 
     @abstractmethod
     def _excepthook(self, exception_info):
