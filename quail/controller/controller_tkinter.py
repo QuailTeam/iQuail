@@ -67,9 +67,8 @@ class FrameInstallFinished(FrameBase):
 class FrameUpdating(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
-        manager = self.manager
-        manager.set_solution_progress_hook(self.progress_callback)
-        manager.set_install_part_solution_hook(self.solution_finished_callback)
+        self.manager.set_solution_progress_hook(self.progress_callback)
+        self.manager.set_install_part_solution_hook(self.solution_finished_callback)
 
         self._label = tk.Label(self, text="Updating...", font=controller.title_font)
         self._label.pack(side="top", fill="x", pady=10)
@@ -81,7 +80,7 @@ class FrameUpdating(FrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        thread = self.tk_thread(manager.update)
+        thread = self.tk_thread(self.manager.update)
         thread.start()
 
     def progress_callback(self, progress: SolutionProgress):
@@ -98,10 +97,9 @@ class FrameUpdating(FrameBase):
 class FrameInstalling(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
-        manager = self.manager
-        manager.set_solution_progress_hook(self.progress_callback)
-        manager.set_install_finished_hook(self.install_finished_callback)
-        manager.set_install_part_solution_hook(self.solution_finished_callback)
+        self.manager.set_solution_progress_hook(self.progress_callback)
+        self.manager.set_install_finished_hook(self.install_finished_callback)
+        self.manager.set_install_part_solution_hook(self.solution_finished_callback)
 
         self._label = tk.Label(self, text="Installing...", font=controller.title_font)
         self._label.pack(side="top", fill="x", pady=10)
@@ -113,7 +111,7 @@ class FrameInstalling(FrameBase):
                                              mode='determinate',
                                              variable=self.progress_var)
         self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
-        thread = self.tk_thread(manager.install_part_solution)
+        thread = self.tk_thread(self.manager.install_part_solution)
         thread.start()
 
     def progress_callback(self, progress: SolutionProgress):
@@ -133,13 +131,11 @@ class FrameInstalling(FrameBase):
 class FrameAskInstall(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
-        manager = self.manager
-
         label = tk.Label(self,
-                         text="%s installer\nWould you like to install this program?" % manager.get_name(),
+                         text="%s installer\nWould you like to install this program?" %
+                              self.manager.get_name(),
                          font=controller.title_font)
         label.pack(side="top", fill="x", pady=10, padx=10)
-
         button = tk.Button(self,
                            text="Install!",
                            command=self._run_install)
@@ -152,13 +148,11 @@ class FrameAskInstall(FrameBase):
 class FrameAskUninstall(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
-        manager = self.manager
-
         label = tk.Label(self,
-                         text="%s installer\nWould you like to uninstall this program?" % manager.get_name(),
+                         text="%s installer\nWould you like to uninstall this program?" %
+                              self.manager.get_name(),
                          font=controller.title_font)
         label.pack(side="top", fill="x", pady=10, padx=10)
-
         button = tk.Button(self,
                            text="Uninstall!",
                            command=self._run_uninstall)

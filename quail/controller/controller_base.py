@@ -7,6 +7,8 @@ class ControllerBase(ABC):
     __manager = None
 
     def setup(self, manager):
+        """Setup controller
+        """
         if manager is None:
             raise AssertionError("manager can't be None")
         self.__manager = manager
@@ -23,6 +25,10 @@ class ControllerBase(ABC):
 
     @abstractmethod
     def _excepthook(self, exception_info):
+        """This hook will be called if any unhandled exception happen
+        You shouldn't call this function yourself:
+        If you want to add callback on this hook, add them on self.excepthook instead
+        """
         pass
 
     @abstractmethod
