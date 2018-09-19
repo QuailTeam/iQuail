@@ -47,6 +47,44 @@ class FrameBase(tk.Frame):
         return thread
 
 
+class FrameValidate(FrameBase):
+    def __init__(self, parent, controller, question, hook, positive_str="yes"):
+        super().__init__(parent, controller)
+        label = tk.Label(self,
+                         text=question,
+                         font=controller.title_font)
+        label.pack(side="top", fill="x", pady=10, padx=10)
+        button = tk.Button(self,
+                           text=positive_str,
+                           command=hook)
+        button.pack(side="bottom", padx=20, pady=20)
+
+
+class FrameValidateInstall(FrameValidate):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller,
+                         question="%s installer\nWould you like to install this program?" %
+                                  controller.manager.get_name(),
+                         hook=self._run_install,
+                         positive_str="Install!")
+
+    def _run_install(self):
+        self.controller.switch_frame(FrameInstalling)
+
+
+class FrameValidateUninstall(FrameValidate):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller,
+                         question="%s installer\nWould you like to uninstall this program?" %
+                                  controller.manager.get_name(),
+                         hook=self._run_uninstall,
+                         positive_str="Uninstall!")
+
+    def _run_uninstall(self):
+        self.manager.uninstall()
+        self.controller.tk.quit()
+
+
 class FrameInstallFinished(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
@@ -128,41 +166,6 @@ class FrameInstalling(FrameBase):
         self.controller.switch_frame(FrameInstallFinished)
 
 
-class FrameAskInstall(FrameBase):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller)
-        label = tk.Label(self,
-                         text="%s installer\nWould you like to install this program?" %
-                              self.manager.get_name(),
-                         font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10, padx=10)
-        button = tk.Button(self,
-                           text="Install!",
-                           command=self._run_install)
-        button.pack(side="bottom", padx=20, pady=20)
-
-    def _run_install(self):
-        self.controller.switch_frame(FrameInstalling)
-
-
-class FrameAskUninstall(FrameBase):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller)
-        label = tk.Label(self,
-                         text="%s installer\nWould you like to uninstall this program?" %
-                              self.manager.get_name(),
-                         font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10, padx=10)
-        button = tk.Button(self,
-                           text="Uninstall!",
-                           command=self._run_uninstall)
-        button.pack(side="bottom", padx=20, pady=20)
-
-    def _run_uninstall(self):
-        self.manager.uninstall()
-        self.controller.tk.quit()
-
-
 class ControllerTkinter(ControllerBase):
     def __init__(self):
         self.tk = None
@@ -203,11 +206,11 @@ class ControllerTkinter(ControllerBase):
         self.tk.quit()
 
     def start_install(self):
-        self._start_tk(FrameAskInstall,
+        self._start_tk(FrameValidateInstall,
                        "%s installer" % self.manager.get_name())
 
     def start_uninstall(self):
-        self._start_tk(FrameAskUninstall,
+        self._start_tk(FrameValidateUninstall,
                        "%s uninstall" % self.manager.get_name())
 
     def start_update(self):
