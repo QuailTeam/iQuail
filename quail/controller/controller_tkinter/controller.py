@@ -2,13 +2,12 @@ import tkinter as tk
 import sys
 from tkinter.font import Font
 from tkinter import ttk
-from tkinter.messagebox import showinfo, showerror, askretrycancel
 import threading
 
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
 from .frames import FrameInProgress, FrameValidate
-
+from .errorbox import ErrorBox
 
 class FrameValidateInstall(FrameValidate):
     def __init__(self, parent, controller):
@@ -119,7 +118,7 @@ class ControllerTkinter(ControllerBase):
         self._frame.tkraise()
 
     def _excepthook(self, exception_info):
-        showerror("Fatal exception", exception_info.traceback_str)
+        ErrorBox(self.tk, exception_info.traceback_str).show()
         self.tk.quit()
 
     def start_install(self):
