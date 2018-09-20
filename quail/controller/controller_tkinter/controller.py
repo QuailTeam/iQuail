@@ -22,47 +22,6 @@ class FrameValidateInstall(FrameValidate):
         self.controller.switch_frame(FrameInstalling)
 
 
-class FrameValidateUninstall(FrameValidate):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller,
-                         question="%s installer\nWould you like to uninstall this program?" %
-                                  controller.manager.get_name(),
-                         hook=self._run_uninstall,
-                         positive_str="Uninstall!")
-
-    def _run_uninstall(self):
-        self.manager.uninstall()
-        self.controller.tk.quit()
-
-
-class FrameInstallFinished(FrameValidate):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller,
-                         question="%s successfully installed!" %
-                                  controller.manager.get_name(),
-                         hook=self._exit,
-                         positive_str="exit")
-
-    def _exit(self):
-        self.controller.tk.quit()
-
-
-class FrameUpdating(FrameInProgress):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller, "Updating...")
-        self.manager.set_solution_progress_hook(self.progress_callback)
-        self.manager.set_install_part_solution_hook(self.solution_finished_callback)
-        thread = self.tk_thread(self.manager.update)
-        thread.start()
-
-    def progress_callback(self, progress: SolutionProgress):
-        self.update_label(progress.status.capitalize() + " ...")
-        self.update_progress(progress.percent)
-
-    def solution_finished_callback(self):
-        self.controller.tk.quit()
-
-
 class FrameInstalling(FrameInProgress):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, "Installing...")
@@ -81,6 +40,47 @@ class FrameInstalling(FrameInProgress):
 
     def install_finished_callback(self):
         self.controller.switch_frame(FrameInstallFinished)
+
+
+class FrameInstallFinished(FrameValidate):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller,
+                         question="%s successfully installed!" %
+                                  controller.manager.get_name(),
+                         hook=self._exit,
+                         positive_str="exit")
+
+    def _exit(self):
+        self.controller.tk.quit()
+
+
+class FrameValidateUninstall(FrameValidate):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller,
+                         question="%s installer\nWould you like to uninstall this program?" %
+                                  controller.manager.get_name(),
+                         hook=self._run_uninstall,
+                         positive_str="Uninstall!")
+
+    def _run_uninstall(self):
+        self.manager.uninstall()
+        self.controller.tk.quit()
+
+
+class FrameUpdating(FrameInProgress):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller, "Updating...")
+        self.manager.set_solution_progress_hook(self.progress_callback)
+        self.manager.set_install_part_solution_hook(self.solution_finished_callback)
+        thread = self.tk_thread(self.manager.update)
+        thread.start()
+
+    def progress_callback(self, progress: SolutionProgress):
+        self.update_label(progress.status.capitalize() + " ...")
+        self.update_progress(progress.percent)
+
+    def solution_finished_callback(self):
+        self.controller.tk.quit()
 
 
 class ControllerTkinter(ControllerBase):
