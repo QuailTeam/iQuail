@@ -1,5 +1,6 @@
 import tkinter as tk
 import sys
+from abc import ABC, abstractmethod
 from tkinter.font import Font
 from tkinter import ttk
 from tkinter.messagebox import showinfo, showerror, askretrycancel
@@ -39,6 +40,7 @@ class FrameBase(tk.Frame):
         """
         target = self.hook_exceptions(func, exception_handler)
         thread = threading.Thread(target=target)
+        thread.daemon = True
         return thread
 
 
@@ -87,3 +89,44 @@ class FrameInProgress(FrameBase):
         if percent > 100:
             percent = 100
         self.progress_var.set(percent)
+
+
+class FrameConfigure(FrameBase):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        label = tk.Label(self,
+                         text="Install configuration",
+                         font=controller.title_font)
+        label.pack(side="top", fill="x", padx=10, pady=10)
+        # self.var = self.add_combobox("Select cmder version:", ('Full', 'Mini'))
+        button = tk.Button(self,
+                           text="next",
+                           command=self.next_pressed)
+        button.pack(side="bottom", padx=20, pady=5, anchor=tk.CENTER)
+
+    def add_combobox(self, hint, choices):
+        """Add combox box (drop list choices)
+        :param hint: Hint for the user
+        :param choices: tuple of choices in the combo box (strings)
+        :return: StringVar to get the result of the choice
+        """
+        choice_frame = tk.Frame(self)
+        choice_frame.pack(side=tk.TOP, fill=tk.X)
+        label = tk.Label(choice_frame,
+                         text=hint,
+                         font=self.controller.medium_font)
+        label.pack(side=tk.LEFT, fill=tk.X, expand=tk.YES, padx=10)
+        choice_var = tk.StringVar()
+        choice_var.set(choices[0])
+        option_menu = ttk.Combobox(choice_frame,
+                                   textvariable=choice_var,
+                                   values=choices,
+                                   state="readonly")
+        option_menu.pack(side=tk.RIGHT, fill=tk.X, expand=tk.YES, padx=10)
+        option_menu.set(choices[0])
+        return choice_var
+
+    @abstractmethod
+    def next_pressed(self):
+        # self.controller.switch_frame(FrameInstalling)
+        pass

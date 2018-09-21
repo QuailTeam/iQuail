@@ -7,7 +7,7 @@ import threading
 
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
-from .frames import FrameInProgress, FrameValidate
+from .frames import FrameInProgress, FrameValidate, FrameBase
 
 
 class FrameValidateInstall(FrameValidate):
@@ -97,6 +97,7 @@ class ControllerTkinter(ControllerBase):
         self.tk.minsize(width=500, height=200)
         self.tk.maxsize(width=500, height=200)
         self.title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
+        self.medium_font = Font(family='Helvetica', size=12, weight="bold")
         self._base_frame = tk.Frame()
         self._base_frame.pack(side="top", fill="both", expand=True)
         self._base_frame.grid_rowconfigure(0, weight=1)
