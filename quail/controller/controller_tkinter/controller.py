@@ -7,18 +7,17 @@ import threading
 
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
-from .frames import FrameInProgress, FrameValidate, FrameBase
+from .frames import FrameInProgress, FrameAccept, FrameBase
 
 
-class FrameValidateInstall(FrameValidate):
+class FrameAcceptInstall(FrameAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          question="%s installer\nWould you like to install this program?" %
                                   controller.manager.get_name(),
-                         hook=self._run_install,
                          positive_str="Install!")
 
-    def _run_install(self):
+    def accept(self):
         self.controller.switch_frame(FrameInstalling)
 
 
@@ -42,27 +41,25 @@ class FrameInstalling(FrameInProgress):
         self.controller.switch_frame(FrameInstallFinished)
 
 
-class FrameInstallFinished(FrameValidate):
+class FrameInstallFinished(FrameAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          question="%s successfully installed!" %
                                   controller.manager.get_name(),
-                         hook=self._exit,
                          positive_str="exit")
 
-    def _exit(self):
+    def accept(self):
         self.controller.tk.quit()
 
 
-class FrameValidateUninstall(FrameValidate):
+class FrameAcceptUninstall(FrameAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          question="%s installer\nWould you like to uninstall this program?" %
                                   controller.manager.get_name(),
-                         hook=self._run_uninstall,
                          positive_str="Uninstall!")
 
-    def _run_uninstall(self):
+    def accept(self):
         self.manager.uninstall()
         self.controller.tk.quit()
 
@@ -124,11 +121,11 @@ class ControllerTkinter(ControllerBase):
         self.tk.quit()
 
     def start_install(self):
-        self._start_tk(FrameValidateInstall,
+        self._start_tk(FrameAcceptInstall,
                        "%s installer" % self.manager.get_name())
 
     def start_uninstall(self):
-        self._start_tk(FrameValidateUninstall,
+        self._start_tk(FrameAcceptUninstall,
                        "%s uninstall" % self.manager.get_name())
 
     def start_update(self):

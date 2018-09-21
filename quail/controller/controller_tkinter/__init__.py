@@ -1,2 +1,2 @@
 from .controller import ControllerTkinter
-from .frames import FrameInProgress, FrameValidate, FrameBase
+from .frames import FrameInProgress, FrameAccept, FrameBase

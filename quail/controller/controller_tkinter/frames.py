@@ -44,15 +44,14 @@ class FrameBase(tk.Frame):
         return thread
 
 
-class FrameValidate(FrameBase):
+class FrameAccept(FrameBase):
     """Frame to ask user to validate an action"""
 
-    def __init__(self, parent, controller, question, hook, positive_str="yes"):
+    def __init__(self, parent, controller, question, positive_str="yes"):
         """
         :param parent: tkinter parent
         :param controller: self explanatory
         :param question: question string for the user
-        :param hook: this hook will be called if user accept
         :param positive_str: positive answer string
         """
         super().__init__(parent, controller)
@@ -62,8 +61,13 @@ class FrameValidate(FrameBase):
         label.pack(side="top", fill="x", pady=10, padx=10)
         button = tk.Button(self,
                            text=positive_str,
-                           command=hook)
+                           command=self.accept)
         button.pack(side="bottom", padx=20, pady=20)
+
+    @abstractmethod
+    def accept(self):
+        """This method will be called when user accept/validate"""
+        pass
 
 
 class FrameInProgress(FrameBase):
