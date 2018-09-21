@@ -18,7 +18,10 @@ class FrameAcceptInstall(FrameAccept):
                          positive_str="Install!")
 
     def accept(self):
-        self.controller.switch_frame(FrameInstalling)
+        if self.controller.install_custom_frame is not None:
+            self.controller.switch_frame(self.controller.install_custom_frame)
+        else:
+            self.controller.switch_frame(FrameInstalling)
 
 
 class FrameInstalling(FrameInProgress):
@@ -81,12 +84,16 @@ class FrameUpdating(FrameInProgress):
 
 
 class ControllerTkinter(ControllerBase):
-    def __init__(self):
+    def __init__(self, install_custom_frame=None):
+        """ Controller tkinter
+        :param install_custom_frame: An instance of FrameBase, this frame will be called during installation
+        """
         self.tk = None
         self._base_frame = None
         self._frame = None
         self.title_font = None
-        # self.window = tk.Tk()
+        assert install_custom_frame is None or issubclass(install_custom_frame, FrameBase)
+        self.install_custom_frame = install_custom_frame
 
     def _init_tkinter(self):
         tk.Tk.report_callback_exception = self.excepthook
@@ -105,6 +112,10 @@ class ControllerTkinter(ControllerBase):
         self.tk.title(title)
         self.switch_frame(frame)
         self.tk.mainloop()
+
+    def switch_to_install_frame(self):
+        """Switch to install frame (begin installation)"""
+        self.switch_frame(FrameInstalling)
 
     def switch_frame(self, frame_class, **kwargs):
         assert self.manager is not None
