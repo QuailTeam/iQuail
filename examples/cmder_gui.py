@@ -6,7 +6,7 @@ if not quail.helper.OS_WINDOWS:
     raise AssertionError("This test solution is windows only")
 
 
-class FrameSelectMiniOrFull(quail.controller_tkinter.FrameConfigure):
+class FrameSelectMiniOrFull(quail.controller_tkinter.FrameBaseConfigure):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         self.version_selected = self.add_combobox("Which version would you like to install?",

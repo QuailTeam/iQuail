@@ -7,10 +7,10 @@ import threading
 
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
-from .frames import FrameInProgress, FrameAccept, FrameBase
+from .frames import FrameBaseInProgress, FrameBaseAccept, FrameBase
 
 
-class FrameAcceptInstall(FrameAccept):
+class FrameAcceptInstall(FrameBaseAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          question="%s installer\nWould you like to install this program?" %
@@ -24,7 +24,7 @@ class FrameAcceptInstall(FrameAccept):
             self.controller.switch_frame(FrameInstalling)
 
 
-class FrameInstalling(FrameInProgress):
+class FrameInstalling(FrameBaseInProgress):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, "Installing...")
         self.manager.set_solution_progress_hook(self.progress_callback)
@@ -44,7 +44,7 @@ class FrameInstalling(FrameInProgress):
         self.controller.switch_frame(FrameInstallFinished)
 
 
-class FrameInstallFinished(FrameAccept):
+class FrameInstallFinished(FrameBaseAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          question="%s successfully installed!" %
@@ -55,7 +55,7 @@ class FrameInstallFinished(FrameAccept):
         self.controller.tk.quit()
 
 
-class FrameAcceptUninstall(FrameAccept):
+class FrameAcceptUninstall(FrameBaseAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          question="%s installer\nWould you like to uninstall this program?" %
@@ -67,7 +67,7 @@ class FrameAcceptUninstall(FrameAccept):
         self.controller.tk.quit()
 
 
-class FrameUpdating(FrameInProgress):
+class FrameUpdating(FrameBaseInProgress):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, "Updating...")
         self.manager.set_solution_progress_hook(self.progress_callback)

@@ -44,7 +44,7 @@ class FrameBase(tk.Frame):
         return thread
 
 
-class FrameAccept(FrameBase):
+class FrameBaseAccept(FrameBase):
     """Frame to ask user to validate an action"""
 
     def __init__(self, parent, controller, question, positive_str="yes"):
@@ -70,7 +70,7 @@ class FrameAccept(FrameBase):
         pass
 
 
-class FrameInProgress(FrameBase):
+class FrameBaseInProgress(FrameBase):
     def __init__(self, parent, controller, label_str):
         super().__init__(parent, controller)
         self._label = tk.Label(self, text=label_str, font=controller.title_font)
@@ -95,7 +95,7 @@ class FrameInProgress(FrameBase):
         self.progress_var.set(percent)
 
 
-class FrameConfigure(FrameBase):
+class FrameBaseConfigure(FrameBase):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         label = tk.Label(self,
