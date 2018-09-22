@@ -92,25 +92,26 @@ class ControllerTkinter(ControllerBase):
         self._base_frame = None
         self._frame = None
         self.title_font = None
+        tk.Tk.report_callback_exception = self.excepthook
         assert install_custom_frame is None or issubclass(install_custom_frame, FrameBase)
         self.install_custom_frame = install_custom_frame
 
-    def _init_tkinter(self):
-        tk.Tk.report_callback_exception = self.excepthook
+    def _start_tk(self, frame, title):
+        # Setup Tk window
         self.tk = tk.Tk()
         self.tk.minsize(width=500, height=200)
         self.tk.maxsize(width=500, height=200)
-        self.title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
-        self.medium_font = Font(family='Helvetica', size=12, weight="bold")
-        self._base_frame = tk.Frame()
-        self._base_frame.pack(side="top", fill="both", expand=True)
-        self._base_frame.grid_rowconfigure(0, weight=1)
-        self._base_frame.grid_columnconfigure(0, weight=1)
-
-    def _start_tk(self, frame, title):
-        self._init_tkinter()
         self.tk.title(title)
+        # Setup base frame
+        self.root_frame = tk.Frame()
+        self.root_frame.pack(side="top", fill="both", expand=True)
+        self.root_frame.grid_rowconfigure(0, weight=1)
+        self.root_frame.grid_columnconfigure(0, weight=1)
+        self.title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
+        self.medium_font = Font(family='Helvetica', size=12)
+        # Select frame
         self.switch_frame(frame)
+        # Start mainloop
         self.tk.mainloop()
 
     def switch_to_install_frame(self):
@@ -121,7 +122,7 @@ class ControllerTkinter(ControllerBase):
         assert self.manager is not None
         if self._frame is not None:
             self._frame.destroy()
-        self._frame = frame_class(parent=self._base_frame,
+        self._frame = frame_class(parent=self.root_frame,
                                   controller=self,
                                   **kwargs)
         self._frame.grid(row=0, column=0, sticky="nsew")
