@@ -7,7 +7,7 @@ import threading
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
 from .frames import FrameInProgress, FrameValidate
-from .errorbox import ErrorBox
+from .error_reporter import ErrorReporter
 
 class FrameValidateInstall(FrameValidate):
     def __init__(self, parent, controller):
@@ -118,7 +118,8 @@ class ControllerTkinter(ControllerBase):
         self._frame.tkraise()
 
     def _excepthook(self, exception_info):
-        ErrorBox(self.tk, exception_info.traceback_str).show()
+        reporter = ErrorReporter("Automatic bug report", exception_info.traceback_str)
+        reporter.show()
         self.tk.quit()
 
     def start_install(self):
