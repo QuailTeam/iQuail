@@ -33,6 +33,7 @@ class Manager:
         with open(self._get_version_file_path(), "w") as f:
             f.write(version)
 
+    # Hooks
     def set_solution_progress_hook(self, hook):
         """Set solution update progress hook
         """
