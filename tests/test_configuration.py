@@ -7,6 +7,10 @@ from quail.helper import Configuration
 class TestConfiguration(BaseTestCase):
     def test_set_get_1(self):
         c = Configuration(self.tmp("test.ini"))
-        c.set("test", 1)
+        c.set("test", "test_value")
         c = Configuration(self.tmp("test.ini"))
-        self.assertEqual(c.get("test"), 1)
+        self.assertEqual(c.get("test"), "test_value")
+
+    def test_no_value(self):
+        c = Configuration(self.tmp("test.ini"))
+        self.assertEqual(c.get("test", default=1), 1)

@@ -1,5 +1,4 @@
 import configparser
-import pickle
 from pathlib import Path
 
 
@@ -21,12 +20,12 @@ class Configuration:
 
     def set(self, name, value):
         assert value is not None
-        self._config[name] = pickle.dumps(value)
+        self._config[name] = value
         self._save()
 
     def get(self, name, default=None):
         value = self._config.get(name, None)
         if value is not None:
-            return pickle.loads(value)
+            return value
         return default
 
