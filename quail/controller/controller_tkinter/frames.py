@@ -13,33 +13,30 @@ class FrameBase(tk.Frame):
         self.controller = controller
         self.manager = controller.manager
 
-    def hook_exceptions(self, func, exception_handler=None):
-        """Decorator: Hook exceptions from a function
-        If the function raises something, it will call exception_handler
-        in the main tk thread with the exception as parameter
-        By default the exception_handler will call self.controller.exception_hook
+    def tk_thread(self, target, exception_handler=None, complete_handler=None):
+        """Same as threading.Thread() BUT:
+        - If the function raises something, it will call exception_handler
+            in the main tk thread with the exception as parameter
+            By default the exception_handler will call self.controller.exception_hook
+            (Otherwise the exceptions which happen within a thread would be ignored)
+        - When the thread is completed, it will call complete_handler in the main tk thread
         """
-        assert callable(func)
+        assert callable(target)
 
         if exception_handler is None:
             exception_handler = self.controller.excepthook
 
         def wrapper():
             try:
-                return func()
+                ret = target()
+                if complete_handler is not None:
+                    self.controller.tk.after(0, complete_handler)
+                return ret
             except Exception as e:
                 exctype, value, tb = sys.exc_info()
                 self.controller.tk.after(0, exception_handler, exctype, value, tb)
 
-        return wrapper
-
-    def tk_thread(self, func, exception_handler=None):
-        """Same as threading.Thread()
-        but decorate func with self.hook_exceptions
-        (Otherwise the exceptions which happen within a thread would be ignored)
-        """
-        target = self.hook_exceptions(func, exception_handler)
-        thread = threading.Thread(target=target)
+        thread = threading.Thread(target=wrapper)
         thread.daemon = True
         return thread
 
