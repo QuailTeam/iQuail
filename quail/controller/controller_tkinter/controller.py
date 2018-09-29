@@ -28,19 +28,16 @@ class FrameInstalling(FrameBaseInProgress):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, "Installing...")
         self.manager.set_solution_progress_hook(self.progress_callback)
-        self.manager.set_install_finished_hook(self.install_finished_callback)
-        self.manager.set_install_part_solution_hook(self.solution_finished_callback)
-        thread = self.tk_thread(self.manager.install_part_solution)
+        thread = self.tk_thread(self.manager.install_part_solution,
+                                complete_hook=self.solution_finish_callback)
         thread.start()
 
     def progress_callback(self, progress: SolutionProgress):
         self.update_label(progress.status.capitalize() + " ...")
         self.update_progress(progress.percent)
 
-    def solution_finished_callback(self):
-        self.controller.tk.after(0, self.manager.install_part_register)
-
-    def install_finished_callback(self):
+    def solution_finish_callback(self):
+        self.manager.install_part_register()
         self.controller.switch_frame(FrameInstallFinished)
 
 
@@ -71,15 +68,15 @@ class FrameUpdating(FrameBaseInProgress):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, "Updating...")
         self.manager.set_solution_progress_hook(self.progress_callback)
-        self.manager.set_install_part_solution_hook(self.solution_finished_callback)
-        thread = self.tk_thread(self.manager.update)
+        thread = self.tk_thread(self.manager.update,
+                                complete_hook=self.solution_finish_callback)
         thread.start()
 
     def progress_callback(self, progress: SolutionProgress):
         self.update_label(progress.status.capitalize() + " ...")
         self.update_progress(progress.percent)
 
-    def solution_finished_callback(self):
+    def solution_finish_callback(self):
         self.controller.tk.quit()
 
 

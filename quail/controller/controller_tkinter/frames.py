@@ -13,7 +13,7 @@ class FrameBase(tk.Frame):
         self.controller = controller
         self.manager = controller.manager
 
-    def tk_thread(self, target, exception_handler=None, complete_handler=None):
+    def tk_thread(self, target, exception_hook=None, complete_hook=None):
         """Same as threading.Thread() BUT:
         - If the function raises something, it will call exception_handler
             in the main tk thread with the exception as parameter
@@ -23,18 +23,18 @@ class FrameBase(tk.Frame):
         """
         assert callable(target)
 
-        if exception_handler is None:
-            exception_handler = self.controller.excepthook
+        if exception_hook is None:
+            exception_hook = self.controller.excepthook
 
         def wrapper():
             try:
                 ret = target()
-                if complete_handler is not None:
-                    self.controller.tk.after(0, complete_handler)
+                if complete_hook is not None:
+                    self.controller.tk.after(0, complete_hook)
                 return ret
             except Exception as e:
                 exctype, value, tb = sys.exc_info()
-                self.controller.tk.after(0, exception_handler, exctype, value, tb)
+                self.controller.tk.after(0, exception_hook, exctype, value, tb)
 
         thread = threading.Thread(target=wrapper)
         thread.daemon = True
