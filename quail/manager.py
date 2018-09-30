@@ -5,6 +5,7 @@ import sys
 import typing
 
 from . import helper
+from .constants import Constants
 from .solution.solutioner import Solutioner
 
 
@@ -17,7 +18,7 @@ class Manager:
                                       self._installer.get_solution_path())
 
     def _get_version_file_path(self):
-        return self._installer.get_install_path("solution_version.txt")
+        return self._installer.get_install_path(Constants.VERSION_FILE)
 
     def _chmod_binary(self):
         binary = self._installer.binary
