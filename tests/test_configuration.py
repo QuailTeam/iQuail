@@ -1,7 +1,7 @@
 import quail
 import unittest
 from .base_test_case import BaseTestCase
-from quail.helper import Configuration
+from quail.helper import Configuration, ConfVar
 
 
 class TestConfiguration(BaseTestCase):
@@ -12,6 +12,15 @@ class TestConfiguration(BaseTestCase):
         c = Configuration(self.tmp("test.ini"))
         c.read()
         self.assertEqual(c.get("test"), "test_value")
+
+        # Test apply:
+        class Test:
+            def __init__(self):
+                self.conf_var = ConfVar("test")
+
+        t = Test()
+        c.apply(t)
+        self.assertEqual(t.conf_var, "test_value")
 
     def test_no_value(self):
         c = Configuration(self.tmp("test.ini"))
