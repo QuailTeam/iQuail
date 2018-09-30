@@ -21,7 +21,7 @@ class FrameSelectMiniOrFull(quail.controller_tkinter.FrameBaseConfigure):
 
 
 quail.run(
-    solution=quail.SolutionGitHub("cmder_mini.zip", "https://github.com/cmderdev/cmder"),
+    solution=quail.SolutionGitHub(quail.ConfVar("zip_url"), "https://github.com/cmderdev/cmder"),
     installer=quail.Installer(
         name='Cmder',
         icon='Cmder.exe',

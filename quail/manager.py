@@ -21,6 +21,12 @@ class Manager:
         )
         if self.is_installed():
             self.config.read()
+            self.apply_conf()
+
+    def apply_conf(self):
+        """Apply configuration on Manager's arguments
+        (replace ConfVars with their actual values"""
+        self.config.apply(self._solution, self._installer)
 
     def _get_version_file_path(self):
         return self._installer.get_install_path(Constants.VERSION_FILE)
@@ -82,6 +88,7 @@ class Manager:
     def install_part_solution(self):
         """part 1 of the installation will install the solution
         """
+        self.apply_conf()  # because conf have been just selected
         self._solutioner.install()
         self._set_solution_installed_version()
 
