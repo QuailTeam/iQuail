@@ -21,7 +21,7 @@ class Solutioner:
         self._solution.open()
         try:
             if os.path.exists(self.dest()):
-                shutil.rmtree(self.dest())
+                shutil.rmtree(self.dest(), ignore_errors=True)  # TODO ignore only root
             os.makedirs(self.dest(), 0o777, True)
             for root, dirs, files in self._solution.walk():
                 for _dir in dirs:
@@ -42,4 +42,4 @@ class Solutioner:
 
     def uninstall(self):
         if self.installed():
-            shutil.rmtree(self.dest())
+            shutil.rmtree(self.dest(), ignore_errors=True)  # TODO ignore only root
