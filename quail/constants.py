@@ -6,4 +6,5 @@ class Constants:
     CHECKSUMS_FILE = ".integrity.json"
     INTEGRITY_IGNORE_FILE = ".integrity_ignore"
     VERSION_FILE = "solution_version.txt"
+    CONFIG_FILE = "config.ini"
 

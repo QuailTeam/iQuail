@@ -14,8 +14,10 @@ class FrameSelectMiniOrFull(quail.controller_tkinter.FrameBaseConfigure):
 
     def next_pressed(self):
         print(self.version_selected.get())
+        version = self.version_selected.get().lower()
+        zip = "cmder_mini.zip" if version == "mini" else "cmder.zip"
+        self.manager.config.set("zip_url", zip)
         self.controller.switch_to_install_frame()
-
 
 quail.run(
     solution=quail.SolutionGitHub("cmder_mini.zip", "https://github.com/cmderdev/cmder"),

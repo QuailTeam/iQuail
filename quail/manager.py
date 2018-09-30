@@ -16,6 +16,11 @@ class Manager:
         self._builder = builder
         self._solutioner = Solutioner(self._solution,
                                       self._installer.get_solution_path())
+        self._config = helper.Configuration(
+            self._installer.get_install_path(Constants.CONFIG_FILE)
+        )
+        if self.is_installed():
+            self.config.read()
 
     def _get_version_file_path(self):
         return self._installer.get_install_path(Constants.VERSION_FILE)
@@ -41,6 +46,10 @@ class Manager:
     def get_name(self):
         """Get solution name"""
         return self._installer.name
+
+    @property
+    def config(self):
+        return self._config
 
     @property
     def solutioner(self):
@@ -81,6 +90,7 @@ class Manager:
         """
         self._installer.register()
         self._chmod_binary()
+        self.config.save()
 
     def install(self):
         """Installation process was split in multiple parts
