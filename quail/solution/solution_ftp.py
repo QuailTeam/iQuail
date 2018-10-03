@@ -3,6 +3,7 @@ import os
 import tempfile
 import shutil
 from .solution_base import SolutionBase
+from ..errors import SolutionUnreachableError
 from .. import helper
 
 
@@ -69,9 +70,10 @@ class SolutionFtp(SolutionBase):
         try:
             self._ftp.connect(self._host, self._port)
             self._ftp.login()
-        except:
+        except Exception as e:
             self.close()
-            raise
+            raise SolutionUnreachableError("Can't login to ftp %s %s" %
+                                           (str(self._host), str(self._port))) from e
         walk = FtpWalk(self._ftp, *self._path)
         self._files = {}
         for w in walk.walk():

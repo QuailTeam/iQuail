@@ -13,7 +13,7 @@ class Solutioner:
         """
         def onerror(func, path, exc_info):
             if self.dest() != path:
-                raise
+                raise OSError("Cannot delete " + path)
         shutil.rmtree(self.dest(), onerror=onerror)
 
     def dest(self, *args):

@@ -48,12 +48,12 @@ class SolutionGitHub(SolutionBase):
             encoding = response.info().get_content_charset("utf-8")
             tags = json.loads(data.decode(encoding))
         except Exception as e:
-            raise SolutionUnreachableError("SolutionGithub get tag", str(e))
+            raise SolutionUnreachableError("SolutionGithub get tag") from e
+        if not tags:
+            raise SolutionUnreachableError("No tags")
         return tags
 
     def _get_last_tag(self):
-        if not self._get_tags():
-            raise SolutionUnreachableError("No tags")
         return self._get_tags()[0]
 
     def get_version_string(self):
@@ -73,7 +73,7 @@ class SolutionGitHub(SolutionBase):
             (zip_file, headers) = urllib.request.urlretrieve(zip_url,
                                                              reporthook=hook)
         except Exception as e:
-            raise SolutionUnreachableError("Solution github retrieve error", str(e))
+            raise SolutionUnreachableError("Solution github retrieve error") from e
         self._solution_zip = SolutionZip(zip_file)
         self._solution_zip.set_progress_hook(self._progress_hook)
         return self._solution_zip.open()

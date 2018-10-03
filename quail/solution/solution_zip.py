@@ -30,7 +30,7 @@ class SolutionZip(SolutionBase):
 
     def open(self):
         if not os.path.isfile(self._zip_name):
-            raise SolutionUnreachableError
+            raise SolutionUnreachableError("File not found %s" % self._zip_name)
         self._tmp = tempfile.mkdtemp()
         zip_ref = zipfile.ZipFile(self._zip_name, 'r')
         uncompress_size = sum((file.file_size for file in zip_ref.infolist()))
