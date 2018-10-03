@@ -7,6 +7,15 @@ class Solutioner:
         self._dest = dest
         self._solution = solution
 
+    def _remove_solution(self):
+        """Remove solution
+        If the root solution isn't removable it will be ignored with this function
+        """
+        def onerror(func, path, exc_info):
+            if self.dest() != path:
+                raise
+        shutil.rmtree(self.dest(), onerror=onerror)
+
     def dest(self, *args):
         return os.path.join(self._dest, *args)
 
@@ -21,7 +30,7 @@ class Solutioner:
         self._solution.open()
         try:
             if os.path.exists(self.dest()):
-                shutil.rmtree(self.dest(), ignore_errors=True)  # TODO ignore only root
+                self._remove_solution()
             os.makedirs(self.dest(), 0o777, True)
             for root, dirs, files in self._solution.walk():
                 for _dir in dirs:
@@ -42,4 +51,4 @@ class Solutioner:
 
     def uninstall(self):
         if self.installed():
-            shutil.rmtree(self.dest(), ignore_errors=True)  # TODO ignore only root
+            self._remove_solution()
