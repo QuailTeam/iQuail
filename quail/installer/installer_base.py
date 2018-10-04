@@ -70,7 +70,8 @@ class InstallerBase(ABC):
 
     @property
     def console(self):
-        """Launch solution in console mode"""
+        """Launch solution in console mode
+        :return: boolean"""
         return self._console
 
     def build_install_path(self):

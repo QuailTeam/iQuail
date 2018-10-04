@@ -44,6 +44,6 @@ class ControllerBase(ABC):
         pass
 
     @abstractmethod
-    def start_update(self):
+    def start_run_or_update(self):
         """ Start update"""
         pass

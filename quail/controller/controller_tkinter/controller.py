@@ -138,6 +138,11 @@ class ControllerTkinter(ControllerBase):
         self._start_tk(FrameAcceptUninstall,
                        "%s uninstall" % self.manager.get_name())
 
-    def start_update(self):
+    def start_run_or_update(self):
+        # TODO: add "checking for update frame"
+        if not self.manager.is_new_version_available():
+            self.manager.run()
+            return
         self._start_tk(FrameUpdating,
                        "%s update" % self.manager.get_name())
+        self.manager.run()

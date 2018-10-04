@@ -3,6 +3,7 @@ import sys
 from .controller_base import ControllerBase
 from ..solution.solution_base import SolutionProgress
 from ..helper.traceback_info import ExceptionInfo
+from ..errors import SolutionUnreachableError
 
 
 def _progress_callback(progress: SolutionProgress):
@@ -16,11 +17,27 @@ class ControllerConsole(ControllerBase):
         for line in exception_info.traceback:
             print(line, file=sys.stderr, end="")
 
-    def start_update(self):
+    def _ask_validate(self, question):
+        """Ask to validate question with Y/n input"""
+        rep = input("[*] %s (y/n): " % question)
+        if rep == 'y' or rep == 'Y':
+            return True
+        return False
+
+    def start_run_or_update(self):
+        if not self.manager.is_new_version_available():
+            self.manager.run()
+            return
         self.manager.set_solution_progress_hook(_progress_callback)
         print("[*] New version available: %s" % self.manager.get_solution_version())
-        self.manager.update()
-        print("[*] Update successful!")
+        try:
+            self.manager.update()
+            print("[*] Update successful!")
+        except SolutionUnreachableError:
+            if self._ask_validate("Impossible to update, would you like to run anyway?"):
+                self.manager.run()
+        else:
+            self.manager.run()
 
     def start_install(self):
         self.manager.set_solution_progress_hook(_progress_callback)
@@ -30,8 +47,7 @@ class ControllerConsole(ControllerBase):
         self.press_to_exit()
 
     def start_uninstall(self):
-        rep = input("[*] Would you like to uninstall %s? (y/n): " % self.manager.get_name())
-        if rep == 'y' or rep == 'Y':
+        if self._ask_validate("Would you like to uninstall %s?" % self.manager.get_name()):
             print("[*] Uninstalling %s ..." % self.manager.get_name())
             try:
                 self.manager.uninstall()
