@@ -20,6 +20,7 @@ class Manager:
             self._installer.get_install_path(Constants.CONFIG_FILE)
         )
         if self.is_installed():
+            # If quail is not installed the conf doesn't exist yet
             self.config.read()
             self.apply_conf()
 

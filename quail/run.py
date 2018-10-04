@@ -48,6 +48,7 @@ def run(solution, installer, builder=None, controller=None):
             if manager.is_new_version_available():
                 controller.start_update()
                 return
+            # TODO: move this to controller?
             # TODO: launch solution first and kill it on update
             manager.run()
         else:

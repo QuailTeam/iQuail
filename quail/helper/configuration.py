@@ -54,5 +54,6 @@ class Configuration:
             for var_name, var_value in instance_vars.items():
                 if isinstance(var_value, ConfVar):
                     value = var_value.cast(self.get(var_value.key))
-                    setattr(instance, var_name, value)
+                    if value is not None:
+                        setattr(instance, var_name, value)
 
