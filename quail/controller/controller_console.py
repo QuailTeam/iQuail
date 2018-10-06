@@ -24,20 +24,19 @@ class ControllerConsole(ControllerBase):
             return True
         return False
 
-    def start_run_or_update(self):
+    def callback_update_solution_unreachable(self, exception):
+        if self._ask_validate("Impossible to check update, would you like to run anyway?"):
+            self.manager.run()
+
+    def _start_run_or_update(self):
         if not self.manager.is_new_version_available():
             self.manager.run()
             return
         self.manager.set_solution_progress_hook(_progress_callback)
         print("[*] New version available: %s" % self.manager.get_solution_version())
-        try:
-            self.manager.update()
-            print("[*] Update successful!")
-        except SolutionUnreachableError:
-            if self._ask_validate("Impossible to update, would you like to run anyway?"):
-                self.manager.run()
-        else:
-            self.manager.run()
+        self.manager.update()
+        print("[*] Update successful!")
+        self.manager.run()
 
     def start_install(self):
         self.manager.set_solution_progress_hook(_progress_callback)

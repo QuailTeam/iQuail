@@ -80,7 +80,18 @@ class FrameUpdating(FrameBaseInProgress):
         self.controller.tk.quit()
 
 
+class FrameSolutionUnreachable(FrameBaseAccept):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller,
+                         question="Impossible to check update!\nWould you like to run anyway?",
+                         positive_str="run!")
+
+    def accept(self):
+        self.manager.run()
+
+
 class ControllerTkinter(ControllerBase):
+
     def __init__(self, install_custom_frame=None):
         """ Controller tkinter
         :param install_custom_frame: An instance of FrameBase, this frame will be called during installation
@@ -138,7 +149,11 @@ class ControllerTkinter(ControllerBase):
         self._start_tk(FrameAcceptUninstall,
                        "%s uninstall" % self.manager.get_name())
 
-    def start_run_or_update(self):
+    def callback_update_solution_unreachable(self, exception):
+        self._start_tk(FrameSolutionUnreachable,
+                       "Solution unreachable")
+
+    def _start_run_or_update(self):
         # TODO: add "checking for update frame"
         if not self.manager.is_new_version_available():
             self.manager.run()

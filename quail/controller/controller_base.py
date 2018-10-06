@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import sys
+from ..errors import SolutionUnreachableError
 from ..helper.traceback_info import ExceptionInfo
 
 
@@ -44,6 +45,17 @@ class ControllerBase(ABC):
         pass
 
     @abstractmethod
-    def start_run_or_update(self):
+    def callback_update_solution_unreachable(self, exception):
+        """This handler will be called when start_run_or_update raises SolutionUnreachableError"""
+        pass
+
+    @abstractmethod
+    def _start_run_or_update(self):
         """ Start update"""
         pass
+
+    def start_run_or_update(self):
+        try:
+            self._start_run_or_update()
+        except SolutionUnreachableError as e:
+            self.callback_update_solution_unreachable(e)
