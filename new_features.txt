@@ -1,5 +1,5 @@
 - Force update is now optional
-- Frame mechanism to make new frames easily
+- Scriptable GUI >> Frame mechanism to make new frames easily
 - Configuration mechanism
 - Error reporting
 - Error management:
