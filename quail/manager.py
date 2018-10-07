@@ -128,6 +128,7 @@ class Manager:
 
     def run(self):
         """Run solution"""
+        # self.config.save() config could be used for "don't ask me again to update" feature
         binary = self._installer.binary
         self._chmod_binary()
         args = list(filter(lambda x: "--quail" not in x, sys.argv[1:]))

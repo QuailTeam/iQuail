@@ -1,0 +1,7 @@
+- Force update is now optional
+- Frame mechanism to make new frames easily
+- Configuration mechanism
+- Error reporting
+- Error management:
+-- If offline during update, ask to run anyway
+

@@ -6,7 +6,7 @@ import threading
 
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
-from .frames import FrameBaseInProgress, FrameBaseAccept, FrameBase
+from .frames import FrameBaseInProgress, FrameBaseAccept, FrameBase, FrameBaseTwoChoice
 from .error_reporter import ErrorReporter
 
 
@@ -80,6 +80,20 @@ class FrameUpdating(FrameBaseInProgress):
         self.controller.tk.quit()
 
 
+class FrameAskToUpdate(FrameBaseTwoChoice):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller,
+                         question="New version is available!\nWould you like to update?",
+                         choice1=" update! ",
+                         choice2="   run!   ")
+
+    def choice1_selected(self):
+        self.controller.switch_frame(FrameUpdating)
+
+    def choice2_selected(self):
+        self.manager.run()
+
+
 class FrameSolutionUnreachable(FrameBaseAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
@@ -92,7 +106,9 @@ class FrameSolutionUnreachable(FrameBaseAccept):
 
 class ControllerTkinter(ControllerBase):
 
-    def __init__(self, install_custom_frame=None):
+    def __init__(self,
+                 install_custom_frame=None,
+                 ask_for_update=False):
         """ Controller tkinter
         :param install_custom_frame: An instance of FrameBase, this frame will be called during installation
         """
@@ -100,6 +116,7 @@ class ControllerTkinter(ControllerBase):
         self._base_frame = None
         self._frame = None
         self.title_font = None
+        self._ask_for_update = ask_for_update
         tk.Tk.report_callback_exception = self.excepthook
         assert install_custom_frame is None or issubclass(install_custom_frame, FrameBase)
         self.install_custom_frame = install_custom_frame
@@ -158,6 +175,10 @@ class ControllerTkinter(ControllerBase):
         if not self.manager.is_new_version_available():
             self.manager.run()
             return
-        self._start_tk(FrameUpdating,
+        if self._ask_for_update:
+            start_frame = FrameAskToUpdate
+        else:
+            start_frame = FrameUpdating
+        self._start_tk(start_frame,
                        "%s update" % self.manager.get_name())
         self.manager.run()

@@ -67,6 +67,43 @@ class FrameBaseAccept(FrameBase):
         pass
 
 
+class FrameBaseTwoChoice(FrameBase):
+    """Frame to ask user to validate an action"""
+
+    def __init__(self, parent, controller, question, choice1, choice2):
+        """
+        :param parent: tkinter parent
+        :param controller: self explanatory
+        :param question: question string for the user
+        :param choice1: choice 1 answer string
+        :param choice1: choice 2 answer string
+        """
+        super().__init__(parent, controller)
+        label = tk.Label(self,
+                         text=question,
+                         font=controller.title_font)
+        label.pack(side="top", fill="x", pady=10, padx=10)
+        button1 = tk.Button(self,
+                            text=choice1,
+                            command=self.choice1_selected)
+        button2 = tk.Button(self,
+                            text=choice2,
+                            command=self.choice2_selected)
+
+        button1.pack(side="left", expand=True, padx=20, pady=20)
+        button2.pack(side="right", expand=True, padx=20, pady=20)
+
+    @abstractmethod
+    def choice1_selected(self):
+        """This method will be called when choice 1 have been selected"""
+        pass
+
+    @abstractmethod
+    def choice2_selected(self):
+        """This method will be called when choice 1 have been selected"""
+        pass
+
+
 class FrameBaseInProgress(FrameBase):
     def __init__(self, parent, controller, label_str):
         super().__init__(parent, controller)
