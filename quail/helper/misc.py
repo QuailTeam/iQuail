@@ -99,3 +99,31 @@ def rerun_as_admin():
                                                 ' '.join(sys.argv),
                                                 None, 1)
     exit(0)
+
+
+def move_folder_content(src, dest, ignore_errors=False):
+    """Move folder content to another folder"""
+    for f in os.listdir(src):
+        # print("moved %s >> %s" % (os.path.join(src, f), dest))
+        try:
+            shutil.move(os.path.join(src, f), dest)
+        except:
+            if not ignore_errors:
+                raise
+
+
+def safe_remove_folder_content(src):
+    """Remove folder content
+    If an error happens while removing
+    the content will be untouched
+    """
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        move_folder_content(src, tmp_dir)
+    except Exception:
+        # rollback move on exception
+        move_folder_content(tmp_dir, src, ignore_errors=True)
+        raise
+    finally:
+        # TODO chmod -R +w ?
+        shutil.rmtree(tmp_dir)
