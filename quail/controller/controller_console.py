@@ -12,6 +12,7 @@ def _progress_callback(progress: SolutionProgress):
 
 
 class ControllerConsole(ControllerBase):
+
     def _excepthook(self, exception_info):
         print("[*] Fatal exception", file=sys.stderr)
         for line in exception_info.traceback:
@@ -24,11 +25,19 @@ class ControllerConsole(ControllerBase):
             return True
         return False
 
-    def callback_update_solution_unreachable(self, exception):
-        if self._ask_validate("Impossible to check update, would you like to run anyway?"):
-            self.manager.run()
+    def callback_solution_unreachable_error(self, exception_info):
+        if self.manager.is_installed():
+            if self._ask_validate("Impossible to check update, would you like to run anyway?"):
+                self.manager.run()
+        else:
+            print("Impossible to install. Server is not reachable")
+            input("Press enter to continue...")
 
-    def _start_run_or_update(self):
+    def callback_solution_not_removable_error(self, exception_info):
+        print("[*] Impossible to remove / update application, please close application first!")
+        input("Press enter to exit...")
+
+    def start_run_or_update(self):
         if not self.manager.is_new_version_available():
             self.manager.run()
             return

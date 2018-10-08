@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import sys
-from ..errors import SolutionUnreachableError
+from ..errors import SolutionUnreachableError, SolutionNotRemovableError
 from ..helper.traceback_info import ExceptionInfo
 
 
@@ -22,7 +22,13 @@ class ControllerBase(ABC):
         return self.__manager
 
     def excepthook(self, exctype, value, tb):
-        self._excepthook(ExceptionInfo(exctype, value, tb))
+        exc_info = ExceptionInfo(exctype, value, tb)
+        if isinstance(value, SolutionNotRemovableError):
+            self.callback_solution_not_removable_error(exc_info)
+        if isinstance(value, SolutionUnreachableError):
+            self.callback_solution_unreachable_error(exc_info)
+        else:
+            self._excepthook(exc_info)
 
     @abstractmethod
     def _excepthook(self, exception_info):
@@ -45,17 +51,19 @@ class ControllerBase(ABC):
         pass
 
     @abstractmethod
-    def callback_update_solution_unreachable(self, exception):
-        """This handler will be called when start_run_or_update raises SolutionUnreachableError"""
+    def callback_solution_unreachable_error(self, exception_info):
+        """This handler will be called when start_run_or_update
+        raises SolutionUnreachableError"""
         pass
 
     @abstractmethod
-    def _start_run_or_update(self):
+    def callback_solution_not_removable_error(self, exception_info):
+        """This handler will be called when SolutionNotRemovable
+        is raised"""
+        pass
+
+    @abstractmethod
+    def start_run_or_update(self):
         """ Start update"""
         pass
 
-    def start_run_or_update(self):
-        try:
-            self._start_run_or_update()
-        except SolutionUnreachableError as e:
-            self.callback_update_solution_unreachable(e)

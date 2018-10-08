@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import sys
 from tkinter.font import Font
 from tkinter import ttk
@@ -49,7 +50,7 @@ class FrameInstallFinished(FrameBaseAccept):
                          positive_str="exit")
 
     def accept(self):
-        self.controller.tk.quit()
+        self.controller.quit_tk()
 
 
 class FrameAcceptUninstall(FrameBaseAccept):
@@ -61,7 +62,7 @@ class FrameAcceptUninstall(FrameBaseAccept):
 
     def accept(self):
         self.manager.uninstall()
-        self.controller.tk.quit()
+        self.controller.quit_tk()
 
 
 class FrameUpdating(FrameBaseInProgress):
@@ -77,7 +78,8 @@ class FrameUpdating(FrameBaseInProgress):
         self.update_progress(progress.percent)
 
     def solution_finish_callback(self):
-        self.controller.tk.quit()
+        self.controller.quit_tk()
+        self.manager.run()
 
 
 class FrameAskToUpdate(FrameBaseTwoChoice):
@@ -104,6 +106,16 @@ class FrameSolutionUnreachable(FrameBaseAccept):
         self.manager.run()
 
 
+class FrameSolutionNotRemovable(FrameBaseAccept):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller,
+                         question="Impossible to remove / update application.\nPlease close application first!",
+                         positive_str="exit!")
+
+    def accept(self):
+        self.controller.quit_tk()
+
+
 class ControllerTkinter(ControllerBase):
 
     def __init__(self,
@@ -121,7 +133,12 @@ class ControllerTkinter(ControllerBase):
         assert install_custom_frame is None or issubclass(install_custom_frame, FrameBase)
         self.install_custom_frame = install_custom_frame
 
+    def quit_tk(self):
+        if self.tk is not None:
+            self.tk.quit()
+
     def _start_tk(self, frame, title):
+        assert self.tk is None
         # Setup Tk window
         self.tk = tk.Tk()
         self.tk.minsize(width=500, height=200)
@@ -156,7 +173,7 @@ class ControllerTkinter(ControllerBase):
     def _excepthook(self, exception_info):
         reporter = ErrorReporter("Automatic bug report", exception_info.traceback_str)
         reporter.show()
-        self.tk.quit()
+        self.quit_tk()
 
     def start_install(self):
         self._start_tk(FrameAcceptInstall,
@@ -166,11 +183,28 @@ class ControllerTkinter(ControllerBase):
         self._start_tk(FrameAcceptUninstall,
                        "%s uninstall" % self.manager.get_name())
 
-    def callback_update_solution_unreachable(self, exception):
-        self._start_tk(FrameSolutionUnreachable,
-                       "Solution unreachable")
+    def callback_solution_unreachable_error(self, exception_info):
+        name = self.manager.get_name()
+        self.quit_tk()
+        if self.manager.is_installed():
+            rep = messagebox.askyesno("[%s] Impossible to check update" % name,
+                                      "Impossible to check update.\n" +
+                                      "Check your internet connection!\n" +
+                                      "Would you like to run %s anyway?" % name)
 
-    def _start_run_or_update(self):
+            if rep:
+                self.manager.run()
+        else:
+            messagebox.showerror("[%s] solution not reachable!" % name,
+                                 "Impossible to install %s\n" % name +
+                                 "Check your internet connection, and try again")
+
+    def callback_solution_not_removable_error(self, exception_info):
+        messagebox.showerror("Impossible to remove / update application",
+                             "Please close application first!")
+        self.quit_tk()
+
+    def start_run_or_update(self):
         # TODO: add "checking for update frame"
         if not self.manager.is_new_version_available():
             self.manager.run()
@@ -181,4 +215,3 @@ class ControllerTkinter(ControllerBase):
             start_frame = FrameUpdating
         self._start_tk(start_frame,
                        "%s update" % self.manager.get_name())
-        self.manager.run()

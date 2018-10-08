@@ -5,4 +5,4 @@
 - Error management:
 -- If offline during update, ask to run anyway
 -- If no permission to remove (eq: program running)
-   don't remove anything
+   don't remove anything and ask user to close the program
