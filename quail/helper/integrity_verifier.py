@@ -28,6 +28,7 @@ class IntegrityVerifier:
         self._stored_checksums = None
 
     def stored_checksums(self, reopen=False):
+        """Get stored checksums as a dict containing file hash"""
         if not self._stored_checksums or reopen:
             if not os.path.isfile(self._checksums_file):
                 raise FileNotFoundError
@@ -75,6 +76,8 @@ class IntegrityVerifier:
         return diff
 
     def calc_checksums(self):
+        """Calc checksums of the folder
+        and returns a dict containing file hash"""
         def calc_checksums_dir(path):
             checksums = {}
             for child in path.iterdir():
