@@ -96,26 +96,6 @@ class FrameAskToUpdate(FrameBaseTwoChoice):
         self.manager.run()
 
 
-class FrameSolutionUnreachable(FrameBaseAccept):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller,
-                         question="Impossible to check update!\nWould you like to run anyway?",
-                         positive_str="run!")
-
-    def accept(self):
-        self.manager.run()
-
-
-class FrameSolutionNotRemovable(FrameBaseAccept):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller,
-                         question="Impossible to remove / update application.\nPlease close application first!",
-                         positive_str="exit!")
-
-    def accept(self):
-        self.controller.quit_tk()
-
-
 class ControllerTkinter(ControllerBase):
 
     def __init__(self,
