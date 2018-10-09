@@ -9,16 +9,16 @@ packages = find_packages()
 packages.remove("tests")
 
 setup(
-    name='Quail-Installer',
+    name='iquail',
     packages=packages,
-    version='1.2',
+    version='1.3',
     description='Quail cross-platform installer',
     author='Quail team',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author_email='quail_2020@labeip.epitech.eu',
     url='https://github.com/QuailTeam/Quail',
-    keywords=['tool', 'deploy', 'installer', 'wizard', 'install', 'update'],
+    keywords=['tool', 'deploy', 'installer', 'wizard', 'install', 'update', 'quail'],
     classifiers=['Intended Audience :: Developers',
                  'Development Status :: 3 - Alpha',
                  'Programming Language :: Python :: 3 :: Only',
