@@ -9,7 +9,7 @@ packages = find_packages()
 packages.remove("tests")
 
 setup(
-    name='quail',
+    name='Quail-Installer',
     packages=packages,
     version='1.2',
     description='Quail cross-platform installer',

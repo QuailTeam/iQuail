@@ -1,7 +1,7 @@
-import quail
+import iquail
 import unittest
 from .base_test_case import BaseTestCase
-from quail.helper import cache_result
+from iquail.helper import cache_result
 
 
 class TestCacheResult(BaseTestCase):

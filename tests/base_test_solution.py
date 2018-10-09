@@ -1,7 +1,7 @@
 
 import os
-import quail
-import quail.helper.integrity_verifier
+import iquail
+import iquail.helper.integrity_verifier
 from .base_test_case import BaseTestCase
 
 
@@ -11,7 +11,7 @@ class BaseTestSolution(BaseTestCase):
         solution.open()
         try:
             path = solution.retrieve_file(relpath)
-            new_checksum = quail.helper.integrity_verifier.checksum_file(path)
+            new_checksum = iquail.helper.integrity_verifier.checksum_file(path)
             self.assertEqual(checksum,
                              new_checksum)
         finally:

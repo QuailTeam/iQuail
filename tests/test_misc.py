@@ -1,9 +1,9 @@
 import shutil
-import quail
+import iquail
 import unittest
 import os
 from .base_test_case import BaseTestCase
-from quail.helper import misc
+from iquail.helper import misc
 
 
 class TestMisc(BaseTestCase):
@@ -11,7 +11,7 @@ class TestMisc(BaseTestCase):
         super().setUp()
         self.test_dir = self.tmp("Allum1")
         shutil.copytree(self.path("Allum1"), self.test_dir)
-        self.verifier = quail.helper.IntegrityVerifier(self.test_dir)
+        self.verifier = iquail.helper.IntegrityVerifier(self.test_dir)
         self.verifier.dump()
 
     def test_safe_remove_folder_content(self):

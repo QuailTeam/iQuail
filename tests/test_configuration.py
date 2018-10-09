@@ -1,7 +1,7 @@
-import quail
+import iquail
 import unittest
 from .base_test_case import BaseTestCase
-from quail.helper import Configuration, ConfVar
+from iquail.helper import Configuration, ConfVar
 
 
 class TestConfiguration(BaseTestCase):

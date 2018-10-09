@@ -1,5 +1,5 @@
 import os
-import quail
+import iquail
 from .base_test_case import BaseTestCase
 
 
@@ -7,7 +7,7 @@ class TestHelperIntegrity(BaseTestCase):
 
     def setUp(self):
         super().setUp()
-        self.verifier = quail.helper.IntegrityVerifier(self.tmp())
+        self.verifier = iquail.helper.IntegrityVerifier(self.tmp())
 
     def test_verify_basic(self):
         os.mkdir(self.tmp("test"))

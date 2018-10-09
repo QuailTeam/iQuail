@@ -2,7 +2,7 @@
 
 import os
 import os.path
-import quail
+import iquail
 import platform
 
 
@@ -10,35 +10,35 @@ def print_progress(percent):
     print("%s%%" % percent)
 
 
-if quail.helper.OS_LINUX:
-    quail.run(
-        solution=quail.SolutionPacked(path='Allum1'),
-        installer=quail.Installer(
+if iquail.helper.OS_LINUX:
+    iquail.run(
+        solution=iquail.SolutionPacked(path='Allum1'),
+        installer=iquail.Installer(
             name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
             console=True,
             launch_with_quail=False
         ),
-        builder=quail.builder.Builder(
-            quail.builder.CmdNoconsole()
+        builder=iquail.builder.Builder(
+            iquail.builder.CmdNoconsole()
         ),
-        controller=quail.ControllerTkinter()
+        controller=iquail.ControllerTkinter()
     )
 
-if quail.helper.OS_WINDOWS:
-    quail.run(
-        solution=quail.SolutionPacked(path='OpenHardwareMonitor'),
-        installer=quail.Installer(
+if iquail.helper.OS_WINDOWS:
+    iquail.run(
+        solution=iquail.SolutionPacked(path='OpenHardwareMonitor'),
+        installer=iquail.Installer(
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
             console=True,
             launch_with_quail=False
         ),
-        builder=quail.builder.Builder(
-            quail.builder.CmdIcon('icon.ico'),
-            quail.builder.CmdNoconsole()
+        builder=iquail.builder.Builder(
+            iquail.builder.CmdIcon('icon.ico'),
+            iquail.builder.CmdNoconsole()
         ),
-        controller=quail.ControllerTkinter()
+        controller=iquail.ControllerTkinter()
     )

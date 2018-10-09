@@ -1,6 +1,6 @@
 import unittest
 
-from quail import SolutionGitHub
+from iquail import SolutionGitHub
 from .base_test_solution import BaseTestSolution
 
 

@@ -23,7 +23,7 @@ def parse_args():
                         help="""remove file or folder:
                         if file is passed as argument and the file's directory
                         is empty, the directory will be removed
-                        (this function is used by quail for windows uninstall)
+                        (this function is used by iquail for windows uninstall)
                         """)
     return parser.parse_known_args()
 

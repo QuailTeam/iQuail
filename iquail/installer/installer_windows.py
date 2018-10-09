@@ -11,9 +11,9 @@ from .installer_base import InstallerBase
 
 
 def on_rmtree_error(function, path, excinfo):
-    """function to ignore if windows can't remove quail binary
+    """function to ignore if windows can't remove iquail binary
     On windows we can't remove binaries being run
-    quail binary will be removed at exit with _delete_itself when uninstalling
+    iquail binary will be removed at exit with _delete_itself when uninstalling
     """
     if not (path == helper.get_script() or
             (function == os.rmdir and path == helper.get_script_path())):

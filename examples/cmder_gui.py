@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
-import quail
+import iquail
 
-if not quail.helper.OS_WINDOWS:
+if not iquail.helper.OS_WINDOWS:
     raise AssertionError("This test solution is windows only")
 
 
-class FrameSelectMiniOrFull(quail.controller_tkinter.FrameBaseConfigure):
+class FrameSelectMiniOrFull(iquail.controller_tkinter.FrameBaseConfigure):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         self.version_selected = self.add_combobox("Which version would you like to install?",
@@ -20,18 +20,18 @@ class FrameSelectMiniOrFull(quail.controller_tkinter.FrameBaseConfigure):
         self.controller.switch_to_install_frame()
 
 
-quail.run(
-    solution=quail.SolutionGitHub(quail.ConfVar("zip_url"), "https://github.com/cmderdev/cmder"),
-    installer=quail.Installer(
+iquail.run(
+    solution=iquail.SolutionGitHub(iquail.ConfVar("zip_url"), "https://github.com/cmderdev/cmder"),
+    installer=iquail.Installer(
         name='Cmder',
         icon='Cmder.exe',
         binary='Cmder.exe',
         console=False,
         launch_with_quail=True
     ),
-    builder=quail.builder.Builder(
-        quail.builder.CmdIcon('icon.ico'),
-        quail.builder.CmdNoconsole()
+    builder=iquail.builder.Builder(
+        iquail.builder.CmdIcon('icon.ico'),
+        iquail.builder.CmdNoconsole()
     ),
-    controller=quail.ControllerTkinter(install_custom_frame=FrameSelectMiniOrFull)
+    controller=iquail.ControllerTkinter(install_custom_frame=FrameSelectMiniOrFull)
 )

@@ -2,7 +2,7 @@
 
 import os
 import os.path
-import quail
+import iquail
 import platform
 
 
@@ -10,30 +10,30 @@ def print_progress(percent):
     print("%s%%" % percent)
 
 
-if quail.helper.OS_LINUX:
-    quail.run(
-        quail.SolutionPacked(path='Allum1'),
-        quail.Installer(
+if iquail.helper.OS_LINUX:
+    iquail.run(
+        iquail.SolutionPacked(path='Allum1'),
+        iquail.Installer(
             name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
             console=True,
             launch_with_quail=False
         ),
-        quail.builder.Builder()
+        iquail.builder.Builder()
     )
 
-if quail.helper.OS_WINDOWS:
-    quail.run(
-        quail.SolutionPacked(path='OpenHardwareMonitor'),
-        quail.Installer(
+if iquail.helper.OS_WINDOWS:
+    iquail.run(
+        iquail.SolutionPacked(path='OpenHardwareMonitor'),
+        iquail.Installer(
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
             console=True,
             launch_with_quail=False
         ),
-        quail.builder.Builder(
-            quail.builder.CmdIcon('icon.ico')
+        iquail.builder.Builder(
+            iquail.builder.CmdIcon('icon.ico')
         )
     )

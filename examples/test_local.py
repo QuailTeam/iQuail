@@ -2,34 +2,34 @@
 
 import os
 import os.path
-import quail
+import iquail
 import platform
 
-if quail.helper.OS_LINUX:
+if iquail.helper.OS_LINUX:
     solution_path = ['Allum1']
-    quail.run(
-        quail.SolutionLocal(['Allum1']),
-        quail.Installer(
+    iquail.run(
+        iquail.SolutionLocal(['Allum1']),
+        iquail.Installer(
             name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
             console=True
         ),
-        quail.builder.Builder(
-            quail.builder.CmdIntegrity(solution_path)
+        iquail.builder.Builder(
+            iquail.builder.CmdIntegrity(solution_path)
         )
     )
-if quail.helper.OS_WINDOWS:
+if iquail.helper.OS_WINDOWS:
     solution_path = ['OpenHardwareMonitor']
-    quail.run(
-        quail.SolutionLocal(['OpenHardwareMonitor']),
-        quail.Installer(
+    iquail.run(
+        iquail.SolutionLocal(['OpenHardwareMonitor']),
+        iquail.Installer(
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
             console=True
         ),
-        quail.builder.Builder(
-            quail.builder.CmdIntegrity(solution_path)
+        iquail.builder.Builder(
+            iquail.builder.CmdIntegrity(solution_path)
         )
     )

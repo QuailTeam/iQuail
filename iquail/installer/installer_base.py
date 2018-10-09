@@ -36,14 +36,14 @@ class InstallerBase(ABC):
 
     @property
     def launch_with_quail(self):
-        """Use quail to launch the binary
+        """Use iquail to launch the binary
         (otherwise the shortcuts will launch the binary directly)
         """
         return self._launch_with_quail
 
     @property
     def quail_binary(self):
-        """Get quail executable install path"""
+        """Get iquail executable install path"""
         return self.get_install_path(helper.get_script_name())
 
     @property
@@ -78,7 +78,7 @@ class InstallerBase(ABC):
         """Build install path
         This function can be overridden to install files to somewhere else
         """
-        return os.path.join(str(pathlib.Path.home()), '.quail', self.name)
+        return os.path.join(str(pathlib.Path.home()), '.iquail', self.name)
 
     def get_solution_path(self, *args):
         """Get solution path"""
@@ -96,9 +96,9 @@ class InstallerBase(ABC):
         shutil.copy2(helper.get_script(), self.quail_binary)
         if helper.running_from_script():
             with suppress(Exception):
-                shutil.rmtree(self.get_install_path("quail"))
+                shutil.rmtree(self.get_install_path("iquail"))
             shutil.copytree(helper.get_module_path(),
-                            self.get_install_path("quail"))
+                            self.get_install_path("iquail"))
 
     def unregister(self):
         self._unregister()
