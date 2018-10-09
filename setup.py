@@ -1,14 +1,16 @@
 """Setup generator file."""
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as f:
     long_description = f.read()
 
 requirements = open("requirements.txt").read().splitlines()
+packages = find_packages()
+packages.remove("tests")
 
 setup(
     name='quail',
-    packages=['quail'],
+    packages=packages,
     version='1.2',
     description='Quail cross-platform installer',
     author='Quail team',
