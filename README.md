@@ -7,15 +7,21 @@ Our goal is to make deploying and updating desktop applications as simple as pos
 
 Today you can deploy a simple solution in less than 10 lines
 
-Quail is currently in planning development stage, everything is subject to change
+Quail is currently in development stage, everything is subject to change
 
 ## Current features
-* Install and uninstall an application on Windows and Linux (Add launch shortcut and register program on the system)
-* Decompress or download a solution
-* Building standalone offline installer
-* Building installer which uses github release feature to deploy/update solutions
-* Tkinter user interface
-* Scriptable actions
+* Windows and Linux compatibility
+* Install and uninstall an application (Add launch shortcut and register program on the system)
+* Many ways to deploy and/or update your application:
+  - Github release
+  - FTP server
+  - Embedded in installer (offline installer)
+* Graphical user interface
+* Scriptable user interface
+* Configuration management
+* Custom scriptable install/uninstall actions
+* Configurable "Force update" or "Ask for update"
+
 
 ## Installation
 1. Install python 3.6
@@ -35,10 +41,10 @@ You can still begin learning by [examples](examples)
 To build a quail installer run ```quail_script.py --quail_build```
 
 ## Short time goals
+* Signing quail's executables
 * Integrity verification and updating only modified data
 * Building a versioning server
 * Using quail to update solutions which already have an installer .msi / .deb / setup.exe / .rpm  files
-* Scriptable GUI (for install, update, uninstall)
 * Mac OS support
 
 ## Support
