@@ -122,6 +122,6 @@ class Manager:
         # self.config.save() config could be used for "don't ask me again to update" feature
         binary = self._installer.binary
         self._chmod_binary()
-        args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
+        args = list(filter(lambda x: "--quail" not in x, sys.argv[1:]))
         binary_args = [os.path.basename(binary)] + args
         os.execl(binary, *binary_args)

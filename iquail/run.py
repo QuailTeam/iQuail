@@ -56,7 +56,7 @@ def run(solution, installer, builder=None, controller=None):
         builder = Builder()
     if not controller:
         controller = ControllerConsole()
-    manager = Manager(installer, solution, builder)
+    manager = Manager(installer, solution)
     controller.setup(manager)
     if args.quail_rm:
         shutil.rmtree(args.quail_rm)
