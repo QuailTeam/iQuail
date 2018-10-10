@@ -10,10 +10,9 @@ from .solution.solutioner import Solutioner
 
 
 class Manager:
-    def __init__(self, installer, solution, builder):
+    def __init__(self, installer, solution):
         self._installer = installer
         self._solution = solution
-        self._builder = builder
         self._solutioner = Solutioner(self._solution,
                                       self._installer.get_solution_path())
         self._config = helper.Configuration(
@@ -61,13 +60,6 @@ class Manager:
     @property
     def solutioner(self):
         return self._solutioner
-
-    def build(self):
-        """Build binary"""
-        if helper.running_from_script():
-            self._builder.build()
-        else:
-            raise AssertionError("Can't build from an executable")
 
     def get_solution_version(self):
         """Get version from solution"""
