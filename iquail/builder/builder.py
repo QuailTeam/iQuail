@@ -1,4 +1,3 @@
-
 from .. import helper
 
 
@@ -9,10 +8,6 @@ class Builder:
 
     def __init__(self, *build_cmds):
         self._build_cmds = list(build_cmds)
-
-    def register(self, builder_action):
-        """see builder_action for more information"""
-        self._build_cmds.extend(builder_action.builder_cmds())
 
     def default_build_params(self):
         params = [helper.get_script(),

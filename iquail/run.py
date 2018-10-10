@@ -1,13 +1,27 @@
-import sys
+import argparse
 import argparse
 import shutil
-import os
-from contextlib import suppress
-from .constants import Constants
+from abc import ABC, abstractmethod
+
 from . import helper
 from .builder import Builder
-from .manager import Manager
+from .constants import Constants
 from .controller import ControllerConsole
+from .manager import Manager
+
+
+class Setup(ABC):
+    @abstractmethod
+    def get_installer(self):
+        pass
+
+    @abstractmethod
+    def get_solution(self):
+        pass
+
+    @abstractmethod
+    def get_builder(self):
+        pass
 
 
 def parse_args():

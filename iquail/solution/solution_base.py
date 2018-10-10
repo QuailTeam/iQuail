@@ -14,7 +14,7 @@ class SolutionProgress:
         self.status = status
 
 
-class SolutionBase(ABC, builder.BuilderAction):
+class SolutionBase(ABC):
     """ The goal of this interface is to be able to resolve solution files
     coming from anywhere.
     current goals are:

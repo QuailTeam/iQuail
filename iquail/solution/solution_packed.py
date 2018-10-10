@@ -4,6 +4,8 @@ from .. import helper
 from .solution_zip import SolutionZip
 
 
+# TODO
+"""
 class SolutionPacked(SolutionZip):
     def __init__(self, path):
         if isinstance(path, list):
@@ -17,3 +19,4 @@ class SolutionPacked(SolutionZip):
     def builder_cmds(self):
         cmds = super().builder_cmds() + [CmdZip(self._path, self._zip_name)]
         return cmds
+"""

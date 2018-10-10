@@ -65,7 +65,6 @@ class Manager:
     def build(self):
         """Build binary"""
         if helper.running_from_script():
-            self._builder.register(self._solution)
             self._builder.build()
         else:
             raise AssertionError("Can't build from an executable")
