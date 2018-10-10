@@ -44,8 +44,8 @@ def get_script_name():
     return os.path.basename(get_script())
 
 
-def get_script_path():
-    return os.path.dirname(get_script())
+def get_script_path(*args):
+    return os.path.join(os.path.dirname(get_script()), *args)
 
 
 def running_from_script():

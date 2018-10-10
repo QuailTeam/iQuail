@@ -3,15 +3,21 @@ import signal
 import stat
 import sys
 import typing
+import pathlib
 
 from . import helper
+from .helper import misc
 from .constants import Constants
 from .solution.solutioner import Solutioner
 
 
 class Manager:
     def __init__(self, installer, solution):
+        self._name = "test"  # FIXME
+        self._install_path = os.path.join(str(pathlib.Path.home()), '.iquail', self.get_name())
+        self._solution_path = os.path.join(self._install_path, 'solution')
         self._installer = installer
+        self._installer.setup(self)
         self._solution = solution
         self._solutioner = Solutioner(self._solution,
                                       self._installer.get_solution_path())
@@ -22,6 +28,14 @@ class Manager:
             # If iquail is not installed the conf doesn't exist yet
             self.config.read()
             self.apply_conf()
+
+    def get_solution_path(self, *args):
+        """Get solution path"""
+        return os.path.join(self._solution_path, *args)
+
+    def get_install_path(self, *args):
+        """Get install path"""
+        return os.path.join(self._install_path, *args)
 
     def apply_conf(self):
         """Apply configuration on Manager's arguments
@@ -51,15 +65,11 @@ class Manager:
 
     def get_name(self):
         """Get solution name"""
-        return self._installer.name
+        return self._name
 
     @property
     def config(self):
         return self._config
-
-    @property
-    def solutioner(self):
-        return self._solutioner
 
     def get_solution_version(self):
         """Get version from solution"""
@@ -115,11 +125,14 @@ class Manager:
 
     def is_installed(self):
         """Check if solution is installed"""
-        return self._solutioner.installed()  # and self._installer.registered()
+        # return self._solutioner.installed()  # and self._installer.registered()
+        if os.path.exists(self.get_install_path()):
+            return True
+        return False
 
     def run(self):
         """Run solution"""
-        # self.config.save() config could be used for "don't ask me again to update" feature
+        # TODO self.config.save() config could be used for "don't ask me again to update" feature
         binary = self._installer.binary
         self._chmod_binary()
         args = list(filter(lambda x: "--quail" not in x, sys.argv[1:]))

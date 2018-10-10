@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from ..helper import misc
 from .. import helper
 from ..constants import Constants
+from ..manager import Manager
 
 
 class InstallerBase(ABC):
@@ -27,8 +28,10 @@ class InstallerBase(ABC):
         self._icon = icon
         self._publisher = publisher
         self._console = console
-        self._install_path = self.build_install_path()
-        self._solution_path = os.path.join(self._install_path, 'solution')
+        self._manager = None
+
+    def setup(self, manager: Manager):
+        self._manager = manager
 
     def get_solution_icon(self):
         """Get solution's icon"""
@@ -74,19 +77,13 @@ class InstallerBase(ABC):
         :return: boolean"""
         return self._console
 
-    def build_install_path(self):
-        """Build install path
-        This function can be overridden to install files to somewhere else
-        """
-        return os.path.join(str(pathlib.Path.home()), '.iquail', self.name)
-
     def get_solution_path(self, *args):
         """Get solution path"""
-        return os.path.join(self._solution_path, *args)
+        return self._manager.get_solution_path(*args)
 
     def get_install_path(self, *args):
         """Get install path"""
-        return os.path.join(self._install_path, *args)
+        return self._manager.get_install_path(*args)
 
     def register(self):
         """Register application for the OS"""
@@ -102,10 +99,10 @@ class InstallerBase(ABC):
 
     def unregister(self):
         self._unregister()
-        misc.self_remove_directory(self.get_install_path())
+        misc.self_remove_directory(self.get_install_path())  # TODO: move to manager?
 
     def registered(self):
-        return os.path.isfile(self.quail_binary) and self._unregister()
+        return os.path.isfile(self.quail_binary) and self._registered()
 
     @abstractmethod
     def _register(self):
