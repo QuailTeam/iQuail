@@ -35,7 +35,7 @@ class InstallerBase(ABC):
 
     def get_solution_icon(self):
         """Get solution's icon"""
-        return self.get_solution_path(self._icon)
+        return self._manager.get_solution_path(self._icon)
 
     @property
     def launch_with_quail(self):
@@ -47,7 +47,7 @@ class InstallerBase(ABC):
     @property
     def quail_binary(self):
         """Get iquail executable install path"""
-        return self.get_install_path(helper.get_script_name())
+        return self._manager.get_install_path(helper.get_script_name())
 
     @property
     def launcher_binary(self):
@@ -59,7 +59,7 @@ class InstallerBase(ABC):
     @property
     def binary(self):
         """Binary name (which must be at the root directory of your solution"""
-        return self.get_solution_path(self._binary_name)
+        return self._manager.get_solution_path(self._binary_name)
 
     @property
     def name(self):
@@ -88,18 +88,18 @@ class InstallerBase(ABC):
     def register(self):
         """Register application for the OS"""
         self._register()
-        os.makedirs(self.get_install_path(), exist_ok=True)
+        os.makedirs(self._manager.get_install_path(), exist_ok=True)
         # install script and module:
         shutil.copy2(helper.get_script(), self.quail_binary)
         if helper.running_from_script():
             with suppress(Exception):
-                shutil.rmtree(self.get_install_path("iquail"))
+                shutil.rmtree(self._manager.get_install_path("iquail"))
             shutil.copytree(helper.get_module_path(),
-                            self.get_install_path("iquail"))
+                            self._manager.get_install_path("iquail"))
 
     def unregister(self):
         self._unregister()
-        misc.self_remove_directory(self.get_install_path())  # TODO: move to manager?
+        misc.self_remove_directory(self._manager.get_install_path())  # TODO: move to manager?
 
     def registered(self):
         return os.path.isfile(self.quail_binary) and self._registered()

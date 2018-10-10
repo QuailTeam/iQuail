@@ -22,12 +22,8 @@ class Manager:
         self._solutioner = Solutioner(self._solution,
                                       self._installer.get_solution_path())
         self._config = helper.Configuration(
-            self._installer.get_install_path(Constants.CONFIG_FILE)
+            self.get_install_path(Constants.CONFIG_FILE)
         )
-        if self.is_installed():
-            # If iquail is not installed the conf doesn't exist yet
-            self.config.read()
-            self.apply_conf()
 
     def get_solution_path(self, *args):
         """Get solution path"""
@@ -37,13 +33,8 @@ class Manager:
         """Get install path"""
         return os.path.join(self._install_path, *args)
 
-    def apply_conf(self):
-        """Apply configuration on Manager's arguments
-        (replace ConfVars with their actual values"""
-        self.config.apply(self._solution, self._installer)
-
     def _get_version_file_path(self):
-        return self._installer.get_install_path(Constants.VERSION_FILE)
+        return self.get_install_path(Constants.VERSION_FILE)
 
     def _chmod_binary(self):
         binary = self._installer.binary
@@ -90,7 +81,6 @@ class Manager:
     def install_part_solution(self):
         """part 1 of the installation will install the solution
         """
-        self.apply_conf()  # because conf have been just selected
         self._solutioner.install()
         self._set_solution_installed_version()
 
@@ -99,7 +89,6 @@ class Manager:
         """
         self._installer.register()
         self._chmod_binary()
-        self.config.save()
 
     def install(self):
         """Installation process was split in multiple parts
