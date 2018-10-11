@@ -11,7 +11,7 @@ packages.remove("tests")
 setup(
     name='iquail',
     packages=packages,
-    version='1.3',
+    version='1.4',
     description='Quail cross-platform installer',
     author='Quail team',
     long_description=long_description,
