@@ -19,6 +19,12 @@ class TestMisc(BaseTestCase):
         self.assertListEqual(os.listdir(self.test_dir), [])
 
     def test_safe_remove_folder_content_error(self):
-        with open(os.path.join(self.test_dir, "subfolder", "testfile.txt"), "a") as f:
-            self.assertRaises(Exception, misc.safe_remove_folder_content, self.test_dir)
-            self.assertListEqual(self.verifier.verify_all(), [])
+        subfolder = os.path.join(self.test_dir, "subfolder")
+        os.chmod(subfolder, 0o555)
+        try:
+            with open(os.path.join(subfolder, "testfile.txt"), "a") as f:
+                self.assertRaises(Exception, misc.safe_remove_folder_content, self.test_dir)
+                self.assertListEqual(self.verifier.verify_all(), [])
+        finally:
+            os.chmod(subfolder, 0o777)
+
