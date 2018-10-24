@@ -15,28 +15,32 @@ class InstallerBase(ABC):
     """Register application on the OS"""
 
     def __init__(self,
-                 name,
                  binary,
-                 icon,
-                 execFlags='',
-                 mimeTypes='',
+                 binary_options='',
+                 install_path='default',
                  publisher='Quail',
-                 console=False,
-                 launch_with_quail=True):
+                 launch_with_quail=True,
+                 **kwargs):
         self._launch_with_quail = launch_with_quail
-        self._name = name
         self._binary_name = binary
-        self._icon = icon
+        self._binary_options = binary_options
+        self._name = kwargs.get('Name', None)
+        self._icon = kwargs.get('Icon', None)
+        if self._name is None or self._icon is None:
+            raise ValueError('Name and/or Icon values not provided')
         self._publisher = publisher
-        self._console = console
-        self._execFlags = execFlags
-        self._mimeTypes = mimeTypes
-        self._install_path = self.build_install_path()
-        self._solution_path = os.path.join(self._install_path, 'solution')
+        self._terminal = kwargs.get('Terminal', 'false')
+        self._install_path = self.build_install_path() if install_path is 'default' else install_path
+        self._solution_path = kwargs.get('Path', os.path.join(self._install_path, 'solution'))
 
     def get_solution_icon(self):
         """Get solution's icon"""
         return self.get_solution_path(self._icon)
+
+    @property
+    def binary_options(self):
+        """Options for the binary"""
+        return self._binary_options
 
     @property
     def launch_with_quail(self):
@@ -51,9 +55,13 @@ class InstallerBase(ABC):
         return self.get_install_path(helper.get_script_name())
 
     @property
+    def launch_command(self):
+        return self.launcher_binary + ' ' + self.binary_options
+
+    @property
     def launcher_binary(self):
         """Binary which will be launched by the main shortcut"""
-        return (self.quail_binary if self.launch_with_quail else self.binary) + ' ' + self._execFlags
+        return self.quail_binary if self.launch_with_quail else self.binary
 
     @property
     def binary(self):
@@ -71,16 +79,10 @@ class InstallerBase(ABC):
         return self._publisher
 
     @property
-    def console(self):
+    def terminal(self):
         """Launch solution in console mode
         :return: boolean"""
-        return self._console
-
-    @property
-    def mimeTypes(self):
-        """mimeTypes associated with the program
-        :return: string"""
-        return self._mimeTypes
+        return self._terminal
 
     def build_install_path(self):
         """Build install path

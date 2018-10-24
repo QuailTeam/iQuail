@@ -10,12 +10,12 @@ if iquail.helper.OS_LINUX:
     iquail.run(
         iquail.SolutionLocal(['Allum1']),
         iquail.Installer(
-            name='Allum1',
-            icon='icon.jpeg',
             binary='allum1',
-            mimeTypes="text/plain",
-            execFlags='%f',
-            console=True
+            exec_flags='%f',
+            Name='Allum1',
+            Icon='icon.jpeg',
+            Terminal='true',
+            MimeTypes='text/plain'
         ),
         iquail.builder.Builder(
             iquail.builder.CmdIntegrity(solution_path)

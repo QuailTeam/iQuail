@@ -11,10 +11,12 @@ from .installer_base import InstallerBase
 
 class InstallerLinux(InstallerBase):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, binary, exec_flags='', *args, **kwargs):
+        super().__init__(binary, *args, **kwargs)
+        self._exec_flags = exec_flags
         self._launch_shortcut = self._desktop(self.name)
-        self._uninstall_shortcut = self._desktop("%s_uninstall" % (self.name))
+        self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
+        self._kwargs = kwargs
 
     def _desktop(self, name):
         return os.path.join(str(pathlib.Path.home()),
@@ -28,21 +30,18 @@ class InstallerLinux(InstallerBase):
         config.optionxform = str
         config['Desktop Entry'] = app_config
         with open(filename, "w") as f:
-            config.write(f)
+            config.write(f, space_around_delimiters=False)
 
-    def add_shortcut(self, dest, name, binary, icon,
-                     mimeTypes='', workpath=None, console=None):
-        if not workpath:
-            workpath = os.path.dirname(binary)
-        app_config = {
-            'Name': name,
-            'Path': workpath,
-            'Exec': binary,
-            'Icon': icon,
-            'Terminal': 'true' if console else 'false',
-            'Type': 'Application',
-            'MimeTypes': mimeTypes
-        }
+    def add_shortcut(self, dest, **kwargs):
+
+        if kwargs.get('Path', None) is None:
+            kwargs.update(Path=os.path.dirname(self.launcher_binary))
+        if kwargs.get('Exec', None) is None:
+            kwargs.update(Exec=self.launcher_binary + ' ' + self.binary_options + ' ' + self._exec_flags)
+        if kwargs.get('Type', None) is None:
+            kwargs.update(Type='Application')
+
+        app_config = kwargs
         self._write_desktop(dest, app_config)
 
     def delete_shortcut(self, dest):
@@ -55,19 +54,13 @@ class InstallerLinux(InstallerBase):
 
     def _register(self):
         self.add_shortcut(dest=self._launch_shortcut,
-                          name=self.name,
-                          workpath=self.get_solution_path(),
-                          binary=self.launcher_binary,
-                          icon=self.get_solution_icon(),
-                          console=self.console,
-                          mimeTypes=self.mimeTypes
-                          )
+                          **self._kwargs)
         self.add_shortcut(dest=self._uninstall_shortcut,
                           name="Uninstall " + self.name,
                           workpath=self.get_solution_path(),
                           binary=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
                           icon=self.get_solution_icon(),
-                          console=self.console
+                          console=self.terminal
                           )
 
     def _unregister(self):
