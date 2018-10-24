@@ -18,6 +18,8 @@ class InstallerBase(ABC):
                  name,
                  binary,
                  icon,
+                 execFlags='',
+                 mimeTypes='',
                  publisher='Quail',
                  console=False,
                  launch_with_quail=True):
@@ -27,6 +29,8 @@ class InstallerBase(ABC):
         self._icon = icon
         self._publisher = publisher
         self._console = console
+        self._execFlags = execFlags
+        self._mimeTypes = mimeTypes
         self._install_path = self.build_install_path()
         self._solution_path = os.path.join(self._install_path, 'solution')
 
@@ -49,9 +53,7 @@ class InstallerBase(ABC):
     @property
     def launcher_binary(self):
         """Binary which will be launched by the main shortcut"""
-        if self.launch_with_quail:
-            return self.quail_binary
-        return self.binary
+        return (self.quail_binary if self.launch_with_quail else self.binary) + ' ' + self._execFlags
 
     @property
     def binary(self):
@@ -73,6 +75,12 @@ class InstallerBase(ABC):
         """Launch solution in console mode
         :return: boolean"""
         return self._console
+
+    @property
+    def mimeTypes(self):
+        """mimeTypes associated with the program
+        :return: string"""
+        return self._mimeTypes
 
     def build_install_path(self):
         """Build install path

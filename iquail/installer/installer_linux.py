@@ -24,14 +24,14 @@ class InstallerLinux(InstallerBase):
     def _write_desktop(self, filename, app_config):
         """Write desktop entry"""
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        config = configparser.ConfigParser()
+        config = configparser.ConfigParser(interpolation=None)
         config.optionxform = str
         config['Desktop Entry'] = app_config
         with open(filename, "w") as f:
             config.write(f)
 
     def add_shortcut(self, dest, name, binary, icon,
-                     workpath=None, console=None):
+                     mimeTypes='', workpath=None, console=None):
         if not workpath:
             workpath = os.path.dirname(binary)
         app_config = {
@@ -40,7 +40,8 @@ class InstallerLinux(InstallerBase):
             'Exec': binary,
             'Icon': icon,
             'Terminal': 'true' if console else 'false',
-            'Type': 'Application'
+            'Type': 'Application',
+            'MimeTypes': mimeTypes
         }
         self._write_desktop(dest, app_config)
 
@@ -58,7 +59,8 @@ class InstallerLinux(InstallerBase):
                           workpath=self.get_solution_path(),
                           binary=self.launcher_binary,
                           icon=self.get_solution_icon(),
-                          console=self.console
+                          console=self.console,
+                          mimeTypes=self.mimeTypes
                           )
         self.add_shortcut(dest=self._uninstall_shortcut,
                           name="Uninstall " + self.name,

@@ -13,6 +13,8 @@ if iquail.helper.OS_LINUX:
             name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
+            mimeTypes="text/plain",
+            execFlags='%f',
             console=True
         ),
         iquail.builder.Builder(
