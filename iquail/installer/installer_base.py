@@ -16,6 +16,9 @@ class InstallerBase(ABC):
 
     def __init__(self,
                  binary,
+                 name,
+                 icon,
+                 console=False,
                  binary_options='',
                  install_path='default',
                  publisher='Quail',
@@ -24,14 +27,13 @@ class InstallerBase(ABC):
         self._launch_with_quail = launch_with_quail
         self._binary_name = binary
         self._binary_options = binary_options
-        self._name = kwargs.get('Name', None)
-        self._icon = kwargs.get('Icon', None)
-        if self._name is None or self._icon is None:
-            raise ValueError('Name and/or Icon values not provided')
+        self._name = name
+        self._icon = icon
         self._publisher = publisher
-        self._terminal = kwargs.get('Terminal', 'false')
+        self._console = console
         self._install_path = self.build_install_path() if install_path is 'default' else install_path
         self._solution_path = kwargs.get('Path', os.path.join(self._install_path, 'solution'))
+
 
     def get_solution_icon(self):
         """Get solution's icon"""
@@ -79,10 +81,10 @@ class InstallerBase(ABC):
         return self._publisher
 
     @property
-    def terminal(self):
+    def console(self):
         """Launch solution in console mode
         :return: boolean"""
-        return self._terminal
+        return self._console
 
     def build_install_path(self):
         """Build install path

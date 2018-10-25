@@ -10,12 +10,14 @@ if iquail.helper.OS_LINUX:
     iquail.run(
         iquail.SolutionLocal(['Allum1']),
         iquail.Installer(
+            name='Allum1',
+            icon='icon.jpeg',
             binary='allum1',
+            console=True,
             exec_flags='%f',
-            Name='Allum1',
-            Icon='icon.jpeg',
-            Terminal='true',
-            MimeTypes='text/plain'
+            #.desktop optional fields
+            MimeTypes='text/plain',
+            Comment='best game ever'
         ),
         iquail.builder.Builder(
             iquail.builder.CmdIntegrity(solution_path)

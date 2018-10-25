@@ -11,11 +11,16 @@ from .installer_base import InstallerBase
 
 class InstallerLinux(InstallerBase):
 
-    def __init__(self, binary, exec_flags='', *args, **kwargs):
-        super().__init__(binary, *args, **kwargs)
+    def __init__(self, binary, name, icon, exec_flags='', *args, **kwargs):
+        super().__init__(binary, name, icon, *args, **kwargs)
         self._exec_flags = exec_flags
         self._launch_shortcut = self._desktop(self.name)
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
+        kwargs.update(Name=self.name, Icon=self.get_solution_icon())
+        if kwargs.get('Terminal', None) is None:
+            kwargs.update(Terminal=self.console)
+        else:
+            self._console = True if kwargs.get('Terminal') is 'true' else False
         self._kwargs = kwargs
 
     def _desktop(self, name):
@@ -60,7 +65,7 @@ class InstallerLinux(InstallerBase):
                           workpath=self.get_solution_path(),
                           binary=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
                           icon=self.get_solution_icon(),
-                          console=self.terminal
+                          console=self.console
                           )
 
     def _unregister(self):
