@@ -30,17 +30,17 @@ class TestInstaller(BaseTestCase):
                 icon='noicon',
                 binary='emptyfile'
             )
-        with tempfile.NamedTemporaryFile() as tmpFile:
-            tmpFile.close()
-            tmpName = tmpFile.name
-            self.assertFalse(os.path.isfile(tmpName))
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            tmp_file.close()
+            tmp_name = tmp_file.name
+            self.assertFalse(os.path.isfile(tmp_name))
             installer.add_shortcut(
-                tmpName,
-                os.path.basename(tmpName),
+                tmp_name,
+                os.path.basename(tmp_name),
                 installer.binary,
                 installer.get_solution_icon()
             )
-            self.assertTrue(os.path.isfile(tmpName))
-            installer.delete_shortcut(tmpName)
-            self.assertFalse(os.path.isfile(tmpName))
-            installer.delete_shortcut(tmpName)
+            self.assertTrue(os.path.isfile(tmp_name))
+            installer.delete_shortcut(tmp_name)
+            self.assertFalse(os.path.isfile(tmp_name))
+            installer.delete_shortcut(tmp_name)

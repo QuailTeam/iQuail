@@ -62,9 +62,8 @@ class TestRun(BaseTestCase):
             self.assertEqual(mock_press.call_count, 1)
             self.assertEqual(mock_ask.call_count, 1)
 
-    @patch('platform.system', return_value='Windows')
-    def test_build_zip_valid(self, mock_windows):
-            testargs = [self.path('Allum1.zip'), '--quail_build']
+    def test_build_zip_valid(self):
+            testargs = [self.path('test_local.py'), '--quail_build']
             installer = iquail.Installer(
                 name='TestQuail',
                 icon='noicon',
