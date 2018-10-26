@@ -1,5 +1,8 @@
 import shutil
 import os
+import glob
+from quail.helper.file_ignore import FileIgnore
+from quail.constants import Constants
 
 
 class Solutioner:
@@ -35,9 +38,23 @@ class Solutioner:
     def installed(self):
         return os.path.exists(self.dest())
 
+    """ 
+        This function makes sure that all the files defined in Constants.UPDATE_IGNORE_FILE 
+        are not deleted when the software is updating
+        
+        First parameter is the root path for the solution. We could have used self.dest() but is not
+        an acceptable solution for tests.
+    """
+    def _clear_non_ignored_files(self, path):
+        fi = FileIgnore(path + "\\" + Constants.UPDATE_IGNORE_FILE)
+        result = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
+        files_to_remove = [item for item in result if fi.accept(item) and not item.endswith(Constants.UPDATE_IGNORE_FILE)]
+        for file in files_to_remove:
+            if os.path.exists(file):
+                os.remove(file)
+
     def update(self):
-        # TODO: uninstall will be a waste of time on future solution types
-        self.uninstall()
+        self._clear_non_ignored_files(self.dest())
         self.install()
 
     def uninstall(self):
