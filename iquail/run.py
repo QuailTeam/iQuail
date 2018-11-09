@@ -37,11 +37,11 @@ def run(solution, installer, builder=None, controller=None):
         controller = ControllerConsole()
     manager = Manager(installer, solution, builder)
     controller.setup(manager)
-    if args.quail_rm:
+    if args.iquail_rm:
         shutil.rmtree(args.quail_rm)
-    elif args.quail_build:
+    elif args.iquail_build:
         manager.build()
-    elif args.quail_uninstall:
+    elif args.iquail_uninstall:
         controller.start_uninstall()
     else:
         if manager.is_installed():
