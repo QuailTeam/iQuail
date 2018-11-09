@@ -1,8 +1,8 @@
 
 class Constants:
-    ARGUMENT_UNINSTALL = "--quail_uninstall"
-    ARGUMENT_BUILD = "--quail_build"
-    ARGUMENT_RM = "--quail_rm"
+    ARGUMENT_UNINSTALL = "--iquail_uninstall"
+    ARGUMENT_BUILD = "--iquail_build"
+    ARGUMENT_RM = "--iquail_rm"
     CHECKSUMS_FILE = ".integrity.json"
     INTEGRITY_IGNORE_FILE = ".integrity_ignore"
     VERSION_FILE = "solution_version.txt"
