@@ -7,6 +7,8 @@ import ctypes
 import platform
 import tempfile
 
+from ..constants import Constants
+
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
 
@@ -46,6 +48,15 @@ def get_script_name():
 
 def get_script_path():
     return os.path.dirname(get_script())
+
+
+def running_from_installed_binary():
+    # TODO: unittest
+    split_script_path = os.path.normpath(get_script_path()).split(os.path.sep)
+    # split script path should look like [..,".iquail", "project_name"]
+    if len(split_script_path) < 2:
+        return False
+    return split_script_path[-2] == Constants.IQUAIL_ROOT_NAME
 
 
 def running_from_script():

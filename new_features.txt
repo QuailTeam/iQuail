@@ -1,8 +1,2 @@
-- Force update is now optional
-- Scriptable GUI >> Frame mechanism to make new frames easily
-- Configuration mechanism
-- Error reporting
-- Error management:
--- If offline during update, ask to run anyway
--- If no permission to remove (eq: program running)
-   don't remove anything and ask user to close the program
+- not running from installed_binary = ask uninstall (instead of launching)
+
