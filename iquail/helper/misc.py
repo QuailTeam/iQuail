@@ -138,3 +138,24 @@ def safe_remove_folder_content(src):
     finally:
         # TODO chmod -R +w ?
         shutil.rmtree(tmp_dir)
+
+
+def safe_mkdtemp(debug=False):
+    """Same as mkdtemp but removes the directory when quail exit
+    """
+    tmp_dir = tempfile.mkdtemp()
+    if debug:
+        print("Created: " + tmp_dir, file=sys.stderr)
+
+    def delete_tmp_dir():
+        if not os.path.isdir(tmp_dir):
+            return
+        try:
+            shutil.rmtree(tmp_dir)
+            if debug:
+                print("Removed: " + tmp_dir, file=sys.stderr)
+        except Exception as e:
+            print("Can't remove: " + tmp_dir + " : " + str(e), file=sys.stderr)
+
+    atexit.register(delete_tmp_dir)
+    return tmp_dir
