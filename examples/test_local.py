@@ -14,10 +14,11 @@ if iquail.helper.OS_LINUX:
             icon='icon.jpeg',
             binary='allum1',
             console=True,
-            exec_flags='%f',
-            #.desktop optional fields
-            MimeTypes='text/plain',
-            Comment='best game ever'
+            linux_exec_flags='%f',
+            linux_desktop_conf={
+                'MimeTypes': 'text/plain',
+                'Comment': 'best game ever'
+            }
         ),
         iquail.builder.Builder(
             iquail.builder.CmdIntegrity(solution_path)

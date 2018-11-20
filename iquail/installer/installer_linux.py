@@ -1,4 +1,3 @@
-
 import configparser
 import pathlib
 import os.path
@@ -11,22 +10,33 @@ from .installer_base import InstallerBase
 
 class InstallerLinux(InstallerBase):
 
-    def __init__(self, binary, name, icon, exec_flags='', *args, **kwargs):
-        super().__init__(binary, name, icon, *args, **kwargs)
-        self._exec_flags = exec_flags
+    def __init__(self, linux_desktop_conf={}, linux_exec_flags='', *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._desktop_conf = linux_desktop_conf
         self._launch_shortcut = self._desktop(self.name)
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
-        kwargs.update(Name=self.name, Icon=self.get_solution_icon())
-        if kwargs.get('Terminal', None) is None:
-            kwargs.update(Terminal=self.console)
-        else:
-            self._console = True if kwargs.get('Terminal') is 'true' else False
-        self._kwargs = kwargs
+
+        if self._desktop_conf.get('Name') is None:
+            self._desktop_conf.update(Name=self.name)
+        elif self._desktop_conf.get('Name') != self.name:
+            raise RuntimeError('Name field in configuration does not match the one in parameters')
+        if self._desktop_conf.get('Icon') is None:
+            self._desktop_conf.update(Icon=self.get_solution_icon())
+        elif self._desktop_conf.get('Icon') != self._icon:
+            raise RuntimeError('Icon field in configuration does not match the one in parameters')
+        if self._desktop_conf.get('Terminal') is None:
+            self._desktop_conf.update(Terminal='true' if self.console else 'false')
+        elif self._desktop_conf.get('Terminal') != self.console:
+            raise RuntimeError('Terminal field in configuration does not match the one in parameters')
+        if self._desktop_conf.get('Type') is None:
+            self._desktop_conf.update(Type='Application')
+        if self._desktop_conf.get('Exec') is None:
+            self._desktop_conf.update(Exec=self.launch_command + ' ' + linux_exec_flags)
 
     def _desktop(self, name):
         return os.path.join(str(pathlib.Path.home()),
                             ".local", "share", "applications",
-                            "%s.desktop" % (name))
+                            "%s.desktop" % name)
 
     def _write_desktop(self, filename, app_config):
         """Write desktop entry"""
@@ -37,16 +47,7 @@ class InstallerLinux(InstallerBase):
         with open(filename, "w") as f:
             config.write(f, space_around_delimiters=False)
 
-    def add_shortcut(self, dest, **kwargs):
-
-        if kwargs.get('Path', None) is None:
-            kwargs.update(Path=os.path.dirname(self.launcher_binary))
-        if kwargs.get('Exec', None) is None:
-            kwargs.update(Exec=self.launcher_binary + ' ' + self.binary_options + ' ' + self._exec_flags)
-        if kwargs.get('Type', None) is None:
-            kwargs.update(Type='Application')
-
-        app_config = kwargs
+    def add_shortcut(self, dest, **app_config):
         self._write_desktop(dest, app_config)
 
     def delete_shortcut(self, dest):
@@ -59,14 +60,13 @@ class InstallerLinux(InstallerBase):
 
     def _register(self):
         self.add_shortcut(dest=self._launch_shortcut,
-                          **self._kwargs)
+                          **self._desktop_conf)
         self.add_shortcut(dest=self._uninstall_shortcut,
-                          name="Uninstall " + self.name,
-                          workpath=self.get_solution_path(),
-                          binary=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
-                          icon=self.get_solution_icon(),
-                          console=self.console
-                          )
+                          Type='Application',
+                          Name="Uninstall " + self.name,
+                          Exec=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
+                          Icon=self.get_solution_icon(),
+                          Terminal='true' if self.console else 'false')
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)

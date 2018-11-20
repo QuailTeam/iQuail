@@ -22,8 +22,7 @@ class InstallerBase(ABC):
                  binary_options='',
                  install_path='default',
                  publisher='Quail',
-                 launch_with_quail=True,
-                 **kwargs):
+                 launch_with_quail=True):
         self._launch_with_quail = launch_with_quail
         self._binary_name = binary
         self._binary_options = binary_options
@@ -32,7 +31,7 @@ class InstallerBase(ABC):
         self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path() if install_path is 'default' else install_path
-        self._solution_path = kwargs.get('Path', os.path.join(self._install_path, 'solution'))
+        self._solution_path = os.path.join(self._install_path, 'solution')
 
 
     def get_solution_icon(self):
