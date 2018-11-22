@@ -1,37 +1,28 @@
 import configparser
-import pathlib
 import os.path
-import shutil
+import pathlib
 from contextlib import suppress
-from ..constants import Constants
-from .. import helper
+
 from .installer_base import InstallerBase
+from ..constants import Constants
 
 
 class InstallerLinux(InstallerBase):
 
     def __init__(self, linux_desktop_conf={}, linux_exec_flags='', *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._desktop_conf = linux_desktop_conf
+
+        if any(c in linux_desktop_conf for c in ['Name', 'Icon', 'Terminal']):
+            raise RuntimeError('\'Name\', \'Icon\' and \'Terminal\' fields should be defined in parameters')
+
+        self._desktop_conf = {'Name': self.name,
+                              'Icon': self.get_solution_icon(),
+                              'Terminal': 'true' if self.console else 'false',
+                              'Type': 'Application',
+                              'Exec': self.launch_command + ' ' + linux_exec_flags}
+        self._desktop_conf.update(linux_desktop_conf)
         self._launch_shortcut = self._desktop(self.name)
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
-
-        if self._desktop_conf.get('Name') is None:
-            self._desktop_conf.update(Name=self.name)
-        elif self._desktop_conf.get('Name') != self.name:
-            raise RuntimeError('Name field in configuration does not match the one in parameters')
-        if self._desktop_conf.get('Icon') is None:
-            self._desktop_conf.update(Icon=self.get_solution_icon())
-        elif self._desktop_conf.get('Icon') != self._icon:
-            raise RuntimeError('Icon field in configuration does not match the one in parameters')
-        if self._desktop_conf.get('Terminal') is None:
-            self._desktop_conf.update(Terminal='true' if self.console else 'false')
-        elif self._desktop_conf.get('Terminal') != self.console:
-            raise RuntimeError('Terminal field in configuration does not match the one in parameters')
-        if self._desktop_conf.get('Type') is None:
-            self._desktop_conf.update(Type='Application')
-        if self._desktop_conf.get('Exec') is None:
-            self._desktop_conf.update(Exec=self.launch_command + ' ' + linux_exec_flags)
 
     def _desktop(self, name):
         return os.path.join(str(pathlib.Path.home()),
