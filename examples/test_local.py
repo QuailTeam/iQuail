@@ -13,7 +13,12 @@ if iquail.helper.OS_LINUX:
             name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
-            console=True
+            console=True,
+            linux_exec_flags='%f',
+            linux_desktop_conf={
+                'MimeTypes': 'text/plain',
+                'Comment': 'best game ever'
+            }
         ),
         iquail.builder.Builder(
             iquail.builder.CmdIntegrity(solution_path)

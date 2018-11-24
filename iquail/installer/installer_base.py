@@ -15,24 +15,33 @@ class InstallerBase(ABC):
     """Register application on the OS"""
 
     def __init__(self,
-                 name,
                  binary,
+                 name,
                  icon,
-                 publisher='Quail',
                  console=False,
+                 binary_options='',
+                 install_path='default',
+                 publisher='Quail',
                  launch_with_quail=True):
         self._launch_with_quail = launch_with_quail
-        self._name = name
         self._binary_name = binary
+        self._binary_options = binary_options
+        self._name = name
         self._icon = icon
         self._publisher = publisher
         self._console = console
-        self._install_path = self.build_install_path()
+        self._install_path = self.build_install_path() if install_path is 'default' else install_path
         self._solution_path = os.path.join(self._install_path, 'solution')
+
 
     def get_solution_icon(self):
         """Get solution's icon"""
         return self.get_solution_path(self._icon)
+
+    @property
+    def binary_options(self):
+        """Options for the binary"""
+        return self._binary_options
 
     @property
     def launch_with_quail(self):
@@ -47,11 +56,13 @@ class InstallerBase(ABC):
         return self.get_install_path(helper.get_script_name())
 
     @property
+    def launch_command(self):
+        return self.launcher_binary + ' ' + self.binary_options
+
+    @property
     def launcher_binary(self):
         """Binary which will be launched by the main shortcut"""
-        if self.launch_with_quail:
-            return self.quail_binary
-        return self.binary
+        return self.quail_binary if self.launch_with_quail else self.binary
 
     @property
     def binary(self):

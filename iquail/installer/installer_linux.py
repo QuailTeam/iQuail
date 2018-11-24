@@ -1,47 +1,44 @@
-
 import configparser
-import pathlib
 import os.path
-import shutil
+import pathlib
 from contextlib import suppress
-from ..constants import Constants
-from .. import helper
+
 from .installer_base import InstallerBase
+from ..constants import Constants
 
 
 class InstallerLinux(InstallerBase):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, linux_desktop_conf={}, linux_exec_flags='', *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if any(c in linux_desktop_conf for c in ['Name', 'Icon', 'Terminal']):
+            raise RuntimeError('\'Name\', \'Icon\' and \'Terminal\' fields should be defined in parameters')
+
+        self._desktop_conf = {'Name': self.name,
+                              'Icon': self.get_solution_icon(),
+                              'Terminal': 'true' if self.console else 'false',
+                              'Type': 'Application',
+                              'Exec': self.launch_command + ' ' + linux_exec_flags}
+        self._desktop_conf.update(linux_desktop_conf)
         self._launch_shortcut = self._desktop(self.name)
-        self._uninstall_shortcut = self._desktop("%s_uninstall" % (self.name))
+        self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
 
     def _desktop(self, name):
         return os.path.join(str(pathlib.Path.home()),
                             ".local", "share", "applications",
-                            "%s.desktop" % (name))
+                            "%s.desktop" % name)
 
     def _write_desktop(self, filename, app_config):
         """Write desktop entry"""
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        config = configparser.ConfigParser()
+        config = configparser.ConfigParser(interpolation=None)
         config.optionxform = str
         config['Desktop Entry'] = app_config
         with open(filename, "w") as f:
-            config.write(f)
+            config.write(f, space_around_delimiters=False)
 
-    def add_shortcut(self, dest, name, binary, icon,
-                     workpath=None, console=None):
-        if not workpath:
-            workpath = os.path.dirname(binary)
-        app_config = {
-            'Name': name,
-            'Path': workpath,
-            'Exec': binary,
-            'Icon': icon,
-            'Terminal': 'true' if console else 'false',
-            'Type': 'Application'
-        }
+    def add_shortcut(self, dest, **app_config):
         self._write_desktop(dest, app_config)
 
     def delete_shortcut(self, dest):
@@ -54,19 +51,13 @@ class InstallerLinux(InstallerBase):
 
     def _register(self):
         self.add_shortcut(dest=self._launch_shortcut,
-                          name=self.name,
-                          workpath=self.get_solution_path(),
-                          binary=self.launcher_binary,
-                          icon=self.get_solution_icon(),
-                          console=self.console
-                          )
+                          **self._desktop_conf)
         self.add_shortcut(dest=self._uninstall_shortcut,
-                          name="Uninstall " + self.name,
-                          workpath=self.get_solution_path(),
-                          binary=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
-                          icon=self.get_solution_icon(),
-                          console=self.console
-                          )
+                          Type='Application',
+                          Name="Uninstall " + self.name,
+                          Exec=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
+                          Icon=self.get_solution_icon(),
+                          Terminal='true' if self.console else 'false')
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)
