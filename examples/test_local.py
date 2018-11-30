@@ -14,7 +14,7 @@ if iquail.helper.OS_LINUX:
             icon='icon.jpeg',
             binary='allum1',
             console=True,
-            install_systemwide=False,
+            install_systemwide=True,
             linux_exec_flags='%f',
             linux_desktop_conf={
                 'Categories': 'GNOME;GTK;Utility;TextEditor;Development;',

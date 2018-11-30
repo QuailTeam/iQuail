@@ -91,7 +91,8 @@ class InstallerBase(ABC):
         """Build install path
         This function can be overridden to install files to somewhere else
         """
-        return os.path.join(str(pathlib.Path.home()), '.iquail', self.name)
+        return '/opt/' + os.path.join('quail', self.name) if self._install_systemwide else \
+            os.path.join(str(pathlib.Path.home()), '.iquail', self.name)
 
     def get_solution_path(self, *args):
         """Get solution path"""
