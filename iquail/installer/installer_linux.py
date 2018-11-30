@@ -49,6 +49,10 @@ class InstallerLinux(InstallerBase):
         # TODO: abs shortcut path & add desktop var
         return os.path.isfile(dest)
 
+    def build_install_path(self):
+        return '/opt/' + os.path.join('quail', self.name) if self._install_systemwide else \
+            os.path.join(str(pathlib.Path.home()), '.iquail', self.name)
+
     def _register(self):
         if self._install_systemwide and os.geteuid() != 0:
             raise RuntimeError('This script should be launched as root if you want to install or update this program '
