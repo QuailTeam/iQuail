@@ -18,11 +18,13 @@ class InstallerBase(ABC):
                  binary,
                  name,
                  icon,
+                 install_systemwide=False,
                  console=False,
                  binary_options='',
-                 install_path='default',
+                 install_path=None,
                  publisher='Quail',
                  launch_with_quail=True):
+        self._install_systemwide = install_systemwide
         self._launch_with_quail = launch_with_quail
         self._binary_name = binary
         self._binary_options = binary_options
@@ -30,7 +32,7 @@ class InstallerBase(ABC):
         self._icon = icon
         self._publisher = publisher
         self._console = console
-        self._install_path = self.build_install_path() if install_path is 'default' else install_path
+        self._install_path = self.build_install_path() if install_path is None else install_path
         self._solution_path = os.path.join(self._install_path, 'solution')
 
 

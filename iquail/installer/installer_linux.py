@@ -25,9 +25,9 @@ class InstallerLinux(InstallerBase):
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
 
     def _desktop(self, name):
-        return os.path.join(str(pathlib.Path.home()),
-                            ".local", "share", "applications",
-                            "%s.desktop" % name)
+        return os.path.join(os.path.join(str(pathlib.Path.root), "/usr") if self._install_systemwide
+                            else os.path.join(str(pathlib.Path.home()), ".local"),
+                            "share", "applications", "%s.desktop" % name)
 
     def _write_desktop(self, filename, app_config):
         """Write desktop entry"""
@@ -50,6 +50,10 @@ class InstallerLinux(InstallerBase):
         return os.path.isfile(dest)
 
     def _register(self):
+        if self._install_systemwide and os.geteuid() != 0:
+            raise RuntimeError('This script should be launched as root if you want to install or update this program '
+                               'systemwide')
+
         self.add_shortcut(dest=self._launch_shortcut,
                           **self._desktop_conf)
         self.add_shortcut(dest=self._uninstall_shortcut,
