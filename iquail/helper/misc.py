@@ -88,8 +88,7 @@ def self_remove_directory(directory):
 
 def rerun_as_admin():
     if OS_LINUX:
-        # os.system('pkexec %s %s' % (get_script_path(),
-        # ' '.join(sys.argv[1:])))
+        os.system('pkexec %s %s' % (get_script_path(), ' '.join(sys.argv[1:])))
         raise NotImplementedError
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():

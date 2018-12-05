@@ -3,11 +3,11 @@ import os.path
 import pathlib
 from contextlib import suppress
 
-from .installer_base import InstallerBase
+from .registrer_base import RegistrerBase
 from ..constants import Constants
 
 
-class InstallerLinux(InstallerBase):
+class RegistrerLinux(RegistrerBase):
 
     def __init__(self, linux_desktop_conf={}, linux_exec_flags='', *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,8 +55,7 @@ class InstallerLinux(InstallerBase):
 
     def _register(self):
         if self._install_systemwide and os.geteuid() != 0:
-            raise RuntimeError('This script should be launched as root if you want to install or update this program '
-                               'systemwide')
+            raise PermissionError("You need root access to install programs system-wide")
 
         self.add_shortcut(dest=self._launch_shortcut,
                           **self._desktop_conf)

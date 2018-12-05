@@ -43,9 +43,8 @@ def run(solution, installer, builder=None, controller=None):
         manager.build()
     elif args.quail_uninstall:
         controller.start_uninstall()
+    elif manager.is_installed():
+        controller.start_run_or_update()
+        # TODO: launch solution first and kill it on update
     else:
-        if manager.is_installed():
-            controller.start_run_or_update()
-            # TODO: launch solution first and kill it on update
-        else:
-            controller.start_install()
+        controller.start_install()
