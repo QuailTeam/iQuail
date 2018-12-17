@@ -43,7 +43,7 @@ class InstallerWindows(InstallerBase):
 
     def _set_reg_uninstall(self):
         uninstall_path = "%s %s" % (
-            self.quail_binary,
+            self.iquail_binary,
             Constants.ARGUMENT_UNINSTALL)
         if helper.running_from_script():
             uninstall_path = sys.executable + ' ' + uninstall_path

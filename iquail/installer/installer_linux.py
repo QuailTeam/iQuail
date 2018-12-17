@@ -55,7 +55,7 @@ class InstallerLinux(InstallerBase):
         self.add_shortcut(dest=self._uninstall_shortcut,
                           Type='Application',
                           Name="Uninstall " + self.name,
-                          Exec=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
+                          Exec=self.iquail_binary + " " + Constants.ARGUMENT_UNINSTALL,
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
 
