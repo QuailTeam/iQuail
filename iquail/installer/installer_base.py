@@ -56,7 +56,7 @@ class InstallerBase(ABC):
         script_name = helper.get_script_name()
         if "." in script_name:
             extension = script_name.split(".")[-1]
-        return self.get_install_path(Constants.IQUAIL_EXE_NAME + "." + extension)
+        return self.get_install_path(Constants.IQUAIL_LAUNCHER_NAME + "." + extension)
 
     @property
     def launch_command(self):
