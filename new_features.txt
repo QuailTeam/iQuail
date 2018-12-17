@@ -1,3 +1,4 @@
 - not running from installed_binary = ask uninstall (instead of launching)
 - delete tmp dir at exit
 - fix bug packed --iquail_rm
+- fixed name for iquail launcher
