@@ -39,7 +39,7 @@ def run(solution, installer, builder=None, controller=None):
     manager = Manager(installer, solution, builder)
     controller.setup(manager)
     if args.iquail_rm:
-        shutil.rmtree(args.quail_rm)
+        shutil.rmtree(args.iquail_rm)
     elif args.iquail_build:
         manager.build()
     elif args.iquail_uninstall:

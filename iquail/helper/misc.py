@@ -77,7 +77,7 @@ def _delete_atexit(path_to_delete):
     def _delete_from_tmp():
         tmpdir = tempfile.mkdtemp()
         newscript = shutil.copy2(get_script(), tmpdir)
-        args = (newscript, "--quail_rm", path_to_delete)
+        args = (newscript, Constants.ARGUMENT_RM, path_to_delete)
         if running_from_script():
             os.execl(sys.executable, sys.executable, *args)
         else:
