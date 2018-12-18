@@ -5,6 +5,7 @@ import atexit
 import tempfile
 import sys
 from contextlib import suppress
+from hashlib import md5
 from abc import ABC, abstractmethod
 from ..helper import misc
 from .. import helper
@@ -18,10 +19,10 @@ class InstallerBase(ABC):
                  binary,
                  name,
                  icon,
+                 publisher,
                  console=False,
                  binary_options='',
                  install_path='default',
-                 publisher='Quail',
                  launch_with_quail=True):
         self._launch_with_quail = launch_with_quail
         self._binary_name = binary
@@ -88,11 +89,17 @@ class InstallerBase(ABC):
         :return: boolean"""
         return self._console
 
+    @property
+    def uid(self):
+        return self.name + "_" + md5(self.publisher).digest()
+
     def build_install_path(self):
         """Build install path
         This function can be overridden to install files to somewhere else
         """
-        return os.path.join(str(pathlib.Path.home()), Constants.IQUAIL_ROOT_NAME, self.name)
+        return os.path.join(str(pathlib.Path.home()),
+                            Constants.IQUAIL_ROOT_NAME,
+                            self.uid)
 
     def get_solution_path(self, *args):
         """Get solution path"""

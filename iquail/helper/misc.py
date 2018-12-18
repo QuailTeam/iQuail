@@ -140,6 +140,12 @@ def safe_remove_folder_content(src):
         shutil.rmtree(tmp_dir)
 
 
+def uid_from_string(string):
+    """Get unique id from string
+    """
+    return "%x" % hash(string)
+
+
 def safe_mkdtemp(debug=False):
     """Same as mkdtemp but removes the directory when quail exit
     """
