@@ -4,3 +4,4 @@
 - fixed name for iquail launcher
 - fixed traceback >> traceback_str
 - UID for publisher
+- require pypiwin32
