@@ -29,7 +29,7 @@ class InstallerWindows(InstallerBase):
             self.uid)
         # use this instead?
         # https://msdn.microsoft.com/fr-fr/library/0ea7b5xe(v=vs.84).aspx
-        shortcut_name = self.uid + '.lnk'
+        shortcut_name = self.name + '.lnk'
         self._desktop_shortcut = os.path.join(
             shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, 0, 0),
             shortcut_name)
