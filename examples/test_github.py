@@ -8,6 +8,7 @@ if not iquail.helper.OS_WINDOWS:
 iquail.run(
     solution=iquail.SolutionGitHub("cmder_mini.zip", "https://github.com/cmderdev/cmder"),
     installer=iquail.Installer(
+        publisher='OHM',
         name='Cmder',
         icon='Cmder.exe',
         binary='Cmder.exe',
