@@ -91,7 +91,8 @@ class InstallerBase(ABC):
 
     @property
     def uid(self):
-        return self.name + "_" + md5(self.publisher).digest()
+        """Get application unique id"""
+        return self.name + "_" + md5(self.publisher.encode('utf-8')).hexdigest()
 
     def build_install_path(self):
         """Build install path

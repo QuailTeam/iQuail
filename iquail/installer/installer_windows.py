@@ -26,17 +26,17 @@ class InstallerWindows(InstallerBase):
         super().__init__(*args, **kwargs)
         self._uninstall_reg_key = os.path.join(
             'SOFTWARE', 'Microsoft', 'Windows', 'CurrentVersion', 'Uninstall',
-            self.name)
+            self.uid)
         # use this instead?
         # https://msdn.microsoft.com/fr-fr/library/0ea7b5xe(v=vs.84).aspx
-        shortcut_name = self.name + '.lnk'
+        shortcut_name = self.uid + '.lnk'
         self._desktop_shortcut = os.path.join(
             shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, 0, 0),
             shortcut_name)
         self._start_menu_path = os.path.join(
             os.getenv('APPDATA'),
             'Microsoft', 'Windows', 'Start Menu', 'Programs',
-            self.name)
+            self.uid)
         self._start_menu_shortcut = os.path.join(
             self._start_menu_path,
             shortcut_name)
