@@ -85,11 +85,23 @@ def self_remove_directory(directory):
     else:
         _delete_atexit(directory)
 
+def is_exe(program):
+    for path in os.environ["PATH"].split(os.pathsep):
+        exe_file = os.path.join(path, program)
+        if os.path.isfile(exe_file) and os.access(exe_file, os.X_OK):
+            return exe_file
+    return None
 
-def rerun_as_admin():
+def rerun_as_admin(graphical):
     if OS_LINUX:
-        os.system('pkexec %s %s' % (get_script_path(), ' '.join(sys.argv[1:])))
-        raise NotImplementedError
+        cmd = None
+        if (graphical is False):
+            cmd = ['sudo']
+        elif (is_exe('gksudo')):
+            cmd = ['gksudo', '--']
+        elif (is_exe('kdesudo')):
+            cmd = ['kdesudo']
+        sys.exit(os.execvp(cmd[0], cmd + sys.argv))
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():
             ctypes.windll.shell32.ShellExecuteW(None,
@@ -97,7 +109,7 @@ def rerun_as_admin():
                                                 sys.executable,
                                                 ' '.join(sys.argv),
                                                 None, 1)
-    exit(0)
+    sys.exit(0)
 
 
 def move_folder_content(src, dest, ignore_errors=False):

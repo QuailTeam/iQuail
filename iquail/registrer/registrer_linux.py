@@ -67,6 +67,8 @@ class RegistrerLinux(RegistrerBase):
                           Terminal='true' if self.console else 'false')
 
     def _unregister(self):
+        if self._install_systemwide and os.geteuid() != 0:
+            raise PermissionError("You need root access to uninstall this program")
         self.delete_shortcut(self._launch_shortcut)
         self.delete_shortcut(self._uninstall_shortcut)
 

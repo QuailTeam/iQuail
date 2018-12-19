@@ -67,3 +67,10 @@ class ControllerBase(ABC):
         """ Start update"""
         pass
 
+    @abstractmethod
+    def is_graphical(self):
+        """Tells if controller is graphical or terminal
+        :return: Boolean
+        """
+        pass
+

@@ -41,6 +41,10 @@ class RegistrerBase(ABC):
         return self.get_solution_path(self._icon)
 
     @property
+    def install_systemwide(self):
+        return self._install_systemwide
+
+    @property
     def binary_options(self):
         """Options for the binary"""
         return self._binary_options

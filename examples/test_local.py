@@ -4,6 +4,7 @@ import os
 import os.path
 import iquail
 import platform
+import sys
 
 if iquail.helper.OS_LINUX:
     solution_path = ['Allum1']
@@ -14,7 +15,7 @@ if iquail.helper.OS_LINUX:
             icon='icon.jpeg',
             binary='allum1',
             console=True,
-            install_systemwide=True,
+            install_systemwide=False,
             linux_exec_flags='%f',
             linux_desktop_conf={
                 'Categories': 'GNOME;GTK;Utility;TextEditor;Development;',

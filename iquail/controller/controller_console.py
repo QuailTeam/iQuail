@@ -34,6 +34,7 @@ class ControllerConsole(ControllerBase):
             input("Press enter to continue...")
 
     def callback_solution_not_removable_error(self, exception_info):
+        pass
         print("[*] Impossible to remove / update application, please close application first!")
         input("Press enter to exit...")
 
@@ -67,3 +68,6 @@ class ControllerConsole(ControllerBase):
 
     def press_to_exit(self):
         input("Press enter to exit ...")
+
+    def is_graphical(self):
+        return False
