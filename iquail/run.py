@@ -32,6 +32,9 @@ def parse_args():
 def run(solution, installer, builder=Builder(), controller=ControllerConsole()):
     """run config"""
     (args, unknown) = parse_args()
+    if len(unknown) is not 0:
+        sys.stderr.write('iQuail: ' + unknown[0] + ': unknown option')
+        sys.exit(84)
     manager = Manager(installer, solution, builder, controller.is_graphical())
     controller.setup(manager)
     if args.iquail_rm:
