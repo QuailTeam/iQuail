@@ -23,6 +23,7 @@ class Configuration:
         self._config = {}
 
     def read(self):
+        Path(self._filename).touch()
         self._parser.read(self._filename)
         if self._default_scope not in self._parser:
             self._parser[self._default_scope] = {}
