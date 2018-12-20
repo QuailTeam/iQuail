@@ -1,5 +1,4 @@
 import os
-import quail
 from .base_test_case import BaseTestCase
 from quail.constants import Constants
 from quail.solution.solutioner import Solutioner
