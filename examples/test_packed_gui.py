@@ -14,6 +14,7 @@ if iquail.helper.OS_LINUX:
     iquail.run(
         solution=iquail.SolutionPacked(path='Allum1'),
         installer=iquail.Installer(
+            publisher="alies",
             name='Allum1',
             icon='icon.jpeg',
             binary='allum1',
@@ -30,6 +31,7 @@ if iquail.helper.OS_WINDOWS:
     iquail.run(
         solution=iquail.SolutionPacked(path='OpenHardwareMonitor'),
         installer=iquail.Installer(
+            publisher="OHM",
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',

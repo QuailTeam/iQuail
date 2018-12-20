@@ -8,6 +8,7 @@ from . import helper
 from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
+from .helper import misc
 
 
 def parse_args():
@@ -33,14 +34,20 @@ def run(solution, installer, builder=Builder(), controller=ControllerConsole()):
     (args, unknown) = parse_args()
     manager = Manager(installer, solution, builder, controller.is_graphical())
     controller.setup(manager)
-    if args.quail_rm:
-        shutil.rmtree(args.quail_rm)
-    elif args.quail_build:
+    if args.iquail_rm:
+        shutil.rmtree(args.iquail_rm)
+    elif args.iquail_build:
         manager.build()
-    elif args.quail_uninstall:
+    elif args.iquail_uninstall:
         controller.start_uninstall()
-    elif manager.is_installed():
-        controller.start_run_or_update()
-        # TODO: launch solution first and kill it on update
     else:
-        controller.start_install()
+        if misc.running_from_installed_binary():
+            controller.start_run_or_update()
+        else:
+            if manager.is_installed():
+                print(misc.get_script_path())
+                # program is installed but we are not launched from the installed folder
+                # TODO: ask repair/uninstall
+                controller.start_uninstall()
+            else:
+                controller.start_install()

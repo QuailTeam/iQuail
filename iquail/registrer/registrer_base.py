@@ -5,6 +5,7 @@ import atexit
 import tempfile
 import sys
 from contextlib import suppress
+from hashlib import md5
 from abc import ABC, abstractmethod
 from ..helper import misc
 from .. import helper
@@ -50,16 +51,20 @@ class RegistrerBase(ABC):
         return self._binary_options
 
     @property
-    def launch_with_quail(self):
+    def launch_with_iquail(self):
         """Use iquail to launch the binary
         (otherwise the shortcuts will launch the binary directly)
         """
         return self._launch_with_quail
 
     @property
-    def quail_binary(self):
+    def iquail_binary(self):
         """Get iquail executable install path"""
-        return self.get_install_path(helper.get_script_name())
+        script_name = helper.get_script_name()
+        if "." in script_name:
+            extension = script_name.split(".")[-1]
+            return self.get_install_path(Constants.IQUAIL_LAUNCHER_NAME + "." + extension)
+        return self.get_install_path(Constants.IQUAIL_LAUNCHER_NAME)
 
     @property
     def launch_command(self):
@@ -68,7 +73,7 @@ class RegistrerBase(ABC):
     @property
     def launcher_binary(self):
         """Binary which will be launched by the main shortcut"""
-        return self.quail_binary if self.launch_with_quail else self.binary
+        return self.iquail_binary if self.launch_with_iquail else self.binary
 
     @property
     def binary(self):
@@ -91,11 +96,18 @@ class RegistrerBase(ABC):
         :return: boolean"""
         return self._console
 
+    @property
+    def uid(self):
+        """Get application unique id"""
+        return self.name + "_" + md5(self.publisher.encode('utf-8')).hexdigest()
+
     def build_install_path(self):
         """Build install path
         This function can be overridden to install files to somewhere else
         """
-        return os.path.join(str(pathlib.Path.home()), '.iquail', self.name)
+        return os.path.join(str(pathlib.Path.home()),
+                            Constants.IQUAIL_ROOT_NAME,
+                            self.uid)
 
     def get_solution_path(self, *args):
         """Get solution path"""
@@ -110,7 +122,7 @@ class RegistrerBase(ABC):
         self._register()
         os.makedirs(self.get_install_path(), exist_ok=True)
         # install script and module:
-        shutil.copy2(helper.get_script(), self.quail_binary)
+        shutil.copy2(helper.get_script(), self.iquail_binary)
         if helper.running_from_script():
             with suppress(Exception):
                 shutil.rmtree(self.get_install_path("iquail"))
@@ -122,7 +134,7 @@ class RegistrerBase(ABC):
         misc.self_remove_directory(self.get_install_path())
 
     def registered(self):
-        return os.path.isfile(self.quail_binary) and self._unregister()
+        return os.path.isfile(self.iquail_binary) and self._unregister()
 
     @abstractmethod
     def _register(self):

@@ -26,7 +26,7 @@ class RegistrerWindows(RegistrerBase):
         super().__init__(*args, **kwargs)
         self._uninstall_reg_key = os.path.join(
             'SOFTWARE', 'Microsoft', 'Windows', 'CurrentVersion', 'Uninstall',
-            self.name)
+            self.uid)
         # use this instead?
         # https://msdn.microsoft.com/fr-fr/library/0ea7b5xe(v=vs.84).aspx
         shortcut_name = self.name + '.lnk'
@@ -36,14 +36,14 @@ class RegistrerWindows(RegistrerBase):
         self._start_menu_path = os.path.join(
             os.getenv('APPDATA'),
             'Microsoft', 'Windows', 'Start Menu', 'Programs',
-            self.name)
+            self.uid)
         self._start_menu_shortcut = os.path.join(
             self._start_menu_path,
             shortcut_name)
 
     def _set_reg_uninstall(self):
         uninstall_path = "%s %s" % (
-            self.quail_binary,
+            self.iquail_binary,
             Constants.ARGUMENT_UNINSTALL)
         if helper.running_from_script():
             uninstall_path = sys.executable + ' ' + uninstall_path

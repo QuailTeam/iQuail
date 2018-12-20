@@ -15,7 +15,7 @@ class ControllerConsole(ControllerBase):
 
     def _excepthook(self, exception_info):
         print("[*] Fatal exception", file=sys.stderr)
-        for line in exception_info.traceback:
+        for line in exception_info.traceback_str:
             print(line, file=sys.stderr, end="")
 
     def _ask_validate(self, question):

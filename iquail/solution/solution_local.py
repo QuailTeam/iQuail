@@ -1,8 +1,7 @@
 import shutil
 import os
-import tempfile
 from .solution_base import SolutionBase
-from .. import helper
+from ..helper import misc
 from ..errors import *
 
 
@@ -27,7 +26,7 @@ class SolutionLocal(SolutionBase):
     def open(self):
         if not os.path.isdir(self._path):
             raise SolutionUnreachableError("Solution local: no directory error")
-        self._tmp = tempfile.mkdtemp()
+        self._tmp = misc.safe_mkdtemp()
 
     def close(self):
         if self._tmp:
