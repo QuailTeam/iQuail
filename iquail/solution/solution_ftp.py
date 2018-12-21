@@ -1,10 +1,9 @@
 from ftplib import FTP
 import os
-import tempfile
 import shutil
 from .solution_base import SolutionBase
 from ..errors import SolutionUnreachableError
-from .. import helper
+from ..helper import misc
 
 
 class FtpWalk:
@@ -65,7 +64,7 @@ class SolutionFtp(SolutionBase):
         return False
 
     def open(self):
-        self._tmpdir = tempfile.mkdtemp()
+        self._tmpdir = misc.safe_mkdtemp()
         self._ftp = FTP()
         try:
             self._ftp.connect(self._host, self._port)

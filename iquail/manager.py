@@ -3,8 +3,9 @@ import signal
 import stat
 import sys
 import typing
-from . import helper
 from .helper import misc
+
+from . import helper
 from .constants import Constants
 from .solution.solutioner import Solutioner
 
@@ -90,6 +91,7 @@ class Manager:
     def install_part_solution(self):
         """part 1 of the installation will install the solution
         """
+        #permission checked here because tkinter calls this method directly instead of install()
         self.check_permissions()
         self.apply_conf()  # because conf have been just selected
         self._solutioner.install()
@@ -143,3 +145,4 @@ class Manager:
         if self._installer.install_systemwide and os.geteuid() != 0:
             print('Root access is required for further action, relaunching as root')
             misc.rerun_as_admin(self._graphical)
+

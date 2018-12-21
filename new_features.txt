@@ -1,8 +1,7 @@
-- Force update is now optional
-- Scriptable GUI >> Frame mechanism to make new frames easily
-- Configuration mechanism
-- Error reporting
-- Error management:
--- If offline during update, ask to run anyway
--- If no permission to remove (eq: program running)
-   don't remove anything and ask user to close the program
+- not running from installed_binary = ask uninstall (instead of launching)
+- delete tmp dir at exit
+- fix bug packed --iquail_rm
+- fixed name for iquail launcher
+- fixed traceback >> traceback_str
+- UID for publisher
+- require pypiwin32

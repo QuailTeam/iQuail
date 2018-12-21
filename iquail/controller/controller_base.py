@@ -73,4 +73,3 @@ class ControllerBase(ABC):
         :return: Boolean
         """
         pass
-

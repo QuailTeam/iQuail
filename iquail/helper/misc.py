@@ -7,6 +7,8 @@ import ctypes
 import platform
 import tempfile
 
+from ..constants import Constants
+
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
 
@@ -48,6 +50,15 @@ def get_script_path():
     return os.path.dirname(get_script())
 
 
+def running_from_installed_binary():
+    # TODO: unittest
+    split_script_path = os.path.normpath(get_script_path()).split(os.path.sep)
+    # split script path should look like [..,".iquail", "project_name"]
+    if len(split_script_path) < 2:
+        return False
+    return split_script_path[-2] == Constants.IQUAIL_ROOT_NAME
+
+
 def running_from_script():
     """check if being run from script
     and not builded in standalone binary"""
@@ -66,7 +77,7 @@ def _delete_atexit(path_to_delete):
     def _delete_from_tmp():
         tmpdir = tempfile.mkdtemp()
         newscript = shutil.copy2(get_script(), tmpdir)
-        args = (newscript, "--quail_rm", path_to_delete)
+        args = (newscript, Constants.ARGUMENT_RM, path_to_delete)
         if running_from_script():
             os.execl(sys.executable, sys.executable, *args)
         else:
@@ -85,12 +96,14 @@ def self_remove_directory(directory):
     else:
         _delete_atexit(directory)
 
+
 def is_exe(program):
     for path in os.environ["PATH"].split(os.pathsep):
         exe_file = os.path.join(path, program)
         if os.path.isfile(exe_file) and os.access(exe_file, os.X_OK):
             return exe_file
     return None
+
 
 def rerun_as_admin(graphical):
     if OS_LINUX:
@@ -138,3 +151,24 @@ def safe_remove_folder_content(src):
     finally:
         # TODO chmod -R +w ?
         shutil.rmtree(tmp_dir)
+
+
+def safe_mkdtemp(debug=False):
+    """Same as mkdtemp but removes the directory when quail exit
+    """
+    tmp_dir = tempfile.mkdtemp()
+    if debug:
+        print("Created: " + tmp_dir, file=sys.stderr)
+
+    def delete_tmp_dir():
+        if not os.path.isdir(tmp_dir):
+            return
+        try:
+            shutil.rmtree(tmp_dir)
+            if debug:
+                print("Removed: " + tmp_dir, file=sys.stderr)
+        except Exception as e:
+            print("Can't remove: " + tmp_dir + " : " + str(e), file=sys.stderr)
+
+    atexit.register(delete_tmp_dir)
+    return tmp_dir

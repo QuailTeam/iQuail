@@ -21,8 +21,8 @@ class InstallerLinux(InstallerBase):
                               'Type': 'Application',
                               'Exec': self.launch_command + ' ' + linux_exec_flags}
         self._desktop_conf.update(linux_desktop_conf)
-        self._launch_shortcut = self._desktop(self.name)
-        self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
+        self._launch_shortcut = self._desktop(self.uid)
+        self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
 
     def _desktop(self, name):
         return os.path.join(os.path.join(str(pathlib.Path.root), "/usr") if self._install_systemwide
@@ -50,25 +50,20 @@ class InstallerLinux(InstallerBase):
         return os.path.isfile(dest)
 
     def build_install_path(self):
-        return '/opt/' + os.path.join('quail', self.name) if self._install_systemwide else \
-            os.path.join(str(pathlib.Path.home()), '.iquail', self.name)
+        return '/opt/' + os.path.join(Constants.IQUAIL_ROOT_NAME, self.name) if self._install_systemwide else \
+            os.path.join(str(pathlib.Path.home()), Constants.IQUAIL_ROOT_NAME, self.name)
 
     def _register(self):
-        if self._install_systemwide and os.geteuid() != 0:
-            raise PermissionError("You need root access to install programs system-wide")
-
         self.add_shortcut(dest=self._launch_shortcut,
                           **self._desktop_conf)
         self.add_shortcut(dest=self._uninstall_shortcut,
                           Type='Application',
                           Name="Uninstall " + self.name,
-                          Exec=self.quail_binary + " " + Constants.ARGUMENT_UNINSTALL,
+                          Exec=self.iquail_binary + " " + Constants.ARGUMENT_UNINSTALL,
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
 
     def _unregister(self):
-        if self._install_systemwide and os.geteuid() != 0:
-            raise PermissionError("You need root access to uninstall this program")
         self.delete_shortcut(self._launch_shortcut)
         self.delete_shortcut(self._uninstall_shortcut)
 
