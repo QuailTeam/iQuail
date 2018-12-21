@@ -1,7 +1,7 @@
 # from .LinuxInstaller import LinuxInstaller
 from .run import run
 from .solution import *
-from .registrer import *
+from .installer import *
 from .controller import *
 from .errors import *
 from .helper.configuration import ConfVar

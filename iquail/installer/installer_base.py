@@ -11,7 +11,7 @@ from .. import helper
 from ..constants import Constants
 
 
-class RegistrerBase(ABC):
+class InstallerBase(ABC):
     """Register application on the OS"""
 
     def __init__(self,

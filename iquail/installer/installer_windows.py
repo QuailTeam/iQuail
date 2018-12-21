@@ -7,7 +7,7 @@ from win32com.client import Dispatch
 from contextlib import suppress
 from ..constants import Constants
 from .. import helper
-from .registrer_base import RegistrerBase
+from .installer_base import InstallerBase
 
 
 def on_rmtree_error(function, path, excinfo):
@@ -20,7 +20,7 @@ def on_rmtree_error(function, path, excinfo):
         raise OSError("Cannot delete " + path)
 
 
-class RegistrerWindows(RegistrerBase):
+class InstallerWindows(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

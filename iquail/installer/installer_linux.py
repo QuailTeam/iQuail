@@ -3,11 +3,11 @@ import os.path
 import pathlib
 from contextlib import suppress
 
-from .registrer_base import RegistrerBase
+from .installer_base import InstallerBase
 from ..constants import Constants
 
 
-class RegistrerLinux(RegistrerBase):
+class InstallerLinux(InstallerBase):
 
     def __init__(self, linux_desktop_conf={}, linux_exec_flags='', *args, **kwargs):
         super().__init__(*args, **kwargs)

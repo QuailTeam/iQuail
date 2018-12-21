@@ -10,15 +10,15 @@ from .solution.solutioner import Solutioner
 
 
 class Manager:
-    def __init__(self, registrer, solution, builder, graphical):
+    def __init__(self, installer, solution, builder, graphical):
         self._graphical = graphical
-        self._registrer = registrer
+        self._installer = installer
         self._solution = solution
         self._builder = builder
         self._solutioner = Solutioner(self._solution,
-                                      self._registrer.get_solution_path())
+                                      self._installer.get_solution_path())
         self._config = helper.Configuration(
-            self._registrer.get_install_path(Constants.CONFIG_FILE)
+            self._installer.get_install_path(Constants.CONFIG_FILE)
         )
         if self.is_installed():
             # If iquail is not installed the conf doesn't exist yet
@@ -28,13 +28,13 @@ class Manager:
     def apply_conf(self):
         """Apply configuration on Manager's arguments
         (replace ConfVars with their actual values"""
-        self.config.apply(self._solution, self._registrer)
+        self.config.apply(self._solution, self._installer)
 
     def _get_version_file_path(self):
-        return self._registrer.get_install_path(Constants.VERSION_FILE)
+        return self._installer.get_install_path(Constants.VERSION_FILE)
 
     def _chmod_binary(self):
-        binary = self._registrer.binary
+        binary = self._installer.binary
         if not (stat.S_IXUSR & os.stat(binary)[stat.ST_MODE]):
             os.chmod(binary, 0o755)
 
@@ -53,7 +53,7 @@ class Manager:
 
     def get_name(self):
         """Get solution name"""
-        return self._registrer.name
+        return self._installer.name
 
     @property
     def config(self):
@@ -98,7 +98,7 @@ class Manager:
     def install_part_register(self):
         """this part of the installation will register the solution
         """
-        self._registrer.register()
+        self._installer.register()
         self._chmod_binary()
         self.config.save()
 
@@ -123,23 +123,23 @@ class Manager:
         """ Uninstall process
         """
         self.check_permissions()
-        self._registrer.unregister()
+        self._installer.unregister()
         self._solutioner.uninstall()
 
     def is_installed(self):
         """Check if solution is installed"""
-        return self._solutioner.installed()  # and self._registrer.registered()
+        return self._solutioner.installed()  # and self._installer.registered()
 
     def run(self):
         """Run solution"""
         # self.config.save() config could be used for "don't ask me again to update" feature
-        binary = self._registrer.binary
+        binary = self._installer.binary
         self._chmod_binary()
         args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
         binary_args = [os.path.basename(binary)] + args
         os.execl(binary, *binary_args)
 
     def check_permissions(self):
-        if self._registrer.install_systemwide and os.geteuid() != 0:
+        if self._installer.install_systemwide and os.geteuid() != 0:
             print('Root access is required for further action, relaunching as root')
             misc.rerun_as_admin(self._graphical)
