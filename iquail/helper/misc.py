@@ -108,11 +108,11 @@ def is_exe(program):
 def rerun_as_admin(graphical):
     if OS_LINUX:
         cmd = None
-        if (graphical is False):
-            cmd = ['sudo']
-        elif (is_exe('gksudo')):
+        if graphical is False:
+            cmd = ['sudo', '-A']
+        elif is_exe('gksudo'):
             cmd = ['gksudo', '--']
-        elif (is_exe('kdesudo')):
+        elif is_exe('kdesudo'):
             cmd = ['kdesudo']
         sys.exit(os.execvp(cmd[0], cmd + sys.argv))
     elif OS_WINDOWS:
