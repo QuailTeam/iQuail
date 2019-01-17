@@ -21,7 +21,7 @@ class InstallerLinux(InstallerBase):
                               'Type': 'Application',
                               'Exec': self.launch_command + ' ' + linux_exec_flags}
         self._desktop_conf.update(linux_desktop_conf)
-        self._launch_shortcut = self._desktop(self.name)
+        self._launch_shortcut = self._desktop(self.uid)
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
 
     def _desktop(self, name):
@@ -83,6 +83,6 @@ class InstallerLinux(InstallerBase):
         os.remove(self.build_symlink_path(name))
 
     def build_symlink_path(self, name):
-        return os.path.join("/usr/bin" if self._install_systemwide else os.path.join(str(pathlib.Path.home()), '.local/bin'),
-                            name)
+        return os.path.join("/usr/bin" if self._install_systemwide
+                            else os.path.join(str(pathlib.Path.home()), '.local/bin'), name)
 

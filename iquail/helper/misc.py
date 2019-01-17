@@ -97,22 +97,14 @@ def self_remove_directory(directory):
         _delete_atexit(directory)
 
 
-def is_exe(program):
-    for path in os.environ["PATH"].split(os.pathsep):
-        exe_file = os.path.join(path, program)
-        if os.path.isfile(exe_file) and os.access(exe_file, os.X_OK):
-            return exe_file
-    return None
-
-
 def rerun_as_admin(graphical):
     if OS_LINUX:
         cmd = None
         if graphical is False:
             cmd = ['sudo', '-A']
-        elif is_exe('gksudo'):
+        elif shutil.which('gksudo'):
             cmd = ['gksudo', '--']
-        elif is_exe('kdesudo'):
+        elif shutil.which('kdesudo'):
             cmd = ['kdesudo']
         sys.exit(os.execvp(cmd[0], cmd + sys.argv))
     elif OS_WINDOWS:
@@ -122,7 +114,7 @@ def rerun_as_admin(graphical):
                                                 sys.executable,
                                                 ' '.join(sys.argv),
                                                 None, 1)
-    sys.exit(0)
+    exit(0)
 
 
 def move_folder_content(src, dest, ignore_errors=False):
