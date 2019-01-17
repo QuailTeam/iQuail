@@ -97,11 +97,16 @@ def self_remove_directory(directory):
         _delete_atexit(directory)
 
 
-def rerun_as_admin():
+def rerun_as_admin(graphical):
     if OS_LINUX:
-        # os.system('pkexec %s %s' % (get_script_path(),
-        # ' '.join(sys.argv[1:])))
-        raise NotImplementedError
+        cmd = None
+        if graphical is False:
+            cmd = ['sudo', '-A']
+        elif shutil.which('gksudo'):
+            cmd = ['gksudo', '--']
+        elif shutil.which('kdesudo'):
+            cmd = ['kdesudo']
+        sys.exit(os.execvp(cmd[0], cmd + sys.argv))
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():
             ctypes.windll.shell32.ShellExecuteW(None,

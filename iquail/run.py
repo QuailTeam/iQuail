@@ -36,7 +36,7 @@ def run(solution, installer, builder=None, controller=None):
         builder = Builder()
     if not controller:
         controller = ControllerConsole()
-    manager = Manager(installer, solution, builder)
+    manager = Manager(installer, solution, builder, controller.is_graphical())
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)

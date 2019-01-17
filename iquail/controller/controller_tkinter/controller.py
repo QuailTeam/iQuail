@@ -195,3 +195,6 @@ class ControllerTkinter(ControllerBase):
             start_frame = FrameUpdating
         self._start_tk(start_frame,
                        "%s update" % self.manager.get_name())
+
+    def is_graphical(self):
+        return True

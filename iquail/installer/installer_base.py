@@ -20,10 +20,12 @@ class InstallerBase(ABC):
                  name,
                  icon,
                  publisher,
+                 install_systemwide=False,
                  console=False,
                  binary_options='',
-                 install_path='default',
+                 install_path=None,
                  launch_with_quail=True):
+        self._install_systemwide = install_systemwide
         self._launch_with_quail = launch_with_quail
         self._binary_name = binary
         self._binary_options = binary_options
@@ -31,13 +33,17 @@ class InstallerBase(ABC):
         self._icon = icon
         self._publisher = publisher
         self._console = console
-        self._install_path = self.build_install_path() if install_path is 'default' else install_path
+        self._install_path = self.build_install_path() if install_path is None else install_path
         self._solution_path = os.path.join(self._install_path, 'solution')
 
 
     def get_solution_icon(self):
         """Get solution's icon"""
         return self.get_solution_path(self._icon)
+
+    @property
+    def install_systemwide(self):
+        return self._install_systemwide
 
     @property
     def binary_options(self):
@@ -99,9 +105,8 @@ class InstallerBase(ABC):
         """Build install path
         This function can be overridden to install files to somewhere else
         """
-        return os.path.join(str(pathlib.Path.home()),
-                            Constants.IQUAIL_ROOT_NAME,
-                            self.uid)
+        base = '/opt/' if self.install_systemwide else pathlib.Path.home()
+        return os.path.join(base, Constants.IQUAIL_ROOT_NAME, self.uid)
 
     def get_solution_path(self, *args):
         """Get solution path"""

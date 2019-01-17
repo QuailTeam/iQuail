@@ -3,6 +3,7 @@ import signal
 import stat
 import sys
 import typing
+from .helper import misc
 
 from . import helper
 from .constants import Constants
@@ -10,7 +11,8 @@ from .solution.solutioner import Solutioner
 
 
 class Manager:
-    def __init__(self, installer, solution, builder):
+    def __init__(self, installer, solution, builder, graphical):
+        self._graphical = graphical
         self._installer = installer
         self._solution = solution
         self._builder = builder
@@ -89,6 +91,8 @@ class Manager:
     def install_part_solution(self):
         """part 1 of the installation will install the solution
         """
+        #permission checked here because tkinter calls this method directly instead of install()
+        self.check_permissions()
         self.apply_conf()  # because conf have been just selected
         self._solutioner.install()
         self._set_solution_installed_version()
@@ -113,14 +117,16 @@ class Manager:
     def update(self):
         """Update process"""
         # TODO: kill solution here
+        self.check_permissions()
         self._solutioner.update()
         self._set_solution_installed_version()
 
     def uninstall(self):
         """ Uninstall process
         """
-        self._solutioner.uninstall()
+        self.check_permissions()
         self._installer.unregister()
+        self._solutioner.uninstall()
 
     def is_installed(self):
         """Check if solution is installed"""
@@ -134,3 +140,9 @@ class Manager:
         args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
         binary_args = [os.path.basename(binary)] + args
         os.execl(binary, *binary_args)
+
+    def check_permissions(self):
+        if self._installer.install_systemwide and os.geteuid() != 0:
+            print('Root access is required for further action, relaunching as root')
+            misc.rerun_as_admin(self._graphical)
+
