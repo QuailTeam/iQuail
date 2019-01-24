@@ -25,6 +25,19 @@ if iquail.helper.OS_LINUX:
             iquail.builder.CmdIntegrity(solution_path)
         )
     )
+if iquail.helper.OS_OSX:
+    solution_path = ['Allum1']
+    iquail.run(
+        iquail.SolutionLocal(['Allum1']),
+        iquail.Installer(
+                name='Allum1',
+                publisher='alies',
+                icon='icon.jpeg',
+                binary='allum1',
+                console=True,
+        ),
+        iquail.builder.Builder(iquail.builder.CmdIntegrity(solution_path))
+    )
 if iquail.helper.OS_WINDOWS:
     solution_path = ['OpenHardwareMonitor']
     iquail.run(

@@ -11,6 +11,7 @@ from ..constants import Constants
 
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
+OS_OSX = platform.system() == 'Darwin'
 
 
 def cache_result(func):
