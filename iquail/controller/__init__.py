@@ -1,3 +1,6 @@
 from .controller_base import ControllerBase
-from .controller_tkinter import ControllerTkinter
+try:
+    from .controller_tkinter import ControllerTkinter
+except:
+    print("No display found or tkinter missing, console mode enabled !")
 from .controller_console import ControllerConsole
