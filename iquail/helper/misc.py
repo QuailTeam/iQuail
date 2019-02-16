@@ -106,6 +106,7 @@ def rerun_as_admin(graphical):
             cmd = ['gksudo', '--']
         elif shutil.which('kdesudo'):
             cmd = ['kdesudo']
+        # TODO fix: cmd can be None
         sys.exit(os.execvp(cmd[0], cmd + sys.argv))
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():
