@@ -5,7 +5,7 @@ from contextlib import suppress
 
 from .installer_base import InstallerBase
 from ..constants import Constants
-
+from ..helper import misc
 
 class InstallerLinux(InstallerBase):
 
@@ -80,9 +80,16 @@ class InstallerLinux(InstallerBase):
         os.symlink(binary, self.build_symlink_path(name))
 
     def remove_from_path(self, name):
-        os.remove(self.build_symlink_path(name))
+        print("unlink: " + self.build_symlink_path(name))
+        os.unlink(self.build_symlink_path(name))
 
+    @misc.cache_result
     def build_symlink_path(self, name):
-        return os.path.join("/usr/bin" if self._install_systemwide
-                            else os.path.join(str(pathlib.Path.home()), '.local/bin'), name)
+        name = os.path.basename(name)
+        if self._install_systemwide:
+            path = "/usr/bin"
+        else:
+            path = os.path.join(str(pathlib.Path.home()), '.local', 'bin')
+        os.makedirs(path, exist_ok=True)
+        return os.path.join(path, name)
 
