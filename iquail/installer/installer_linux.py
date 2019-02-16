@@ -7,27 +7,29 @@ from .installer_base import InstallerBase
 from ..constants import Constants
 from ..helper import misc
 
+
 class InstallerLinux(InstallerBase):
 
-    def __init__(self, linux_desktop_conf={}, linux_exec_flags='', *args, **kwargs):
+    def __init__(self, linux_desktop_conf=None, linux_exec_flags='', *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        if any(c in linux_desktop_conf for c in ['Name', 'Icon', 'Terminal']):
-            raise RuntimeError('\'Name\', \'Icon\' and \'Terminal\' fields should be defined in parameters')
-
         self._desktop_conf = {'Name': self.name,
                               'Icon': self.get_solution_icon(),
                               'Terminal': 'true' if self.console else 'false',
                               'Type': 'Application',
                               'Exec': self.launch_command + ' ' + linux_exec_flags}
-        self._desktop_conf.update(linux_desktop_conf)
+        if linux_desktop_conf:
+            if any(c in linux_desktop_conf for c in ['Name', 'Icon', 'Terminal']):
+                raise RuntimeError('\'Name\', \'Icon\' and \'Terminal\' fields should be defined in parameters')
+            self._desktop_conf.update(linux_desktop_conf)
         self._launch_shortcut = self._desktop(self.uid)
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
 
     def _desktop(self, name):
-        return os.path.join(os.path.join(str(pathlib.Path.root), "/usr") if self._install_systemwide
-                            else os.path.join(str(pathlib.Path.home()), ".local"),
-                            "share", "applications", "%s.desktop" % name)
+        if self._install_systemwide:
+            basepath = os.path.join(str(pathlib.Path.root), "/usr", name)
+        else:
+            basepath = os.path.join(str(pathlib.Path.home()), ".local")
+        return os.path.join(basepath, "share", "applications", "%s.desktop" % name)
 
     def _write_desktop(self, filename, app_config):
         """Write desktop entry"""
@@ -49,9 +51,11 @@ class InstallerLinux(InstallerBase):
         # TODO: abs shortcut path & add desktop var
         return os.path.isfile(dest)
 
-    def build_install_path(self):
-        return '/opt/' + os.path.join(Constants.IQUAIL_ROOT_NAME, self.name) if self._install_systemwide else \
-            os.path.join(str(pathlib.Path.home()), Constants.IQUAIL_ROOT_NAME, self.name)
+    def build_root_path(self):
+        if self._install_systemwide:
+            return "/opt/"
+        else:
+            return super().build_root_path()
 
     def _register(self):
         self.add_shortcut(dest=self._launch_shortcut,
@@ -80,7 +84,6 @@ class InstallerLinux(InstallerBase):
         os.symlink(binary, self.build_symlink_path(name))
 
     def remove_from_path(self, name):
-        print("unlink: " + self.build_symlink_path(name))
         os.unlink(self.build_symlink_path(name))
 
     @misc.cache_result
@@ -92,4 +95,3 @@ class InstallerLinux(InstallerBase):
             path = os.path.join(str(pathlib.Path.home()), '.local', 'bin')
         os.makedirs(path, exist_ok=True)
         return os.path.join(path, name)
-
