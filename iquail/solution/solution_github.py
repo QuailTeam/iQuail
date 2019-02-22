@@ -12,6 +12,9 @@ from .solution_base import SolutionBase
 from .solution_zip import SolutionZip
 
 
+ssl._create_default_https_context = ssl._create_unverified_context
+
+
 class SolutionGitHub(SolutionBase):
     """ GitHub solution
     Find zip solutions on github
