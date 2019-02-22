@@ -1,6 +1,7 @@
 import json
 import re
 import os
+import ssl
 import shutil
 import tempfile
 import urllib.request
@@ -11,6 +12,16 @@ from ..helper import cache_result
 from .solution_base import SolutionBase
 from .solution_zip import SolutionZip
 
+
+#ctx = ssl._create_unverified_context()
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+"""
+ctx = ssl.create_default_context()
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
+"""
 
 class SolutionGitHub(SolutionBase):
     """ GitHub solution
@@ -34,23 +45,18 @@ class SolutionGitHub(SolutionBase):
         return rep[0]
 
     def _get_tag_url(self):
-        return "https://api.github.com/repos/%s/%s/tags" % self._parse_github_url()
+        return "http://api.github.com/repos/%s/%s/tags" % self._parse_github_url()
 
     def _get_zip_url(self, tag):
         (owner, name) = self._parse_github_url()
-        return "https://github.com/%s/%s/releases/download/%s/%s" % (owner, name, tag, self._zip_name)
+        return "http://github.com/%s/%s/releases/download/%s/%s" % (owner, name, tag, self._zip_name)
 
     @cache_result
     def _get_tags(self):
-        try:
-            response = urllib.request.urlopen(self._get_tag_url())
-            data = response.read()
-            encoding = response.info().get_content_charset("utf-8")
-            tags = json.loads(data.decode(encoding))
-        except Exception as e:
-            raise SolutionUnreachableError("SolutionGithub get tag") from e
-        if not tags:
-            raise SolutionUnreachableError("No tags")
+        response = urllib.request.urlopen(self._get_tag_url())
+        data = response.read()
+        encoding = response.info().get_content_charset("utf-8")
+        tags = json.loads(data.decode(encoding))
         return tags
 
     def _get_last_tag(self):
@@ -71,9 +77,10 @@ class SolutionGitHub(SolutionBase):
                                   status="downloading")
         try:
             (zip_file, headers) = urllib.request.urlretrieve(zip_url,
-                                                             reporthook=hook)
+                                                             reporthook=hook
+            )
         except Exception as e:
-            raise SolutionUnreachableError("Solution github retrieve error") from e
+            raise
         self._solution_zip = SolutionZip(zip_file)
         self._solution_zip.set_progress_hook(self._progress_hook)
         return self._solution_zip.open()

@@ -13,7 +13,7 @@ class ControllerBase(ABC):
         if manager is None:
             raise AssertionError("manager can't be None")
         self.__manager = manager
-        sys.excepthook = self.excepthook
+        #sys.excepthook = self.excepthook
 
     @property
     def manager(self):
