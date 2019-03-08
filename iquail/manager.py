@@ -11,7 +11,7 @@ from .solution.solutioner import Solutioner
 
 
 class Manager:
-    def __init__(self, installer, solution, builder, graphical):
+    def __init__(self, installer, solution, builder, graphical, eula_file=None):
         self._graphical = graphical
         self._installer = installer
         self._solution = solution
@@ -21,6 +21,8 @@ class Manager:
         self._config = helper.Configuration(
             self._installer.get_install_path(Constants.CONFIG_FILE)
         )
+        # maybe check eula file hash at every run
+        self._eula_file = eula_file
         if self.is_installed():
             # If iquail is not installed the conf doesn't exist yet
             self.config.read()
@@ -55,6 +57,10 @@ class Manager:
     def get_name(self):
         """Get solution name"""
         return self._installer.name
+
+    @property
+    def eula_file(self):
+        return self._eula_file
 
     @property
     def config(self):

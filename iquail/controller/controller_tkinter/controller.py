@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import Text
+from tkinter import END
 import sys
 from tkinter.font import Font
 from tkinter import ttk
@@ -11,15 +13,40 @@ from .frames import FrameBaseInProgress, FrameBaseAccept, FrameBase, FrameBaseTw
 from .error_reporter import ErrorReporter
 
 
+class FrameAcceptEULA(FrameBaseTwoChoice):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller, "Do you accept the End-User "
+                                             "License agreement",
+                         "I accept", "I refuse")
+        eula_file = open(self.controller.manager.eula_file, 'r')
+        la = Text(self, height=30, width=30)
+        la.pack()
+        licence = eula_file.read()
+        eula_file.close()
+        la.insert(END, licence)
+
+    def choice1_selected(self):
+        if self.controller.install_custom_frame is not None:
+            self.controller.switch_frame(self.controller.install_custom_frame)
+        else:
+            self.controller.switch_frame(FrameInstalling)
+
+    def choice2_selected(self):
+        self.quit()
+
+
 class FrameAcceptInstall(FrameBaseAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         question="%s installer\nWould you like to install this program?" %
+                         question="%s installer\nWould you like to install "
+                                  "this program?" %
                                   controller.manager.get_name(),
                          positive_str="Install!")
 
     def accept(self):
-        if self.controller.install_custom_frame is not None:
+        if self.controller.manager.eula_file is not None:
+            self.controller.switch_frame(FrameAcceptEULA)
+        elif self.controller.install_custom_frame is not None:
             self.controller.switch_frame(self.controller.install_custom_frame)
         else:
             self.controller.switch_frame(FrameInstalling)

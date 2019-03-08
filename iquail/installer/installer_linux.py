@@ -10,16 +10,21 @@ from ..helper import misc
 
 class InstallerLinux(InstallerBase):
 
-    def __init__(self, linux_desktop_conf=None, linux_exec_flags='', add_to_path=True, *args, **kwargs):
+    def __init__(self, linux_desktop_conf=None, linux_exec_flags='',
+                 add_to_path=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._desktop_conf = {'Name': self.name,
                               'Icon': self.get_solution_icon(),
                               'Terminal': 'true' if self.console else 'false',
                               'Type': 'Application',
-                              'Exec': self.launch_command + ' ' + linux_exec_flags}
+                              'Exec': self.launch_command + ' ' +
+                                      linux_exec_flags}
         if linux_desktop_conf:
-            if any(c in linux_desktop_conf for c in ['Name', 'Icon', 'Terminal']):
-                raise RuntimeError('\'Name\', \'Icon\' and \'Terminal\' fields should be defined in parameters')
+            if any(c in linux_desktop_conf for c in
+                   ['Name', 'Icon', 'Terminal']):
+                raise RuntimeError('\'Name\', \'Icon\' and \'Terminal\' fields'
+                                   ' should be defined in parameters of the '
+                                   'installer')
             self._desktop_conf.update(linux_desktop_conf)
         self._launch_shortcut = self._desktop(self.uid)
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
@@ -30,7 +35,8 @@ class InstallerLinux(InstallerBase):
             basepath = os.path.join(str(pathlib.Path.root), "/usr", name)
         else:
             basepath = os.path.join(str(pathlib.Path.home()), ".local")
-        return os.path.join(basepath, "share", "applications", "%s.desktop" % name)
+        return os.path.join(basepath, "share", "applications",
+                            "%s.desktop" % name)
 
     def _write_desktop(self, filename, app_config):
         """Write desktop entry"""
@@ -64,7 +70,8 @@ class InstallerLinux(InstallerBase):
         self.add_shortcut(dest=self._uninstall_shortcut,
                           Type='Application',
                           Name="Uninstall " + self.name,
-                          Exec=self.iquail_binary + " " + Constants.ARGUMENT_UNINSTALL,
+                          Exec=self.iquail_binary + " " +
+                               Constants.ARGUMENT_UNINSTALL,
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:

@@ -36,7 +36,8 @@ def run(solution, installer, builder=None, controller=None):
         builder = Builder()
     if not controller:
         controller = ControllerConsole()
-    manager = Manager(installer, solution, builder, controller.is_graphical())
+    manager = Manager(installer, solution, builder, controller.is_graphical(),
+                      eula_file="test")
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)
@@ -44,14 +45,11 @@ def run(solution, installer, builder=None, controller=None):
         manager.build()
     elif args.iquail_uninstall:
         controller.start_uninstall()
+    elif misc.running_from_installed_binary():
+        controller.start_run_or_update()
+    elif manager.is_installed():
+        # program is installed but we are not launched from the installed folder
+        # TODO: ask repair/uninstall
+        controller.start_uninstall()
     else:
-        if misc.running_from_installed_binary():
-            controller.start_run_or_update()
-        else:
-            if manager.is_installed():
-                print(misc.get_script_path())
-                # program is installed but we are not launched from the installed folder
-                # TODO: ask repair/uninstall
-                controller.start_uninstall()
-            else:
-                controller.start_install()
+        controller.start_install()
