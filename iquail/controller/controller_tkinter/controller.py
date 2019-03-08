@@ -18,12 +18,16 @@ class FrameAcceptEULA(FrameBaseTwoChoice):
         super().__init__(parent, controller, "Do you accept the End-User "
                                              "License agreement",
                          "I accept", "I refuse")
-        eula_file = open(self.controller.manager.eula_file, 'r')
-        la = Text(self, height=30, width=30)
-        la.pack()
-        licence = eula_file.read()
-        eula_file.close()
-        la.insert(END, licence)
+        try:
+            eula_file = open(self.controller.manager.eula_file, 'r')
+            la = Text(self, height=30, width=30)
+            la.pack()
+            licence = eula_file.read()
+            eula_file.close()
+            la.insert(END, licence)
+        except FileNotFoundError:
+            print("Could not start the installation, %s file not found",
+                  self.manager.eula_file)
 
     def choice1_selected(self):
         if self.controller.install_custom_frame is not None:
