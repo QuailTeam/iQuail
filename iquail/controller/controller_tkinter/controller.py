@@ -124,16 +124,16 @@ class ControllerTkinter(ControllerBase):
         assert self.tk is None
         # Setup Tk window
         self.tk = tk.Tk()
-        self.tk.minsize(width=500, height=200)
-        self.tk.maxsize(width=500, height=200)
+        self.tk.minsize(width=600, height=250)
+        self.tk.maxsize(width=600, height=250)
         self.tk.title(title)
         # Setup base frame
         self.root_frame = tk.Frame()
         self.root_frame.pack(side="top", fill="both", expand=True)
         self.root_frame.grid_rowconfigure(0, weight=1)
         self.root_frame.grid_columnconfigure(0, weight=1)
-        self.title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
-        self.medium_font = Font(family='Helvetica', size=12)
+        self.title_font = Font(family='Helvetica', size=15, weight="bold", slant="italic")
+        self.medium_font = Font(family='Helvetica', size=11)
         # Select frame
         self.switch_frame(frame)
         # Start mainloop

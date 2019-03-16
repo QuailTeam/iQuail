@@ -69,11 +69,14 @@ class SolutionGitHub(SolutionBase):
     def open(self):
         last_tag_name = self._get_last_tag()["name"]
         zip_url = self._get_zip_url(last_tag_name)
+        self._update_progress(percent=0,
+                              status="downloading",
+                              info="Downloading file:" + zip_url + "\n")
 
         def hook(count, block_size, total_size):
             self._update_progress(percent=count / (total_size / block_size) * 100,
                                   status="downloading",
-                                  info="file: " + zip_url)
+                                  info=".")
         try:
             (zip_file, headers) = urllib.request.urlretrieve(zip_url,
                                                              reporthook=hook)
