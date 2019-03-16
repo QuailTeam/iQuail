@@ -109,6 +109,8 @@ class FrameBaseInProgress(FrameBase):
         super().__init__(parent, controller)
         self._label = tk.Label(self, text=label_str, font=controller.title_font)
         self._label.pack(side="top", fill="x", pady=10)
+        self._label_info = tk.Label(self, text='', font=controller.medium_font)
+        self._label_info.pack(side="top", fill="x", pady=10)
         self.progress_var = tk.IntVar()
         self._progress_bar = ttk.Progressbar(self,
                                              orient=tk.HORIZONTAL,
@@ -120,6 +122,10 @@ class FrameBaseInProgress(FrameBase):
     def update_label(self, text):
         self._label.configure(text=text)
         self._label.update()
+
+    def update_info(self, info_text):
+        self._label_info.configure(text=info_text)
+        self._label_info.update()
 
     def update_progress(self, percent):
         if percent < 0:
