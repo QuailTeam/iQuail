@@ -3,6 +3,7 @@ import sys
 from abc import ABC, abstractmethod
 from tkinter.font import Font
 from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 from tkinter.messagebox import showinfo, showerror, askretrycancel
 import threading
 
@@ -109,17 +110,29 @@ class FrameBaseInProgress(FrameBase):
         super().__init__(parent, controller)
         self._label = tk.Label(self, text=label_str, font=controller.title_font)
         self._label.pack(side="top", fill="x", pady=10)
+        # self._label_info = tk.Label(self, text='', font=controller.medium_font)
+        # self._label_info.pack(side="top", fill="x", pady=10)
+
         self.progress_var = tk.IntVar()
         self._progress_bar = ttk.Progressbar(self,
                                              orient=tk.HORIZONTAL,
                                              length=100,
                                              mode='determinate',
                                              variable=self.progress_var)
-        self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
+        self._progress_bar.pack(fill="x", padx=10, pady=10)
+
+        self._info_log = ScrolledText(self)
+        self._info_log.pack(fill="x", side="bottom")
 
     def update_label(self, text):
         self._label.configure(text=text)
         self._label.update()
+
+    def update_log(self, info_text):
+        if info_text:
+            self._info_log.insert(tk.END, info_text)
+            self._info_log.see(tk.END)
+            self._info_log.update()
 
     def update_progress(self, percent):
         if percent < 0:
