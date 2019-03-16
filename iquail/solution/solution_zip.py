@@ -37,12 +37,12 @@ class SolutionZip(SolutionBase):
         extracted_size = 0
         self._update_progress(percent=0,
                               status="unzipping",
-                              info="Extracting:\n")
+                              log="Extracting:\n")
         for file in zip_ref.infolist():
             extracted_size += file.file_size
             self._update_progress(percent=extracted_size * 100 / uncompress_size,
                                   status="unzipping",
-                                  info=file.filename + "\n")
+                                  log=file.filename + "\n")
             zip_ref.extract(file, self._tmp)
         zip_ref.close()
 

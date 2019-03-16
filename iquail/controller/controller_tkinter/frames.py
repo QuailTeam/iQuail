@@ -122,15 +122,13 @@ class FrameBaseInProgress(FrameBase):
         self._progress_bar.pack(fill="x", padx=10, pady=10)
 
         self._info_log = ScrolledText(self)
-        self._info_log.insert(tk.END, ".")
         self._info_log.pack(fill="x", side="bottom")
 
     def update_label(self, text):
         self._label.configure(text=text)
         self._label.update()
 
-    def update_info(self, info_text):
-
+    def update_log(self, info_text):
         if info_text:
             self._info_log.insert(tk.END, info_text)
             self._info_log.see(tk.END)

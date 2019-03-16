@@ -35,7 +35,7 @@ class FrameInstalling(FrameBaseInProgress):
 
     def progress_callback(self, progress: SolutionProgress):
         self.update_label(progress.status.capitalize() + " ...")
-        self.update_info(progress.info)
+        self.update_log(progress.log)
         self.update_progress(progress.percent)
 
 
@@ -77,7 +77,7 @@ class FrameUpdating(FrameBaseInProgress):
 
     def progress_callback(self, progress: SolutionProgress):
         self.update_label(progress.status.capitalize() + " ...")
-        self.update_info(progress.info)
+        self.update_log(progress.log)
         self.update_progress(progress.percent)
 
     def solution_finish_callback(self):
