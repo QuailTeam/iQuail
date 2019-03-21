@@ -38,7 +38,6 @@ class FrameInstalling(FrameBaseInProgress):
         self.update_log(progress.log)
         self.update_progress(progress.percent)
 
-
     def solution_finish_callback(self):
         self.manager.install_part_register()
         self.controller.switch_frame(FrameInstallFinished)
