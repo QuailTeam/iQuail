@@ -53,19 +53,19 @@ class ControllerConsole(ControllerBase):
 
     def ask_EULA_agreement(self):
         try:
-            eula_file = open(self.manager.eula_file, 'r')
+            eula_file = open(self.eula_file, 'r')
             la = eula_file.read()
             eula_file.close()
             print("-----EULA-----")
             print(la)
         except FileNotFoundError:
-            print("Could not start the installation, %s file not found",
-                  self.manager.eula_file)
+            print("Could not start the installation, %s : file not found",
+                  self.eula_file)
         self._ask_validate("Do you accept this software's End-User"
                            "License Agreement ?")
 
     def start_install(self):
-        if self.manager.eula_file is not None and self.ask_EULA_agreement() is False:
+        if self.eula_file is not None and self.ask_EULA_agreement() is False:
             exit(0)
         self.manager.set_solution_progress_hook(_progress_callback)
         print("[*] Installing %s" % self.manager.get_name())

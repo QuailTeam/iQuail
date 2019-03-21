@@ -19,7 +19,7 @@ class FrameAcceptEULA(FrameBaseTwoChoice):
                                              "License agreement",
                          "I accept", "I refuse")
         try:
-            eula_file = open(self.controller.manager.eula_file, 'r')
+            eula_file = open(self.controller.eula_file, 'r')
             la = Text(self, height=30, width=30)
             la.pack()
             licence = eula_file.read()
@@ -27,7 +27,7 @@ class FrameAcceptEULA(FrameBaseTwoChoice):
             la.insert(END, licence)
         except FileNotFoundError:
             print("Could not start the installation, %s file not found",
-                  self.manager.eula_file)
+                  self.controller.eula_file)
 
     def choice1_selected(self):
         if self.controller.install_custom_frame is not None:
@@ -48,7 +48,7 @@ class FrameAcceptInstall(FrameBaseAccept):
                          positive_str="Install!")
 
     def accept(self):
-        if self.controller.manager.eula_file is not None:
+        if self.controller.eula_file is not None:
             self.controller.switch_frame(FrameAcceptEULA)
         elif self.controller.install_custom_frame is not None:
             self.controller.switch_frame(self.controller.install_custom_frame)
@@ -131,10 +131,13 @@ class ControllerTkinter(ControllerBase):
 
     def __init__(self,
                  install_custom_frame=None,
-                 ask_for_update=False):
+                 ask_for_update=False,
+                 *args,
+                 **kwargs):
         """ Controller tkinter
         :param install_custom_frame: An instance of FrameBase, this frame will be called during installation
         """
+        super().__init__(*args, **kwargs)
         self.tk = None
         self._base_frame = None
         self._frame = None
