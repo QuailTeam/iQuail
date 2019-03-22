@@ -101,7 +101,7 @@ def rerun_as_admin(graphical):
     if OS_LINUX:
         cmd = None
         if graphical is False:
-            cmd = ['sudo', '-A']
+            cmd = ['sudo']
         elif shutil.which('gksudo'):
             cmd = ['gksudo', '--']
         elif shutil.which('kdesudo'):

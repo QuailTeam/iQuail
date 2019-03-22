@@ -7,12 +7,12 @@ from ..helper.traceback_info import ExceptionInfo
 class ControllerBase(ABC):
     __manager = None
 
-    def __init__(self, eula_file=None):
-        self._eula_file = eula_file
+    def __init__(self, eula=None):
+        self._eula = eula
 
     @property
-    def eula_file(self):
-        return self._eula_file
+    def eula(self):
+        return self._eula
 
     def setup(self, manager):
         """Setup controller
