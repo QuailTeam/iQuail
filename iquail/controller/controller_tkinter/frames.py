@@ -6,6 +6,8 @@ from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 from tkinter.messagebox import showinfo, showerror, askretrycancel
 import threading
+import os
+from ... import helper
 
 
 class FrameBase(tk.Frame):
@@ -13,6 +15,10 @@ class FrameBase(tk.Frame):
         super().__init__(parent)
         self.controller = controller
         self.manager = controller.manager
+
+        self._img = tk.PhotoImage(file=os.path.join(helper.get_module_path(), "assets", "brook.gif"))
+        self._label = tk.Label(self, image=self._img)
+        self._label.pack(side="left")
 
     def tk_thread(self, target, exception_hook=None, complete_hook=None):
         """Same as threading.Thread() BUT:
