@@ -98,6 +98,24 @@ class FrameAskToUpdate(FrameBaseTwoChoice):
         self.manager.run()
 
 
+class FrameCheckForUpdate(FrameBaseInProgress):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller, "Checking for update...")
+        thread = self.tk_thread(self.check_update,
+                                complete_hook=self.next)
+        thread.start()
+        self.is_update_available = False
+
+    def check_update(self):
+        if self.manager.is_new_version_available():
+            self.is_update_available = True
+
+    def next(self):
+        if not self.is_update_available:
+            self.controller.quit_tk()
+            self.manager.run()
+
+
 class ControllerTkinter(ControllerBase):
 
     def __init__(self,
@@ -188,6 +206,7 @@ class ControllerTkinter(ControllerBase):
 
     def start_run_or_update(self):
         # TODO: add "checking for update frame"
+        '''
         if not self.manager.is_new_version_available():
             self.manager.run()
             return
@@ -197,6 +216,9 @@ class ControllerTkinter(ControllerBase):
             start_frame = FrameUpdating
         self._start_tk(start_frame,
                        "%s update" % self.manager.get_name())
+        '''
+        self._start_tk(FrameCheckForUpdate,
+                       "%s checking updates" % self.manager.get_name())
 
     def is_graphical(self):
         return True
