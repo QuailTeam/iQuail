@@ -140,6 +140,9 @@ class FrameBaseInProgress(FrameBase):
             self._info_log.see(tk.END)
             self._info_log.update()
 
+    def set_indeterminate(self):
+        self._progress_bar.configure(mode='indeterminate')
+
     def update_progress(self, percent):
         if percent < 0:
             percent = 0

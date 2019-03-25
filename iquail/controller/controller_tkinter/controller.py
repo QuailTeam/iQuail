@@ -104,6 +104,7 @@ class FrameCheckForUpdate(FrameBaseInProgress):
         thread = self.tk_thread(self.check_update,
                                 complete_hook=self.next)
         thread.start()
+        self.set_indeterminate()
         self.is_update_available = False
 
     def check_update(self):
@@ -114,6 +115,11 @@ class FrameCheckForUpdate(FrameBaseInProgress):
         if not self.is_update_available:
             self.controller.quit_tk()
             self.manager.run()
+        else:
+            if self.controller.ask_for_update:
+                self.controller.switch_frame(FrameAskToUpdate)
+            else:
+                self.controller.switch_frame(FrameUpdating)
 
 
 class ControllerTkinter(ControllerBase):
@@ -132,6 +138,10 @@ class ControllerTkinter(ControllerBase):
         tk.Tk.report_callback_exception = self.excepthook
         assert install_custom_frame is None or issubclass(install_custom_frame, FrameBase)
         self.install_custom_frame = install_custom_frame
+
+    @property
+    def ask_for_update(self):
+        return self._ask_for_update
 
     def quit_tk(self):
         if self.tk is not None:
@@ -205,20 +215,8 @@ class ControllerTkinter(ControllerBase):
         self.quit_tk()
 
     def start_run_or_update(self):
-        # TODO: add "checking for update frame"
-        '''
-        if not self.manager.is_new_version_available():
-            self.manager.run()
-            return
-        if self._ask_for_update:
-            start_frame = FrameAskToUpdate
-        else:
-            start_frame = FrameUpdating
-        self._start_tk(start_frame,
-                       "%s update" % self.manager.get_name())
-        '''
         self._start_tk(FrameCheckForUpdate,
-                       "%s checking updates" % self.manager.get_name())
+                       "%s updating" % self.manager.get_name())
 
     def is_graphical(self):
         return True

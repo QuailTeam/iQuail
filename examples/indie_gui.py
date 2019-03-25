@@ -29,5 +29,5 @@ iquail.run(
         iquail.builder.CmdIcon('icon.png'),
         iquail.builder.CmdNoconsole()
     ),
-    controller=iquail.ControllerTkinter()
+    controller=iquail.ControllerTkinter(ask_for_update=True)
 )
