@@ -1,12 +1,12 @@
 import os
 
+#TODO : add full PATH to spotlight env to access python3
 class PlistTemplate():
     def __init__(self, CFBundleName, plistDict):
-        print("init template")
         self.file = open("/Applications/" + CFBundleName + ".app/Contents/Info.plist", "a+")
         self.plistDict = dict(
             CFBundleGetInfoString=CFBundleName,
-            CFBundleExecutable=CFBundleName,
+            CFBundleExecutable='launcher',
             CFBundleIdentifier=CFBundleName,
             CFBundleName=CFBundleName
         )
