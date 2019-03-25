@@ -34,8 +34,12 @@ def cache_result(func):
     return wrapper
 
 
-def get_module_path():
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+def get_side_img_path():
+    return get_module_path("side_img.gif")
+
+
+def get_module_path(*args):
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', *args))
 
 
 def get_script():

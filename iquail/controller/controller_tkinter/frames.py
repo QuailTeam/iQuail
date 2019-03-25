@@ -16,7 +16,7 @@ class FrameBase(tk.Frame):
         self.controller = controller
         self.manager = controller.manager
 
-        self._img = tk.PhotoImage(file=os.path.join(helper.get_module_path(), "assets", "brook.gif"))
+        self._img = tk.PhotoImage(file=helper.get_side_img_path())
         self._label = tk.Label(self, image=self._img)
         self._label.pack(side="left")
 
