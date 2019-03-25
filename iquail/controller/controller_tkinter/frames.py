@@ -142,6 +142,7 @@ class FrameBaseInProgress(FrameBase):
 
     def set_indeterminate(self):
         self._progress_bar.configure(mode='indeterminate')
+        self._progress_bar.start()
 
     def update_progress(self, percent):
         if percent < 0:
