@@ -1,9 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-import sys
 from tkinter.font import Font
-from tkinter import ttk
-import threading
 
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
