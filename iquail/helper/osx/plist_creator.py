@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 class PlistCreator:
     def __init__(self, bundle_name: str, plistDict: dict):
         self.__file = open("/applications/" + bundle_name + ".app/contents/info.plist", "a+")
-        self.__
         self.__plist_dict = {
             "CFBundleGetInfoString": bundle_name,
             "CFBundleExecutable": 'launcher',
