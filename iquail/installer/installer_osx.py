@@ -40,10 +40,6 @@ class InstallerOsx(InstallerBase):
             final_folder = os.path.join(str(pathlib.Path.home()), '/Applications/' + self._name + '.app/Contents/MacOS/')
         else:
             final_folder = os.path.join(str(pathlib.Path.home()), '/Applications/' + self._name + '.app/Contents/MacOS/')
-        print('DEBUG run')
-        print(final_folder)
-        print(name)
-        print('END_DEEBUG run')
         return os.path.join(final_folder, name)
 
     def _build_launcher(self):
