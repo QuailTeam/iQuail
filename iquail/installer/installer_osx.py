@@ -9,13 +9,13 @@ class InstallerOsx(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._bundle_install_path = '/Applications/' + self.name + '.app'
+        self._bundle_install_path =  os.path.join('Applications', self.name + '.app')
 
     """ We need to put a syslink into /usr/local/bin or into a local folder inside the user's home directory"""
     def _register(self):
-        bundle = BundleTemplate(self._name)
+        bundle = BundleTemplate(self.name)
         bundle.make()
-        plist = PlistTemplate(self._binary_name, {})
+        plist = PlistTemplate(self.binary, {})
         plist.make()
         self._build_launcher()
         #self.__add_to_path(self.binary, self._binary_name)
@@ -37,16 +37,16 @@ class InstallerOsx(InstallerBase):
         if self.install_systemwide:
             #TODO setup local installation
             #final_folder = '/Applications'
-            final_folder = os.path.join(str(pathlib.Path.home()), '/Applications/' + self._name + '.app/Contents/MacOS/')
+            final_folder = os.path.join(str(pathlib.Path.home()), 'Applications', self._name + '.app', 'Contents', 'MacOS')
         else:
-            final_folder = os.path.join(str(pathlib.Path.home()), '/Applications/' + self._name + '.app/Contents/MacOS/')
+            final_folder = os.path.join(str(pathlib.Path.home()), 'Applications', self._name + '.app', 'Contents', 'MacOS')
         return os.path.join(final_folder, name)
 
     def _build_launcher(self):
-        with open(self._bundle_install_path + '/Contents/MacOS/launcher', 'w') as f:
+        with open(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher'), 'w') as f:
             content = '/usr/local/bin/python3 ~/.iquail/' + self.uid + '/iquail_launcher.py'
             shebang = '#!/bin/bash\n'
             f.write(shebang)
             f.write(content)
-        st = os.stat(self._bundle_install_path + '/Contents/MacOS/launcher')
-        os.chmod(self._bundle_install_path + '/Contents/MacOS/launcher', st.st_mode | stat.S_IEXEC)
+        st = os.stat(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher'))
+        os.chmod(os.stat(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher')), st.st_mode | stat.S_IEXEC)
