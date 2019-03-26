@@ -1,9 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-import sys
 from tkinter.font import Font
-from tkinter import ttk
-import threading
 
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
@@ -35,6 +32,7 @@ class FrameInstalling(FrameBaseInProgress):
 
     def progress_callback(self, progress: SolutionProgress):
         self.update_label(progress.status.capitalize() + " ...")
+        self.update_log(progress.log)
         self.update_progress(progress.percent)
 
     def solution_finish_callback(self):
@@ -75,6 +73,7 @@ class FrameUpdating(FrameBaseInProgress):
 
     def progress_callback(self, progress: SolutionProgress):
         self.update_label(progress.status.capitalize() + " ...")
+        self.update_log(progress.log)
         self.update_progress(progress.percent)
 
     def solution_finish_callback(self):
@@ -96,6 +95,30 @@ class FrameAskToUpdate(FrameBaseTwoChoice):
         self.manager.run()
 
 
+class FrameCheckForUpdate(FrameBaseInProgress):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller, "Checking for update...")
+        thread = self.tk_thread(self.check_update,
+                                complete_hook=self.next)
+        thread.start()
+        self.set_indeterminate()
+        self.is_update_available = False
+
+    def check_update(self):
+        if self.manager.is_new_version_available():
+            self.is_update_available = True
+
+    def next(self):
+        if not self.is_update_available:
+            self.controller.quit_tk()
+            self.manager.run()
+        else:
+            if self.controller.ask_for_update:
+                self.controller.switch_frame(FrameAskToUpdate)
+            else:
+                self.controller.switch_frame(FrameUpdating)
+
+
 class ControllerTkinter(ControllerBase):
 
     def __init__(self,
@@ -113,6 +136,10 @@ class ControllerTkinter(ControllerBase):
         assert install_custom_frame is None or issubclass(install_custom_frame, FrameBase)
         self.install_custom_frame = install_custom_frame
 
+    @property
+    def ask_for_update(self):
+        return self._ask_for_update
+
     def quit_tk(self):
         if self.tk is not None:
             self.tk.quit()
@@ -121,16 +148,16 @@ class ControllerTkinter(ControllerBase):
         assert self.tk is None
         # Setup Tk window
         self.tk = tk.Tk()
-        self.tk.minsize(width=500, height=200)
-        self.tk.maxsize(width=500, height=200)
+        self.tk.minsize(width=600, height=250)
+        self.tk.maxsize(width=600, height=250)
         self.tk.title(title)
         # Setup base frame
         self.root_frame = tk.Frame()
         self.root_frame.pack(side="top", fill="both", expand=True)
         self.root_frame.grid_rowconfigure(0, weight=1)
         self.root_frame.grid_columnconfigure(0, weight=1)
-        self.title_font = Font(family='Helvetica', size=18, weight="bold", slant="italic")
-        self.medium_font = Font(family='Helvetica', size=12)
+        self.title_font = Font(family='Helvetica', size=15, weight="bold", slant="italic")
+        self.medium_font = Font(family='Helvetica', size=11)
         # Select frame
         self.switch_frame(frame)
         # Start mainloop
@@ -185,16 +212,8 @@ class ControllerTkinter(ControllerBase):
         self.quit_tk()
 
     def start_run_or_update(self):
-        # TODO: add "checking for update frame"
-        if not self.manager.is_new_version_available():
-            self.manager.run()
-            return
-        if self._ask_for_update:
-            start_frame = FrameAskToUpdate
-        else:
-            start_frame = FrameUpdating
-        self._start_tk(start_frame,
-                       "%s update" % self.manager.get_name())
+        self._start_tk(FrameCheckForUpdate,
+                       "%s updating" % self.manager.get_name())
 
     def is_graphical(self):
         return True

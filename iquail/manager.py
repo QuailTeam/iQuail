@@ -139,6 +139,7 @@ class Manager:
         self._chmod_binary()
         args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
         binary_args = [os.path.basename(binary)] + args
+        os.chdir(self._installer.get_solution_path())
         os.execl(binary, *binary_args)
 
     def check_permissions(self):

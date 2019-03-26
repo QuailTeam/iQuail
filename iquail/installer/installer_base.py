@@ -101,12 +101,14 @@ class InstallerBase(ABC):
         """Get application unique id"""
         return self.name + "_" + md5(self.publisher.encode('utf-8')).hexdigest()
 
+    def build_root_path(self):
+        return os.path.join(str(pathlib.Path.home()), Constants.IQUAIL_ROOT_NAME)
+
     def build_install_path(self):
         """Build install path
         This function can be overridden to install files to somewhere else
         """
-        base = '/opt/' if self.install_systemwide else pathlib.Path.home()
-        return os.path.join(base, Constants.IQUAIL_ROOT_NAME, self.uid)
+        return os.path.join(self.build_root_path(), self.uid)
 
     def get_solution_path(self, *args):
         """Get solution path"""

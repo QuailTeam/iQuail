@@ -1,2 +1,2 @@
 pyinstaller
-pypiwin32
+pypiwin32; sys_platform == 'win32'

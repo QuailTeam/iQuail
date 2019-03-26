@@ -2,6 +2,7 @@ import json
 import re
 import os
 import shutil
+import ssl
 import tempfile
 import urllib.request
 from pprint import pprint
@@ -10,6 +11,9 @@ from ..errors import *
 from ..helper import cache_result
 from .solution_base import SolutionBase
 from .solution_zip import SolutionZip
+
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 
 class SolutionGitHub(SolutionBase):
@@ -65,6 +69,9 @@ class SolutionGitHub(SolutionBase):
     def open(self):
         last_tag_name = self._get_last_tag()["name"]
         zip_url = self._get_zip_url(last_tag_name)
+        self._update_progress(percent=0,
+                              status="downloading",
+                              log="Downloading file:\n" + zip_url + "\n")
 
         def hook(count, block_size, total_size):
             self._update_progress(percent=count / (total_size / block_size) * 100,

@@ -1,5 +1,6 @@
 """Setup generator file."""
 from setuptools import setup, find_packages
+import sys
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -11,7 +12,7 @@ packages.remove("tests")
 setup(
     name='iquail',
     packages=packages,
-    version='1.4',
+    version='1.5',
     description='iQuail cross-platform installer',
     author='Quail team',
     long_description=long_description,
@@ -24,7 +25,5 @@ setup(
                  'Programming Language :: Python :: 3 :: Only',
                  'Topic :: Software Development'
                  ],
-    install_requires=[
-        'pyinstaller'
-    ],
+    install_requires=requirements,
 )

@@ -35,8 +35,12 @@ def cache_result(func):
     return wrapper
 
 
-def get_module_path():
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+def get_side_img_path():
+    return get_module_path("side_img.gif")
+
+
+def get_module_path(*args):
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', *args))
 
 
 def get_script():
@@ -107,6 +111,7 @@ def rerun_as_admin(graphical):
             cmd = ['gksudo', '--']
         elif shutil.which('kdesudo'):
             cmd = ['kdesudo']
+        # TODO fix: cmd can be None
         sys.exit(os.execvp(cmd[0], cmd + sys.argv))
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():
