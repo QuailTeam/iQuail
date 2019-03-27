@@ -26,13 +26,13 @@ class InstallerLinux(InstallerBase):
                                    ' should be defined in parameters of the '
                                    'installer')
             self._desktop_conf.update(linux_desktop_conf)
-        self._launch_shortcut = self._desktop(self.uid)
-        self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
+        self._launch_shortcut = self._desktop(self.name)
+        self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
         self._add_to_path = add_to_path
 
     def _desktop(self, name):
         if self._install_systemwide:
-            basepath = os.path.join(str(pathlib.Path.root), "/usr", name)
+            basepath = os.path.join("/", "usr")
         else:
             basepath = os.path.join(str(pathlib.Path.home()), ".local")
         return os.path.join(basepath, "share", "applications",
