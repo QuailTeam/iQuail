@@ -1,17 +1,16 @@
 import os
-import signal
 import stat
 import sys
-import typing
 from .helper import misc
 
 from . import helper
 from .constants import Constants
 from .solution.solutioner import Solutioner
 
-
 class Manager:
     def __init__(self, installer, solution, builder, graphical):
+        self._exec_dir = os.getcwd()
+        self._exec_bin = os.path.basename(sys.argv[0])
         self._graphical = graphical
         self._installer = installer
         self._solution = solution
@@ -25,6 +24,7 @@ class Manager:
             # If iquail is not installed the conf doesn't exist yet
             self.config.read()
             self.apply_conf()
+        self.check_permissions()
 
     def apply_conf(self):
         """Apply configuration on Manager's arguments
@@ -92,7 +92,6 @@ class Manager:
         """part 1 of the installation will install the solution
         """
         #permission checked here because tkinter calls this method directly instead of install()
-        self.check_permissions()
         self.apply_conf()  # because conf have been just selected
         self._solutioner.install()
         self._set_solution_installed_version()
@@ -117,14 +116,12 @@ class Manager:
     def update(self):
         """Update process"""
         # TODO: kill solution here
-        self.check_permissions()
         self._solutioner.update()
         self._set_solution_installed_version()
 
     def uninstall(self):
         """ Uninstall process
         """
-        self.check_permissions()
         self._installer.unregister()
         self._solutioner.uninstall()
 
@@ -144,6 +141,7 @@ class Manager:
 
     def check_permissions(self):
         if self._installer.install_systemwide and os.geteuid() != 0:
-            print('Root access is required for further action, relaunching as root')
-            misc.rerun_as_admin(self._graphical)
+            if self._graphical is False:
+                print('Root access is required for further action, relaunching as root')
+            misc.rerun_as_admin(self._graphical, self._exec_dir, self._exec_bin)
 

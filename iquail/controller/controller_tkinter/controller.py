@@ -41,7 +41,7 @@ class FrameAcceptInstall(FrameBaseAccept):
                          positive_str="Install!")
 
     def accept(self):
-        if self.controller.eula_file is not None:
+        if self.controller.eula is not None:
             self.controller.switch_frame(FrameAcceptEULA)
         elif self.controller.install_custom_frame is not None:
             self.controller.switch_frame(self.controller.install_custom_frame)

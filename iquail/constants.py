@@ -1,5 +1,6 @@
 
 class Constants:
+    ARGUMENT_PATH = "--iquail_path"
     IQUAIL_ROOT_NAME = ".iquail"
     ARGUMENT_UNINSTALL = "--iquail_uninstall"
     ARGUMENT_BUILD = "--iquail_build"

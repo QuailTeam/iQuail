@@ -26,12 +26,23 @@ def parse_args():
                         is empty, the directory will be removed
                         (this function is used by iquail for windows uninstall)
                         """)
+    parser.add_argument(Constants.ARGUMENT_PATH,
+                        type=str,
+                        help="Tells iQuail to chdir to specified directory at launch",)
     return parser.parse_known_args()
 
 
 def run(solution, installer, builder=None, controller=None):
     """run config"""
     (args, unknown) = parse_args()
+    if args.iquail_path:
+        os.chdir(args.iquail_path)
+
+    try:
+        os.environ["DISPLAY"]
+    except Exception:
+        os.environ['DISPLAY'] = ':0'
+
     if not builder:
         builder = Builder()
     if not controller:
