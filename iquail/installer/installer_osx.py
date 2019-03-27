@@ -9,13 +9,13 @@ class InstallerOsx(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._bundle_install_path =  os.path.join('Applications', self.name + '.app')
+        self._bundle_install_path =  os.path.join(os.sep, 'Applications', self.name + '.app')
 
     """ We need to put a syslink into /usr/local/bin or into a local folder inside the user's home directory"""
     def _register(self):
         bundle = BundleTemplate(self.name)
         bundle.make()
-        plist = PlistTemplate(self.binary, {})
+        plist = PlistTemplate(self._binary_name, {})
         plist.make()
         self._build_launcher()
         #self.__add_to_path(self.binary, self._binary_name)
@@ -49,4 +49,4 @@ class InstallerOsx(InstallerBase):
             f.write(shebang)
             f.write(content)
         st = os.stat(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher'))
-        os.chmod(os.stat(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher')), st.st_mode | stat.S_IEXEC)
+        os.chmod(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher'), st.st_mode | stat.S_IEXEC)
