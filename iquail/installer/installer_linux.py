@@ -75,12 +75,12 @@ class InstallerLinux(InstallerBase):
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:
-            self.add_to_path(self.binary, self._binary_name)
+            self.add_to_path(self.launcher_binary, self._binary_name)
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)
         self.delete_shortcut(self._uninstall_shortcut)
-        self.remove_from_path(self.binary)
+        self.remove_from_path(self._binary_name)
 
     def _registered(self):
         if not self.is_shortcut(self._launch_shortcut):
