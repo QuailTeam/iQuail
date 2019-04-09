@@ -3,8 +3,11 @@ import sys
 from abc import ABC, abstractmethod
 from tkinter.font import Font
 from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 from tkinter.messagebox import showinfo, showerror, askretrycancel
 import threading
+import os
+from ... import helper
 
 
 class FrameBase(tk.Frame):
@@ -12,6 +15,10 @@ class FrameBase(tk.Frame):
         super().__init__(parent)
         self.controller = controller
         self.manager = controller.manager
+
+        self._img = tk.PhotoImage(file=helper.get_side_img_path())
+        self._label = tk.Label(self, image=self._img)
+        self._label.pack(side="left")
 
     def tk_thread(self, target, exception_hook=None, complete_hook=None):
         """Same as threading.Thread() BUT:
@@ -115,11 +122,24 @@ class FrameBaseInProgress(FrameBase):
                                              length=100,
                                              mode='determinate',
                                              variable=self.progress_var)
-        self._progress_bar.pack(side="bottom", fill="x", padx=20, pady=20)
+        self._progress_bar.pack(fill="x", padx=10, pady=10)
+
+        self._info_log = ScrolledText(self)
+        self._info_log.pack(fill="x", side="bottom")
 
     def update_label(self, text):
         self._label.configure(text=text)
         self._label.update()
+
+    def update_log(self, info_text):
+        if info_text:
+            self._info_log.insert(tk.END, info_text)
+            self._info_log.see(tk.END)
+            self._info_log.update()
+
+    def set_indeterminate(self):
+        self._progress_bar.configure(mode='indeterminate')
+        self._progress_bar.start()
 
     def update_progress(self, percent):
         if percent < 0:

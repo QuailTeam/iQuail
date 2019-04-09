@@ -9,9 +9,10 @@ class SolutionProgress:
     """Class returned in callback to notify progress
     (see SolutionBase._update_progress
     """
-    def __init__(self, percent, status):
+    def __init__(self, percent, status, log):
         self.percent = percent
         self.status = status
+        self.log = log
 
 
 class SolutionBase(ABC, builder.BuilderAction):
@@ -37,13 +38,13 @@ class SolutionBase(ABC, builder.BuilderAction):
         """set progression hook"""
         self._progress_hook = hook
 
-    def _update_progress(self, percent, status="loading"):
+    def _update_progress(self, percent, status="loading", log=""):
         """ This function will be called to update solution progression
         while downloading.
         It will call
         """
         if self._progress_hook:
-            self._progress_hook(SolutionProgress(percent, status))
+            self._progress_hook(SolutionProgress(percent, status, log))
 
     def get_version_string(self):
         """ return version string of a solution
