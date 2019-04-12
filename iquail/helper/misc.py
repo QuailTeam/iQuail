@@ -117,7 +117,6 @@ def rerun_as_admin(graphical, dir=None, bin=None):
                                                 ' '.join(sys.argv),
                                                 None, 1)
     ##TODO MACOS
-    exit(42)
 
 
 def move_folder_content(src, dest, ignore_errors=False):
