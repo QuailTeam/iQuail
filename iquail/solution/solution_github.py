@@ -69,6 +69,9 @@ class SolutionGitHub(SolutionBase):
     def open(self):
         last_tag_name = self._get_last_tag()["name"]
         zip_url = self._get_zip_url(last_tag_name)
+        self._update_progress(percent=0,
+                              status="downloading",
+                              log="Downloading file:\n" + zip_url + "\n")
 
         def hook(count, block_size, total_size):
             self._update_progress(percent=count / (total_size / block_size) * 100,

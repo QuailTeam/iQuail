@@ -1,4 +1,4 @@
-
+import os
 from .. import helper
 
 
@@ -17,6 +17,7 @@ class Builder:
     def default_build_params(self):
         params = [helper.get_script(),
                   "--onefile",
+                  '--add-data', helper.get_side_img_path() + os.path.pathsep + "iquail",
                   "--exclude-module", "PyInstaller"]
         if helper.OS_WINDOWS:
             # upx slows down the launch time
