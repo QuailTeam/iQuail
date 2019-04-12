@@ -24,7 +24,7 @@ class Manager:
             # If iquail is not installed the conf doesn't exist yet
             self.config.read()
             self.apply_conf()
-        self.check_permissions()
+
 
     def apply_conf(self):
         """Apply configuration on Manager's arguments

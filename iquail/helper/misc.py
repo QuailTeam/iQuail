@@ -99,16 +99,12 @@ def self_remove_directory(directory):
 
 def rerun_as_admin(graphical, dir=None, bin=None):
     if OS_LINUX:
-        if graphical is False:
-            cmd = ['sudo']
-        else:
-            cmd = ['pkexec']
-        # TODO fix: cmd can be None
+        cmd = ['sudo'] if graphical is False else ['pkexec']
         cmd = cmd + sys.argv
         if dir:
             cmd = cmd + ['--iquail_path', dir]
             cmd[1] = os.path.join(dir, bin)
-        sys.exit(os.execvp(cmd[0], cmd + sys.argv[1:]))
+        os.execvp(cmd[0], cmd + sys.argv[1:])
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():
             ctypes.windll.shell32.ShellExecuteW(None,
@@ -116,7 +112,8 @@ def rerun_as_admin(graphical, dir=None, bin=None):
                                                 sys.executable,
                                                 ' '.join(sys.argv),
                                                 None, 1)
-    exit(0)
+    ##TODO MACOS
+    exit(42)
 
 
 def move_folder_content(src, dest, ignore_errors=False):

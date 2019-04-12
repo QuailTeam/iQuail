@@ -49,17 +49,20 @@ def run(solution, installer, builder=None, controller=None):
         controller = ControllerConsole()
     manager = Manager(installer, solution, builder, controller.is_graphical())
     controller.setup(manager)
-    if args.iquail_rm:
-        shutil.rmtree(args.iquail_rm)
-    elif args.iquail_build:
+
+    if args.iquail_build:
         manager.build()
-    elif args.iquail_uninstall:
-        controller.start_uninstall()
     elif misc.running_from_installed_binary():
         controller.start_run_or_update()
-    elif manager.is_installed():
-        # program is installed but we are not launched from the installed folder
-        # TODO: ask repair/uninstall
-        controller.start_uninstall()
     else:
-        controller.start_install()
+        manager.check_permissions()
+        if args.iquail_rm:
+            shutil.rmtree(args.iquail_rm)
+        elif args.iquail_uninstall:
+            controller.start_uninstall()
+        elif manager.is_installed():
+            # program is installed but we are not launched from the installed folder
+            # TODO: ask repair/uninstall
+            controller.start_uninstall()
+        else:
+            controller.start_install()

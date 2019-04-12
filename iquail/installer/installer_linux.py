@@ -60,7 +60,7 @@ class InstallerLinux(InstallerBase):
 
     def build_root_path(self):
         if self._install_systemwide:
-            return "/opt/"
+            return "/opt/.iquail/"
         else:
             return super().build_root_path()
 
