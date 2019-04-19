@@ -26,12 +26,23 @@ def parse_args():
                         is empty, the directory will be removed
                         (this function is used by iquail for windows uninstall)
                         """)
+    parser.add_argument(Constants.ARGUMENT_PATH,
+                        type=str,
+                        help="Tells iQuail to chdir to specified directory at launch",)
     return parser.parse_known_args()
 
 
 def run(solution, installer, builder=None, controller=None):
     """run config"""
     (args, unknown) = parse_args()
+    if args.iquail_path:
+        os.chdir(args.iquail_path)
+
+    try:
+        os.environ["DISPLAY"]
+    except Exception:
+        os.environ['DISPLAY'] = ':0'
+
     if not builder:
         builder = Builder()
     if not controller:
@@ -44,14 +55,11 @@ def run(solution, installer, builder=None, controller=None):
         manager.build()
     elif args.iquail_uninstall:
         controller.start_uninstall()
+    elif misc.running_from_installed_binary():
+        controller.start_run_or_update()
+    elif manager.is_installed():
+        # program is installed but we are not launched from the installed folder
+        # TODO: ask repair/uninstall
+        controller.start_uninstall()
     else:
-        if misc.running_from_installed_binary():
-            controller.start_run_or_update()
-        else:
-            if manager.is_installed():
-                print(misc.get_script_path())
-                # program is installed but we are not launched from the installed folder
-                # TODO: ask repair/uninstall
-                controller.start_uninstall()
-            else:
-                controller.start_install()
+        controller.start_install()
