@@ -26,8 +26,8 @@ class InstallerLinux(InstallerBase):
                                    ' should be defined in parameters of the '
                                    'installer')
             self._desktop_conf.update(linux_desktop_conf)
-        self._launch_shortcut = self._desktop(self.name)
-        self._uninstall_shortcut = self._desktop("%s_uninstall" % self.name)
+        self._launch_shortcut = self._desktop(self.uid)
+        self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
         self._add_to_path = add_to_path
 
     def _desktop(self, name):
