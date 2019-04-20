@@ -30,13 +30,13 @@ class InstallerLinux(InstallerBase):
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
         self._add_to_path = add_to_path
 
-    def _desktop(self, name):
+    def _desktop(self, uid):
         if self._install_systemwide:
             basepath = os.path.join("/", "usr")
         else:
             basepath = os.path.join(str(pathlib.Path.home()), ".local")
         return os.path.join(basepath, "share", "applications",
-                            "%s.desktop" % name)
+                            "%s.desktop" % uid)
 
     def _write_desktop(self, filename, app_config):
         """Write desktop entry"""

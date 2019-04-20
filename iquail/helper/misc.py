@@ -7,6 +7,7 @@ import ctypes
 import platform
 import tempfile
 
+from iquail.helper.linux_polkit_file import polkit_check
 from ..constants import Constants
 
 OS_LINUX = platform.system() == 'Linux'
@@ -43,7 +44,7 @@ def get_module_path(*args):
 
 
 def get_script():
-    return os.path.realpath(sys.argv[0])
+    return os.path.realpath(os.path.basename(sys.argv[0]))
 
 
 def get_script_name():
@@ -101,13 +102,15 @@ def self_remove_directory(directory):
         _delete_atexit(directory)
 
 
-def rerun_as_admin(graphical, dir=None, bin=None):
+def rerun_as_admin(graphical, uid=None):
     if OS_LINUX:
         cmd = ['sudo'] if graphical is False else ['pkexec']
-        cmd = cmd + sys.argv
-        if dir:
-            cmd = cmd + ['--iquail_path', dir]
-            cmd[1] = os.path.join(dir, bin)
+        cmd = cmd + [os.path.realpath(os.path.basename(sys.argv[0]))]
+        if cmd[0] == 'pkexec':
+            if polkit_check(uid) is False:
+                cmd = cmd + [Constants.ARGUMENT_INSTALL_POLKIT]
+            elif Constants.ARGUMENT_INSTALL_POLKIT in cmd:
+                cmd.remove(Constants.ARGUMENT_INSTALL_POLKIT)
         os.execvp(cmd[0], cmd + sys.argv[1:])
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():

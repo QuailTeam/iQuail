@@ -2,6 +2,7 @@ import sys
 import argparse
 import shutil
 import os
+from datetime import datetime
 from contextlib import suppress
 from .constants import Constants
 from . import helper
@@ -9,6 +10,7 @@ from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
 from .helper import misc
+import _tkinter
 
 
 def parse_args():
@@ -26,22 +28,19 @@ def parse_args():
                         is empty, the directory will be removed
                         (this function is used by iquail for windows uninstall)
                         """)
-    parser.add_argument(Constants.ARGUMENT_PATH,
-                        type=str,
-                        help="Tells iQuail to chdir to specified directory at launch",)
+    parser.add_argument(Constants.ARGUMENT_INSTALL_POLKIT,
+                        action="store_true",
+                        help="Tells iQuail to install a polkit authorization file in /usr/bin/polkit-1/actions and "
+                             "then rerun itself with pkexec (Linux only)")
     return parser.parse_known_args()
 
 
 def run(solution, installer, builder=None, controller=None):
     """run config"""
     (args, unknown) = parse_args()
-    if args.iquail_path:
-        os.chdir(args.iquail_path)
 
-    try:
-        os.environ["DISPLAY"]
-    except Exception:
-        os.environ['DISPLAY'] = ':0'
+    # chdir to the directory where the executable is at
+    os.chdir(os.path.dirname(sys.argv[0]))
 
     if not builder:
         builder = Builder()
@@ -52,11 +51,14 @@ def run(solution, installer, builder=None, controller=None):
 
     if args.iquail_build:
         manager.build()
-    elif misc.running_from_installed_binary():
+    elif misc.running_from_installed_binary() and not args.iquail_uninstall:
         controller.start_run_or_update()
     else:
-        manager.check_permissions()
-        if args.iquail_rm:
+        manager.check_permissions(manager.uid)
+        if args.iquail_install_polkit:
+            helper.polkit_install(helper.get_script(), manager.uid)
+            helper.rerun_as_admin(controller.is_graphical(), manager.uid)
+        elif args.iquail_rm:
             shutil.rmtree(args.iquail_rm)
         elif args.iquail_uninstall:
             controller.start_uninstall()

@@ -25,6 +25,9 @@ class Manager:
             self.config.read()
             self.apply_conf()
 
+    @property
+    def uid(self):
+        return self._installer.uid
 
     def apply_conf(self):
         """Apply configuration on Manager's arguments
@@ -139,9 +142,9 @@ class Manager:
         os.chdir(self._installer.get_solution_path())
         os.execl(binary, *binary_args)
 
-    def check_permissions(self):
+    def check_permissions(self, uid):
         if self._installer.install_systemwide and os.geteuid() != 0:
             if self._graphical is False:
                 print('Root access is required for further action, relaunching as root')
-            misc.rerun_as_admin(self._graphical, self._exec_dir, self._exec_bin)
+            misc.rerun_as_admin(self._graphical, uid)
 
