@@ -38,7 +38,7 @@ def run(solution, installer, builder=None, controller=None):
     (args, unknown) = parse_args()
 
     # chdir to the directory where the executable is at
-    os.chdir(os.path.dirname(sys.argv[0]))
+    # os.chdir(os.path.dirname(sys.argv[0]))
 
     if not builder:
         builder = Builder()
