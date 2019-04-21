@@ -44,7 +44,7 @@ def get_module_path(*args):
 
 
 def get_script():
-    return os.path.realpath(os.path.basename(sys.argv[0]))
+    return os.path.realpath(sys.argv[0])
 
 
 def get_script_name():
