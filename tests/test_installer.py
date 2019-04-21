@@ -12,7 +12,8 @@ class TestInstaller(BaseTestCase):
             installer = iquail.Installer(
                 name='TestQuail',
                 icon='noicon',
-                binary='emptyfile'
+                binary='emptyfile',
+                publisher="tester"
             )
             self.assertFalse(installer._registered())
             installer._register()
