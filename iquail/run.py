@@ -10,8 +10,6 @@ from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
 from .helper import misc
-import _tkinter
-
 
 def parse_args():
     parser = argparse.ArgumentParser(add_help=helper.running_from_script())
