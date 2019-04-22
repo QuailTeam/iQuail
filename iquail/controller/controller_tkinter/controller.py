@@ -11,23 +11,28 @@ from .frames import FrameBaseInProgress, FrameBaseAccept, FrameBase, FrameBaseTw
 from .error_reporter import ErrorReporter
 
 
-class FrameAcceptEULA(FrameBaseTwoChoice):
+class FrameAcceptEULA(FrameBase):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller, "Do you accept the End-User "
-                                             "License agreement",
-                         "I accept", "I refuse")
-        la = Text(self, height=30, width=30)
-        la.pack()
-        la.insert(END, self.controller.eula)
+        super().__init__(parent, controller)
+        label = tk.Label(self,
+                         text="Do you accept the End-User\n"
+                              "License agreement",
+                         font=controller.title_font)
+        label.pack(side="top", fill="x", pady=10, padx=10)
+        button1 = tk.Button(self,
+                            text="I accept",
+                            command=self.accept_eula)
+        button1.pack(side="bottom", expand=True, padx=10, pady=1)
 
-    def choice1_selected(self):
+        text = Text(self)
+        text.pack()
+        text.insert(END, self.controller.eula)
+
+    def accept_eula(self):
         if self.controller.install_custom_frame is not None:
             self.controller.switch_frame(self.controller.install_custom_frame)
         else:
             self.controller.switch_frame(FrameInstalling)
-
-    def choice2_selected(self):
-        self.quit()
 
 
 class FrameAcceptInstall(FrameBaseAccept):
