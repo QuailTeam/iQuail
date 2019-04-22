@@ -2,12 +2,14 @@ import os
 
 class BundleTemplate():
 
-    def __init__(self, CFBundleName):
-        self.bundle_name = CFBundleName
-        #TODO refactor name
-        self.base_dir = "/Applications/"
-        self.full_path = self.base_dir + self.bundle_name + ".app"
-        self.names = [self.full_path, self.full_path + "/Contents", self.full_path + "/Contents/MacOS"]
+    def __init__(self, bundle_name: str, base_dir='/Application'):
+        self.full_path = os.path.join(base_dir, bundle_name + ".app")
+        self.names = [
+                    self.full_path,
+                    os.path.join(self.full_path, 'Contents'),
+                    os.path.join(self.full_path, 'Contents/MacOS'),
+                    os.path.join(self.full_path, 'Contents/Ressources')
+        ]
 
     def make(self):
         for path in self.names:

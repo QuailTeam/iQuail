@@ -3,7 +3,7 @@ import os
 import stat
 import shutil
 import pathlib
-from ..helper import BundleTemplate, PlistTemplate
+from ..helper import BundleTemplate, PlistCreator
 
 class InstallerOsx(InstallerBase):
 
@@ -15,8 +15,8 @@ class InstallerOsx(InstallerBase):
     def _register(self):
         bundle = BundleTemplate(self.name)
         bundle.make()
-        plist = PlistTemplate(self._binary_name, {})
-        plist.make()
+        plist = PlistCreator(self.name, '/Applications', {})
+        plist.write_file()
         self._build_launcher()
         #self.__add_to_path(self.binary, self._binary_name)
 

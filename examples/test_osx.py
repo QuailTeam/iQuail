@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 
-import os
-import os.path
 import iquail
-import platform
 
 if iquail.helper.OS_OSX:
     solution_path = ['MacCalc']
