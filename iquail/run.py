@@ -38,7 +38,7 @@ def run(solution, installer, builder=None, controller=None):
     (args, unknown) = parse_args()
 
     # chdir to the directory where the executable is at
-    # os.chdir(os.path.dirname(sys.argv[0]))
+    os.chdir(os.path.dirname(os.path.sys.argv[0]))
 
     if not builder:
         builder = Builder()
@@ -46,15 +46,20 @@ def run(solution, installer, builder=None, controller=None):
         controller = ControllerConsole()
     manager = Manager(installer, solution, builder, controller.is_graphical())
     controller.setup(manager)
-    if args.iquail_rm:
-        shutil.rmtree(args.iquail_rm)
-    elif args.iquail_build:
+
+    if args.iquail_build:
         manager.build()
-    elif args.iquail_uninstall:
-        controller.start_uninstall()
+    elif misc.running_from_installed_binary():
+        controller.start_run_or_update()
     else:
-        if misc.running_from_installed_binary():
-            controller.start_run_or_update()
+        manager.check_permissions(manager.uid)
+        if args.iquail_install_polkit:
+            helper.polkit_install(helper.get_script(), manager.uid)
+            helper.rerun_as_admin(controller.is_graphical(), manager.uid)
+        elif args.iquail_uninstall:
+            controller.start_uninstall()
+        elif args.iquail_rm:
+            shutil.rmtree(args.iquail_rm)
         else:
             if manager.is_installed():
                 print(misc.get_script_path())
