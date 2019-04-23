@@ -8,7 +8,7 @@ class BundleTemplate():
                     self.full_path,
                     os.path.join(self.full_path, 'Contents'),
                     os.path.join(self.full_path, 'Contents/MacOS'),
-                    os.path.join(self.full_path, 'Contents/Ressources')
+                    os.path.join(self.full_path, 'Contents/Resources')
         ]
 
     def make(self):
