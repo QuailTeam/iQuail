@@ -7,7 +7,7 @@ class PlistCreator:
         # The argument plist_dict can't be mutable
         if not plist_dict:
             plist_dict = {}
-        self.__filename = os.path.join(application_path, bundle_name + ".app/Contents/info.plist")
+        self.__filename = os.path.join(application_path, bundle_name + ".app/Contents/Info.plist")
         self.__data = ""
         self.__plist_dict = {
             "CFBundleGetInfoString": bundle_name,
@@ -46,19 +46,8 @@ class PlistCreator:
                     elem.tail = i
 
     def __add_icon(self, root: ET.Element, icon_name: str):
-        root.append(self.__make_key_with_text('key', 'CFBundleIcons'))
-
-        icon_dict = ET.SubElement(root, 'dict')
-        icon_dict.append(self.__make_key_with_text('key', 'CFBundlePrimaryIcon'))
-
-        sub_dict = ET.SubElement(icon_dict, 'dict')
-        sub_dict.append(self.__make_key_with_text('key', 'CFBundleIconFiles'))
-        array = ET.SubElement(sub_dict, 'array')
-        string = ET.SubElement(array, 'string')
-        string.text = icon_name
-
-        sub_dict.append(self.__make_key_with_text('key', 'UIPrerenderedIcon'))
-        ET.SubElement(sub_dict, 'false')
+        root.append(self.__make_key_with_text('key', 'CFBundleIconFile'))
+        root.append(self.__make_key_with_text('string', icon_name))
 
     def __create_header(self):
         self.__data += self.__plist_header

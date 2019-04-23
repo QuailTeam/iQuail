@@ -1,5 +1,6 @@
 import os
 
+from iquail.helper.osx.plist_creator import PlistCreator
 from tests.base_test_osx_bundle import BaseTestOsxBundle
 
 
@@ -13,5 +14,6 @@ class TestOsxBundle(BaseTestOsxBundle):
         assert os.path.exists(os.path.join(self._test_folder_path, 'Contents'))
 
     def test_plist_creation(self):
-        self.plistCreator.write_file()
+        plist_creator = PlistCreator('test', self._tmpdir)
+        plist_creator.write_file()
         assert os.path.exists(os.path.join(self._test_folder_path, 'Contents', 'info.plist'))

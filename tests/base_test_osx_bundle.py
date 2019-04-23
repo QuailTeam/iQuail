@@ -10,7 +10,6 @@ class BaseTestOsxBundle(BaseTestCase):
     def setUp(self):
         super(BaseTestOsxBundle, self).setUp()
         self._test_folder_path = self.tmp('test.app')
-        self.plistCreator = PlistCreator('test', self._tmpdir)
         self.bt = BundleTemplate('test', self._tmpdir)
         self.bt.make()
 
