@@ -2,6 +2,7 @@ import sys
 import argparse
 import shutil
 import os
+from datetime import datetime
 from contextlib import suppress
 from .constants import Constants
 from . import helper
@@ -9,6 +10,7 @@ from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
 from .helper import misc
+import _tkinter
 
 
 def parse_args():
@@ -38,7 +40,7 @@ def run(solution, installer, builder=None, controller=None):
     (args, unknown) = parse_args()
 
     # chdir to the directory where the executable is at
-    os.chdir(os.path.dirname(os.path.sys.argv[0]))
+    os.chdir(os.path.dirname(sys.argv[0]))
 
     if not builder:
         builder = Builder()
@@ -49,22 +51,25 @@ def run(solution, installer, builder=None, controller=None):
 
     if args.iquail_build:
         manager.build()
-    elif misc.running_from_installed_binary():
+    elif misc.running_from_installed_binary() and not args.iquail_uninstall:
         controller.start_run_or_update()
     else:
-        manager.check_permissions(manager.uid)
+        if not manager.check_permissions():
+            if controller.is_graphical() is False:
+                print('Root access is required for further action, relaunching as root')
+            misc.rerun_as_admin(controller.is_graphical(), manager.uid)
         if args.iquail_install_polkit:
-            helper.polkit_install(helper.get_script(), manager.uid)
+            helper.polkit_install(helper.get_script(), manager.uid + '-installer')
+            helper.polkit_install(installer.launcher_binary, manager.uid)
+            sys.argv.remove(Constants.ARGUMENT_INSTALL_POLKIT)
             helper.rerun_as_admin(controller.is_graphical(), manager.uid)
-        elif args.iquail_uninstall:
-            controller.start_uninstall()
         elif args.iquail_rm:
             shutil.rmtree(args.iquail_rm)
+        elif args.iquail_uninstall:
+            controller.start_uninstall()
+        elif manager.is_installed():
+            # program is installed but we are not launched from the installed folder
+            # TODO: ask repair/uninstall
+            controller.start_uninstall()
         else:
-            if manager.is_installed():
-                print(misc.get_script_path())
-                # program is installed but we are not launched from the installed folder
-                # TODO: ask repair/uninstall
-                controller.start_uninstall()
-            else:
-                controller.start_install()
+            controller.start_install()

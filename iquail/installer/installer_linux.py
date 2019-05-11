@@ -1,6 +1,7 @@
 import configparser
 import os.path
 import pathlib
+from iquail.helper import linux_polkit_file
 from contextlib import suppress
 
 from .installer_base import InstallerBase
@@ -75,12 +76,19 @@ class InstallerLinux(InstallerBase):
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:
-            self.add_to_path(self.launcher_binary, self._binary_name)
+            self.add_to_path(self.launcher_binary, self.uid)
+        if linux_polkit_file.polkit_check(self.uid + '-installer') is True:
+            linux_polkit_file.polkit_remove(self.uid + '-installer')
+
+
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)
         self.delete_shortcut(self._uninstall_shortcut)
-        self.remove_from_path(self._binary_name)
+        self.remove_from_path(self.uid)
+        if linux_polkit_file.polkit_check(self.uid) is True:
+            linux_polkit_file.polkit_remove(self.uid)
+
 
     def _registered(self):
         if not self.is_shortcut(self._launch_shortcut):

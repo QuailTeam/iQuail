@@ -16,15 +16,16 @@ class SolutionLocal(SolutionBase):
             self._path = os.path.join(*path)
         else:
             self._path = path
-        self._path = os.path.realpath(self._path)
 
-        self._tmp = None
+    @property
+    def path(self):
+        return os.path.abspath(self._path)
 
     def local(self):
         return True
 
     def open(self):
-        if not os.path.isdir(self._path):
+        if not os.path.isdir(self.path):
             raise SolutionUnreachableError("Solution local: no directory error")
         self._tmp = misc.safe_mkdtemp()
 
@@ -33,11 +34,11 @@ class SolutionLocal(SolutionBase):
             shutil.rmtree(self._tmp, ignore_errors=True)
 
     def walk(self):
-        for root, dirs, files in os.walk(self._path):
-            yield (os.path.relpath(root, self._path), dirs, files)
+        for root, dirs, files in os.walk(self.path):
+            yield (os.path.relpath(root, self.path), dirs, files)
 
     def retrieve_file(self, relative_path):
-        src = os.path.join(self._path, relative_path)
+        src = os.path.join(self.path, relative_path)
         if not os.path.isfile(src):
             raise SolutionUnreachableError("File not found on solution: " + relative_path)
         os.makedirs(os.path.join(self._tmp, os.path.dirname(relative_path)),

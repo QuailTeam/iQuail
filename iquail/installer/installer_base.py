@@ -120,7 +120,6 @@ class InstallerBase(ABC):
 
     def register(self):
         """Register application for the OS"""
-        self._register()
         os.makedirs(self.get_install_path(), exist_ok=True)
         # install script and module:
         shutil.copy2(helper.get_script(), self.iquail_binary)
@@ -129,6 +128,7 @@ class InstallerBase(ABC):
                 shutil.rmtree(self.get_install_path("iquail"))
             shutil.copytree(helper.get_module_path(),
                             self.get_install_path("iquail"))
+        self._register()
 
     def unregister(self):
         self._unregister()
