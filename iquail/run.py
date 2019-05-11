@@ -2,15 +2,12 @@ import sys
 import argparse
 import shutil
 import os
-from datetime import datetime
-from contextlib import suppress
 from .constants import Constants
 from . import helper
 from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
 from .helper import misc
-import _tkinter
 
 
 def parse_args():
@@ -39,8 +36,9 @@ def run(solution, installer, builder=None, controller=None):
     """run config"""
     (args, unknown) = parse_args()
 
-    # chdir to the directory where the executable is at
-    os.chdir(os.path.dirname(sys.argv[0]))
+    if helper.OS_LINUX:
+        # chdir to the directory where the executable is at
+        os.chdir(os.path.dirname(sys.argv[0]))
 
     if not builder:
         builder = Builder()
@@ -58,11 +56,8 @@ def run(solution, installer, builder=None, controller=None):
             if controller.is_graphical() is False:
                 print('Root access is required for further action, relaunching as root')
             misc.rerun_as_admin(controller.is_graphical(), manager.uid)
-        if args.iquail_install_polkit:
-            helper.polkit_install(helper.get_script(), manager.uid + '-installer')
-            helper.polkit_install(installer.launcher_binary, manager.uid)
-            sys.argv.remove(Constants.ARGUMENT_INSTALL_POLKIT)
-            helper.rerun_as_admin(controller.is_graphical(), manager.uid)
+        if args.iquail_install_polkit and helper.OS_LINUX:
+            installer.install_polkit(manager.uid, installer.launcher_binary, controller.is_graphical())
         elif args.iquail_rm:
             shutil.rmtree(args.iquail_rm)
         elif args.iquail_uninstall:

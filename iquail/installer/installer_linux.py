@@ -1,7 +1,8 @@
 import configparser
 import os.path
 import pathlib
-from iquail.helper import linux_polkit_file
+import sys
+from iquail import helper
 from contextlib import suppress
 
 from .installer_base import InstallerBase
@@ -77,17 +78,19 @@ class InstallerLinux(InstallerBase):
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:
             self.add_to_path(self.launcher_binary, self.uid)
-        if linux_polkit_file.polkit_check(self.uid + '-installer') is True:
-            linux_polkit_file.polkit_remove(self.uid + '-installer')
-
+        if helper.polkit_check(self.uid + '-installer') is True:
+            helper.polkit_remove(self.uid + '-installer')
 
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)
         self.delete_shortcut(self._uninstall_shortcut)
-        self.remove_from_path(self.uid)
-        if linux_polkit_file.polkit_check(self.uid) is True:
-            linux_polkit_file.polkit_remove(self.uid)
+        if self._add_to_path:
+            self.remove_from_path(self.uid)
+        if helper.polkit_check(self.uid) is True:
+            helper.polkit_remove(self.uid)
+        if helper.polkit_check(self.uid + '-installer') is True:
+            helper.polkit_remove(self.uid + '-installer')
 
 
     def _registered(self):
@@ -112,3 +115,9 @@ class InstallerLinux(InstallerBase):
             path = os.path.join(str(pathlib.Path.home()), '.local', 'bin')
         os.makedirs(path, exist_ok=True)
         return os.path.join(path, name)
+
+    def install_polkit(self, uid, launcher_binary, graphical):
+        helper.polkit_install(helper.get_script(), uid + '-installer')
+        helper.polkit_install(launcher_binary, uid)
+        sys.argv.remove(Constants.ARGUMENT_INSTALL_POLKIT)
+        helper.rerun_as_admin(graphical, uid)
