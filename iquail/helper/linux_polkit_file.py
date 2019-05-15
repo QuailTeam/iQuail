@@ -29,9 +29,11 @@ def polkit_check(uid):
     return os.path.isfile(polkit_get_file_name(uid))
 
 
-def polkit_install(bin_path, uid):
+def polkit_install(bin_path, uid, file=None):
+    if file is None:
+        file = polkit_get_file(bin_path)
     polkit = open(polkit_get_file_name(uid), 'w+')
-    polkit.write(polkit_get_file(bin_path))
+    polkit.write(file)
     polkit.close()
 
 

@@ -38,7 +38,7 @@ def run(solution, installer, builder=None, controller=None):
 
     if helper.OS_LINUX:
         # chdir to the directory where the executable is at
-        os.chdir(os.path.dirname(sys.argv[0]))
+        os.chdir(helper.get_script_path())
 
     if not builder:
         builder = Builder()
@@ -52,6 +52,7 @@ def run(solution, installer, builder=None, controller=None):
     elif misc.running_from_installed_binary() and not args.iquail_uninstall:
         controller.start_run_or_update()
     else:
+        #all the following actions might need elevated privileges
         if not manager.check_permissions():
             if controller.is_graphical() is False:
                 print('Root access is required for further action, relaunching as root')

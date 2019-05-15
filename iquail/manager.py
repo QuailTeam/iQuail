@@ -9,8 +9,6 @@ from .solution.solutioner import Solutioner
 
 class Manager:
     def __init__(self, installer, solution, builder, graphical):
-        self._exec_dir = os.getcwd()
-        self._exec_bin = os.path.basename(sys.argv[0])
         self._graphical = graphical
         self._installer = installer
         self._solution = solution

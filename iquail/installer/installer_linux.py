@@ -2,9 +2,9 @@ import configparser
 import os.path
 import pathlib
 import sys
-from iquail import helper
 from contextlib import suppress
 
+from .. import helper
 from .installer_base import InstallerBase
 from ..constants import Constants
 from ..helper import misc

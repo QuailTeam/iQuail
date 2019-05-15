@@ -44,7 +44,7 @@ def get_module_path(*args):
 
 
 def get_script():
-    return os.path.realpath(os.path.basename(sys.argv[0]))
+    return os.path.realpath(sys.argv[0])
 
 
 def get_script_name():
@@ -104,9 +104,9 @@ def self_remove_directory(directory):
 
 def rerun_as_admin(graphical, uid=None):
     if OS_LINUX:
-        cmd = ['sudo'] if graphical is False else ['pkexec', 'env', 'DISPLAY=' + os.environ['DISPLAY'],
-                                                   'XAUTHORITY=' + os.environ['XAUTHORITY']]
-        cmd = cmd + [os.path.realpath(os.path.basename(sys.argv[0]))] + sys.argv[1:]
+        cmd = ['sudo'] if graphical is False else ('pkexec env DISPLAY=' + os.environ['DISPLAY']
+                                                   + ' XAUTHORITY=' + os.environ['XAUTHORITY']).split()
+        cmd = cmd + [get_script()] + sys.argv[1:]
         if cmd[0] == 'pkexec' and polkit_check(uid) is False:
             cmd = cmd + [Constants.ARGUMENT_INSTALL_POLKIT]
         os.execvp(cmd[0], cmd)
