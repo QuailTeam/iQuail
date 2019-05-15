@@ -13,7 +13,7 @@ from ..helper import misc
 class InstallerLinux(InstallerBase):
 
     def __init__(self, linux_desktop_conf=None, linux_exec_flags='',
-                 add_to_path=True, *args, **kwargs):
+                 add_to_path=True, polkit_file=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._desktop_conf = {'Name': self.name,
                               'Icon': self.get_solution_icon(),
@@ -31,6 +31,7 @@ class InstallerLinux(InstallerBase):
         self._launch_shortcut = self._desktop(self.uid)
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
         self._add_to_path = add_to_path
+        self._polkit_file = polkit_file
 
     def _desktop(self, uid):
         if self._install_systemwide:
@@ -118,6 +119,5 @@ class InstallerLinux(InstallerBase):
 
     def install_polkit(self, uid, launcher_binary, graphical):
         helper.polkit_install(helper.get_script(), uid + '-installer')
-        helper.polkit_install(launcher_binary, uid)
-        sys.argv.remove(Constants.ARGUMENT_INSTALL_POLKIT)
+        helper.polkit_install(launcher_binary, uid, self._polkit_file)
         helper.rerun_as_admin(graphical, uid)

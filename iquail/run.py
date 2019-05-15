@@ -58,6 +58,7 @@ def run(solution, installer, builder=None, controller=None):
                 print('Root access is required for further action, relaunching as root')
             misc.rerun_as_admin(controller.is_graphical(), manager.uid)
         if args.iquail_install_polkit and helper.OS_LINUX:
+            sys.argv.remove(Constants.ARGUMENT_INSTALL_POLKIT)
             installer.install_polkit(manager.uid, installer.launcher_binary, controller.is_graphical())
         elif args.iquail_rm:
             shutil.rmtree(args.iquail_rm)
