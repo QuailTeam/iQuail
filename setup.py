@@ -12,7 +12,7 @@ packages.remove("tests")
 setup(
     name='iquail',
     packages=packages,
-    version='1.6',
+    version='1.7',
     description='iQuail cross-platform installer',
     author='Quail team',
     long_description=long_description,
@@ -21,7 +21,7 @@ setup(
     url='https://github.com/QuailTeam/iQuail',
     keywords=['tool', 'deploy', 'installer', 'wizard', 'install', 'update', 'quail'],
     classifiers=['Intended Audience :: Developers',
-                 'Development Status :: 3 - Alpha',
+                 'Development Status :: 4 - Beta',
                  'Programming Language :: Python :: 3 :: Only',
                  'Topic :: Software Development'
                  ],
