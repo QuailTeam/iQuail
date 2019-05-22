@@ -10,4 +10,3 @@ class Constants:
     INTEGRITY_IGNORE_FILE = ".integrity_ignore"
     VERSION_FILE = "solution_version.txt"
     CONFIG_FILE = "config.ini"
-    IQUAIL_LAUNCHER_NAME = "iquail_launcher"

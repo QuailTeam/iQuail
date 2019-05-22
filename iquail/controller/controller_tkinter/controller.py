@@ -73,7 +73,7 @@ class FrameInstalling(FrameBaseInProgress):
 class FrameInstallFinished(FrameBaseAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         question="%s successfully installed!" %
+                         question="%s\nsuccessfully installed!" %
                                   controller.manager.get_name(),
                          positive_str="exit")
 

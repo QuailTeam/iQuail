@@ -24,17 +24,22 @@ class InstallerBase(ABC):
                  console=False,
                  binary_options='',
                  install_path=None,
+                 requires_root=False,
                  launch_with_quail=True):
         self._install_systemwide = install_systemwide
         self._launch_with_quail = launch_with_quail
         self._binary_name = binary
         self._binary_options = binary_options
         self._name = name
+        self._requires_root = requires_root
         self._icon = icon
         self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path() if install_path is None else install_path
         self._solution_path = os.path.join(self._install_path, 'solution')
+        self._launcher_name = "iquail_launcher"
+        if self.requires_root:
+            self._launcher_name = "setup_" + self._launcher_name
 
 
     def get_solution_icon(self):
@@ -58,13 +63,17 @@ class InstallerBase(ABC):
         return self._launch_with_quail
 
     @property
+    def requires_root(self):
+        return self._requires_root
+
+    @property
     def iquail_binary(self):
         """Get iquail executable install path"""
         script_name = helper.get_script_name()
         if "." in script_name:
             extension = script_name.split(".")[-1]
-            return self.get_install_path(Constants.IQUAIL_LAUNCHER_NAME + "." + extension)
-        return self.get_install_path(Constants.IQUAIL_LAUNCHER_NAME)
+            return self.get_install_path(self._launcher_name + "." + extension)
+        return self.get_install_path(self._launcher_name)
 
     @property
     def launch_command(self):
