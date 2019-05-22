@@ -1,4 +1,3 @@
-
 import os
 import quail
 from .base_test_solution import BaseTestSolution

@@ -31,5 +31,5 @@ class FileIgnore:
         except FileNotFoundError:
             self._ignore_list = []
 
-    def accept(self, path):
+    def is_file_ignored(self, path):
         return accept_path(path, self._ignore_list)
