@@ -7,7 +7,6 @@ from . import helper
 from .constants import Constants
 from .solution.solutioner import Solutioner
 
-
 class Manager:
     def __init__(self, installer, solution, builder, graphical):
         self._graphical = graphical
@@ -93,7 +92,7 @@ class Manager:
     def install_part_solution(self):
         """part 1 of the installation will install the solution
         """
-        # permission checked here because tkinter calls this method directly instead of install()
+        #permission checked here because tkinter calls this method directly instead of install()
         self.apply_conf()  # because conf have been just selected
         self._solutioner.install()
         self._set_solution_installed_version()
@@ -141,8 +140,6 @@ class Manager:
         os.chdir(self._installer.get_solution_path())
         os.execl(binary, *binary_args)
 
-    def check_permissions(self, uid):
-        if self._installer.install_systemwide and os.geteuid() != 0:
-            if self._graphical is False:
-                print('Root access is required for further action, relaunching as root')
-            misc.rerun_as_admin(self._graphical, uid)
+    def check_permissions(self):
+        return not (self._installer.install_systemwide and os.geteuid() != 0)
+

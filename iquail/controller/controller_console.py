@@ -2,8 +2,6 @@ import sys
 
 from .controller_base import ControllerBase
 from ..solution.solution_base import SolutionProgress
-from ..helper.traceback_info import ExceptionInfo
-from ..errors import SolutionUnreachableError
 
 
 def _progress_callback(progress: SolutionProgress):
