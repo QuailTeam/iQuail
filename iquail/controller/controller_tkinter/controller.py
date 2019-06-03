@@ -34,9 +34,6 @@ class FrameAcceptEULA(FrameBase):
         else:
             self.controller.switch_frame(FrameInstalling)
 
-    #def choice2_selected(self):
-    #    self.quit()
-
 
 class FrameAcceptInstall(FrameBaseAccept):
     def __init__(self, parent, controller):

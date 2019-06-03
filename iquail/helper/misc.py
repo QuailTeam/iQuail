@@ -104,12 +104,14 @@ def self_remove_directory(directory):
 
 def rerun_as_admin(graphical, uid=None):
     if OS_LINUX:
-        cmd = ['sudo'] if graphical is False else ('pkexec env DISPLAY=' + os.environ['DISPLAY']
-                                                   + ' XAUTHORITY=' + os.environ['XAUTHORITY']).split()
-        cmd = cmd + [get_script()] + sys.argv[1:]
-        if cmd[0] == 'pkexec' and polkit_check(uid) is False:
-            cmd = cmd + [Constants.ARGUMENT_INSTALL_POLKIT]
-        os.execvp(cmd[0], cmd)
+        cmd = ['sudo'] if graphical is False else ['pkexec']
+        cmd = cmd + [os.path.realpath(os.path.basename(sys.argv[0]))]
+        if cmd[0] == 'pkexec':
+            if polkit_check(uid) is False:
+                cmd = cmd + [Constants.ARGUMENT_INSTALL_POLKIT]
+            elif Constants.ARGUMENT_INSTALL_POLKIT in cmd:
+                cmd.remove(Constants.ARGUMENT_INSTALL_POLKIT)
+        os.execvp(cmd[0], cmd + sys.argv[1:])
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():
             ctypes.windll.shell32.ShellExecuteW(None,

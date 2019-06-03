@@ -1,10 +1,8 @@
 import configparser
 import os.path
 import pathlib
-import sys
 from contextlib import suppress
 
-from .. import helper
 from .installer_base import InstallerBase
 from ..constants import Constants
 from ..helper import misc
@@ -13,7 +11,7 @@ from ..helper import misc
 class InstallerLinux(InstallerBase):
 
     def __init__(self, linux_desktop_conf=None, linux_exec_flags='',
-                 add_to_path=True, polkit_file=None, *args, **kwargs):
+                 add_to_path=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._desktop_conf = {'Name': self.name,
                               'Icon': self.get_solution_icon(),
@@ -31,7 +29,6 @@ class InstallerLinux(InstallerBase):
         self._launch_shortcut = self._desktop(self.uid)
         self._uninstall_shortcut = self._desktop("%s_uninstall" % self.uid)
         self._add_to_path = add_to_path
-        self._polkit_file = polkit_file
 
     def _desktop(self, uid):
         if self._install_systemwide:
@@ -78,21 +75,12 @@ class InstallerLinux(InstallerBase):
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:
-            self.add_to_path(self.launcher_binary, self.uid)
-        if helper.polkit_check(self.uid + '-installer') is True:
-            helper.polkit_remove(self.uid + '-installer')
-
+            self.add_to_path(self.launcher_binary, self._binary_name)
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)
         self.delete_shortcut(self._uninstall_shortcut)
-        if self._add_to_path:
-            self.remove_from_path(self.uid)
-        if helper.polkit_check(self.uid) is True:
-            helper.polkit_remove(self.uid)
-        if helper.polkit_check(self.uid + '-installer') is True:
-            helper.polkit_remove(self.uid + '-installer')
-
+        self.remove_from_path(self._binary_name)
 
     def _registered(self):
         if not self.is_shortcut(self._launch_shortcut):
@@ -116,8 +104,3 @@ class InstallerLinux(InstallerBase):
             path = os.path.join(str(pathlib.Path.home()), '.local', 'bin')
         os.makedirs(path, exist_ok=True)
         return os.path.join(path, name)
-
-    def install_polkit(self, uid, launcher_binary, graphical):
-        helper.polkit_install(helper.get_script(), uid + '-installer')
-        helper.polkit_install(launcher_binary, uid, self._polkit_file)
-        helper.rerun_as_admin(graphical, uid)
