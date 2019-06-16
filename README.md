@@ -41,8 +41,9 @@ You can still begin learning by [examples](examples)
 
 To build a iQuail installer run ```iquail_script.py --iquail_build```
 
+How to sign? https://github.com/pyinstaller/pyinstaller/wiki/Recipe-Win-Code-Signing
+
 ## Short time goals
-* Signing iquail's executables
 * Integrity verification and updating only modified data
 * Building a versioning server
 * Using iquail to update solutions which already have an installer .msi / .deb / setup.exe / .rpm  files
