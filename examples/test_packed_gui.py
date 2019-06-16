@@ -1,14 +1,6 @@
 #!/usr/bin/python3
 
-import os
-import os.path
 import iquail
-import platform
-
-
-def print_progress(percent):
-    print("%s%%" % percent)
-
 
 if iquail.helper.OS_LINUX:
     iquail.run(
