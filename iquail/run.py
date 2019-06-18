@@ -26,6 +26,12 @@ def parse_args():
                         is empty, the directory will be removed
                         (this function is used by iquail for windows uninstall)
                         """)
+    parser.add_argument(Constants.ARGUMENT_REPLACE,
+                        type=str,
+                        help="""replace file:
+                            dest:src
+                            this function is used by iquail for windows self update
+                            """)
     parser.add_argument(Constants.ARGUMENT_INSTALL_POLKIT,
                         action="store_true",
                         help="Tells iQuail to install a polkit authorization file in /usr/bin/polkit-1/actions and "
@@ -48,6 +54,9 @@ def run(solution, installer, builder=None, controller=None):
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)
+    if args.iquail_replace:
+        dest, src = args.iquail_rm.split(":")
+        os.replace(src, dest)
     elif args.iquail_build:
         manager.build()
     elif args.iquail_uninstall:

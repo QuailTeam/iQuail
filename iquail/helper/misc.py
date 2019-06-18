@@ -103,7 +103,7 @@ def replace_atexit(dest, src):
     def _replace_from_tmp():
         tmpdir = tempfile.mkdtemp()
         newscript = shutil.copy2(get_script(), tmpdir)
-        args = (newscript, Constants.ARGUMENT_REPLACE, dest, src)
+        args = (newscript, Constants.ARGUMENT_REPLACE, dest + ":" + src)
         if running_from_script():
             os.execl(sys.executable, sys.executable, *args)
         else:
