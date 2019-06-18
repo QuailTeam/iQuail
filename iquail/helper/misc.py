@@ -91,6 +91,27 @@ def _delete_atexit(path_to_delete):
     atexit.register(_delete_from_tmp)
 
 
+def replace_atexit(dest, src):
+    """On windows we can't remove/move binaries being run.
+    This function will remove a file or folder at exit
+    to be able to move itself
+    """
+
+    assert os.path.isfile(src)
+    assert not os.path.isdir(dest)
+
+    def _replace_from_tmp():
+        tmpdir = tempfile.mkdtemp()
+        newscript = shutil.copy2(get_script(), tmpdir)
+        args = (newscript, Constants.ARGUMENT_REPLACE, dest, src)
+        if running_from_script():
+            os.execl(sys.executable, sys.executable, *args)
+        else:
+            os.execl(newscript, *args)
+
+    atexit.register(_replace_from_tmp)
+
+
 def self_remove_directory(directory):
     """Remove directory but if we are running from a compiled binary
     it will remove the directory only when exiting.
