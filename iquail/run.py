@@ -54,8 +54,8 @@ def run(solution, installer, builder=None, controller=None):
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)
-    if args.iquail_replace:
-        dest, src = args.iquail_rm.split(":")
+    elif args.iquail_replace:
+        dest, src = args.iquail_replace.split(":")
         os.replace(src, dest)
     elif args.iquail_build:
         manager.build()
