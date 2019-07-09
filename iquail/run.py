@@ -32,10 +32,14 @@ def parse_args():
                             dest:src
                             this function is used by iquail for windows self update
                             """)
+    parser.add_argument(Constants.ARGUMENT_RUN,
+                        help="Before exiting the solution will be run",
+                        action="store_true")
     parser.add_argument(Constants.ARGUMENT_INSTALL_POLKIT,
                         action="store_true",
                         help="Tells iQuail to install a polkit authorization file in /usr/bin/polkit-1/actions and "
                              "then rerun itself with pkexec (Linux only)")
+
     return parser.parse_known_args()
 
 
@@ -72,4 +76,6 @@ def run(solution, installer, builder=None, controller=None):
                 controller.start_uninstall()
             else:
                 controller.start_install()
+    if args.iquail_run:
+        controller.start_run_or_update()
 
