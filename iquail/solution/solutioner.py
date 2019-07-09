@@ -2,6 +2,7 @@ import shutil
 import os
 from ..errors import SolutionNotRemovableError
 from ..helper import misc
+from ..constants import Constants
 
 
 class Solutioner:
@@ -46,6 +47,12 @@ class Solutioner:
                     self._retrieve_file(os.path.join(root, _file))
         finally:
             self._solution.close()
+
+    def get_iquail_update(self):
+        path = self.dest(Constants.IQUAIL_TO_UPDATE)
+        if os.path.isfile(path):
+            return path
+        return None
 
     def installed(self):
         return os.path.exists(self.dest())
