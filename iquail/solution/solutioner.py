@@ -24,7 +24,7 @@ class Solutioner:
             raise SolutionNotRemovableError("Can't remove %s" % self.dest()) from e
 
     def dest(self, *args):
-        return os.path.join(self._dest, *args)
+        return os.path.realpath(os.path.join(self._dest, *args))
 
     def _retrieve_file(self, relpath):
         tmpfile = self._solution.retrieve_file(relpath)
