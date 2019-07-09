@@ -72,3 +72,4 @@ def run(solution, installer, builder=None, controller=None):
                 controller.start_uninstall()
             else:
                 controller.start_install()
+
