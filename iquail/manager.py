@@ -133,8 +133,11 @@ class Manager:
 
     def run(self):
         """Run solution"""
-        # self.config.save() config could be used for "don't ask me again to update" feature
+        # TODO: self.config.save() config could be used for "don't ask me again to update" feature
         binary = self._installer.binary
+        if self.solutioner.get_iquail_update() is not None:
+            # TODO: verify binary
+            misc.exit_and_replace(misc.get_script(), self.solutioner.get_iquail_update(), run=True)
         self._chmod_binary()
         args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
         binary_args = [os.path.basename(binary)] + args

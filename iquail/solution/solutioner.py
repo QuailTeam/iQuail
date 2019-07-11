@@ -2,6 +2,7 @@ import shutil
 import os
 from ..errors import SolutionNotRemovableError
 from ..helper import misc
+from ..constants import Constants
 
 
 class Solutioner:
@@ -23,7 +24,7 @@ class Solutioner:
             raise SolutionNotRemovableError("Can't remove %s" % self.dest()) from e
 
     def dest(self, *args):
-        return os.path.join(self._dest, *args)
+        return os.path.realpath(os.path.join(self._dest, *args))
 
     def _retrieve_file(self, relpath):
         tmpfile = self._solution.retrieve_file(relpath)
@@ -46,6 +47,12 @@ class Solutioner:
                     self._retrieve_file(os.path.join(root, _file))
         finally:
             self._solution.close()
+
+    def get_iquail_update(self):
+        path = self.dest(Constants.IQUAIL_TO_UPDATE)
+        if os.path.isfile(path):
+            return path
+        return None
 
     def installed(self):
         return os.path.exists(self.dest())

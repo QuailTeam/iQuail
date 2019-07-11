@@ -87,7 +87,7 @@ class InstallerBase(ABC):
     @property
     def binary(self):
         """Binary name (which must be at the root directory of your solution"""
-        return self.get_solution_path(self._binary_name)
+        return os.path.realpath(self.get_solution_path(self._binary_name))
 
     @property
     def name(self):
