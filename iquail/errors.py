@@ -6,3 +6,7 @@ class SolutionUnreachableError(Exception):
 class SolutionNotRemovableError(Exception):
     """Raised if solution is not reachable"""
     pass
+
+class SolutionFileNotFoundError(Exception):
+    """Raised if solution cannot retreive file"""
+    pass
