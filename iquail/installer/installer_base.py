@@ -56,7 +56,7 @@ class InstallerBase(ABC):
         return self._binary_options
 
     @property
-    def launch_with_iquail(self):
+    def launch_with_quail(self):
         """Use iquail to launch the binary
         (otherwise the shortcuts will launch the binary directly)
         """
@@ -82,7 +82,7 @@ class InstallerBase(ABC):
     @property
     def launcher_binary(self):
         """Binary which will be launched by the main shortcut"""
-        return self.iquail_binary if self.launch_with_iquail else self.binary
+        return self.iquail_binary if self.launch_with_quail else self.binary
 
     @property
     def binary(self):
