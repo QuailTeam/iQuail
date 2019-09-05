@@ -93,7 +93,8 @@ class InstallerLinux(InstallerBase):
         os.symlink(binary, self.build_symlink_path(name))
 
     def remove_from_path(self, name):
-        os.unlink(self.build_symlink_path(name))
+        with suppress(FileNotFoundError):
+            os.unlink(self.build_symlink_path(name))
 
     @misc.cache_result
     def build_symlink_path(self, name):
