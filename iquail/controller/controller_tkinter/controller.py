@@ -7,7 +7,7 @@ from tkinter.font import Font
 
 from ...solution.solution_base import SolutionProgress
 from ..controller_base import ControllerBase
-from .frames import FrameBaseInProgress, FrameBaseAccept, FrameBase, FrameBaseTwoChoice
+from .frames import FrameBaseInProgress, FrameBaseAccept, FrameBase, FrameBaseTwoChoice, FrameBaseThreeChoice
 from .error_reporter import ErrorReporter
 
 
@@ -111,17 +111,13 @@ class FrameUpdating(FrameBaseInProgress):
         self.manager.run()
 
 
-class FrameAskToUpdate(FrameBaseTwoChoice):
+class FrameAskToUpdate(FrameBaseThreeChoice):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
                          question="New version is available!\nWould you like to update?",
                          choice1=" update! ",
-                         choice2="   run!   ")
-        button3 = tk.Button(self,
-                            text="Never ask again",
-                            command=self.choice3_selected)
-
-        button3.pack(expand=True, padx=20, pady=20)
+                         choice2="   run!   ",
+                         choice3="Never ask again")
 
     def choice1_selected(self):
         self.controller.switch_frame(FrameUpdating)

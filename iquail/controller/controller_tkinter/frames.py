@@ -110,6 +110,21 @@ class FrameBaseTwoChoice(FrameBase):
         """This method will be called when choice 1 have been selected"""
         pass
 
+class FrameBaseThreeChoice(FrameBaseTwoChoice):
+    def __init__(self, parent, controller, choice3, *args, **kwargs):
+        super().__init__(parent, controller, *args, **kwargs)
+        button3 = tk.Button(self,
+                            text=choice3,
+                            command=self.choice3_selected)
+
+        button3.pack(expand=True, padx=20, pady=20)
+
+    @abstractmethod
+    def choice3_selected(self):
+        """This method will be called when choice 3 have been selected"""
+        pass
+
+
 class FrameBaseInProgress(FrameBase):
     def __init__(self, parent, controller, label_str):
         super().__init__(parent, controller)
