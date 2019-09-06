@@ -110,7 +110,6 @@ class FrameBaseTwoChoice(FrameBase):
         """This method will be called when choice 1 have been selected"""
         pass
 
-
 class FrameBaseInProgress(FrameBase):
     def __init__(self, parent, controller, label_str):
         super().__init__(parent, controller)

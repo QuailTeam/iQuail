@@ -117,12 +117,20 @@ class FrameAskToUpdate(FrameBaseTwoChoice):
                          question="New version is available!\nWould you like to update?",
                          choice1=" update! ",
                          choice2="   run!   ")
+        button3 = tk.Button(self,
+                            text="Never ask again",
+                            command=self.choice3_selected)
+
+        button3.pack(expand=True, padx=20, pady=20)
 
     def choice1_selected(self):
         self.controller.switch_frame(FrameUpdating)
 
     def choice2_selected(self):
         self.manager.run()
+
+    def choice3_selected(self):
+        print("ok")
 
 
 class FrameCheckForUpdate(FrameBaseInProgress):
