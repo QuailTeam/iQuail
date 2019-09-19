@@ -15,5 +15,6 @@ iquail.run(
         console=True,
         launch_with_quail=False
     ),
-    builder=iquail.builder.Builder()
+    builder=iquail.builder.Builder(),
+    controller=iquail.ControllerTkinter()
 )

@@ -60,6 +60,10 @@ class QuailFS:
             return False
         return True
 
+    def get_nbr_files(self):
+        lines = self._send_cmd('NBR_FILES')
+        return int(lines[0])
+
     def get_error(self):
         return self.error
 

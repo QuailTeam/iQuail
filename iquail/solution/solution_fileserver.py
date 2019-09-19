@@ -15,6 +15,8 @@ class SolutionFileServer(SolutionBase):
         self._tmpdir = None
         self._serv = None
         self._files = None
+        self._nbrFiles = 1
+        self._nbrFilesDownloaded = 0
 
     def local(self):
         return False
@@ -30,6 +32,8 @@ class SolutionFileServer(SolutionBase):
         if not self._serv.connect(self._host, self._port):
             raise SolutionUnreachableError("FileServer.connect() failed: %s" %
                                            self._serv.get_error())
+        self._nbrFiles = self._serv.get_nbr_files()
+        self._nbrFilesDownloaded = 0
 
     def close(self):
         self._serv.disconnect()
@@ -62,4 +66,6 @@ class SolutionFileServer(SolutionBase):
     def retrieve_file(self, relpath):
         if not self._serv.get_file(relpath):
             raise SolutionFileNotFoundError('FileServer.get_file() failed')
+        self._nbrFilesDownloaded += 1
+        self._update_progress(percent=(100*self._nbrFilesDownloaded)/self._nbrFiles, status='downloading', log=relpath+'\n')
         return self._get_tmp_path(relpath)
