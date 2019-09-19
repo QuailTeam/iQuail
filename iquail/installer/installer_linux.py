@@ -75,7 +75,8 @@ class InstallerLinux(InstallerBase):
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:
-            self.add_to_path(self.launcher_binary, self._binary_name)
+            # TODO launch with self.launcher_binary?
+            self.add_to_path(self.binary, self._binary_name)
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)
@@ -93,7 +94,8 @@ class InstallerLinux(InstallerBase):
         os.symlink(binary, self.build_symlink_path(name))
 
     def remove_from_path(self, name):
-        os.unlink(self.build_symlink_path(name))
+        with suppress(FileNotFoundError):
+            os.unlink(self.build_symlink_path(name))
 
     @misc.cache_result
     def build_symlink_path(self, name):
