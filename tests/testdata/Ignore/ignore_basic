@@ -1,0 +1,3 @@
+conf_file
+*.conf
+!not_conf.conf
