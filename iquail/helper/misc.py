@@ -152,7 +152,8 @@ def move_folder_content(src, dest, ignore_errors=False):
             if not ignore_errors:
                 raise
 
-def safe_remove_folder_content(src):
+
+def safe_remove_folder_content(src, ignore=None):
     """Remove folder content
     If an error happens while removing
     the content will be untouched
@@ -160,6 +161,9 @@ def safe_remove_folder_content(src):
     tmp_dir = tempfile.mkdtemp()
     try:
         move_folder_content(src, tmp_dir)
+        if ignore is not None:
+            # move back files that shouldn't have been removed
+            ignore.copy_ignored(tmp_dir, src)
     except Exception:
         # rollback move on exception
         move_folder_content(tmp_dir, src, ignore_errors=True)

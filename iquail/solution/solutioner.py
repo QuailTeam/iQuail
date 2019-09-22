@@ -2,6 +2,7 @@ import shutil
 import os
 from ..errors import SolutionNotRemovableError
 from ..helper import misc
+from ..helper import FileIgnore
 from ..constants import Constants
 
 
@@ -10,7 +11,7 @@ class Solutioner:
         self._dest = dest
         self._solution = solution
 
-    def _remove_solution(self):
+    def _remove_solution(self, ignore=None):
         """Remove solution
         If the root solution isn't removable it will be ignored with this function
                 def onerror(func, path, exc_info):
@@ -19,7 +20,7 @@ class Solutioner:
         shutil.rmtree(self.dest(), onerror=onerror)
         """
         try:
-            misc.safe_remove_folder_content(self.dest())
+            misc.safe_remove_folder_content(self.dest(), ignore=ignore)
         except Exception as e:
             raise SolutionNotRemovableError("Can't remove %s" % self.dest()) from e
 
@@ -59,7 +60,11 @@ class Solutioner:
 
     def update(self):
         # TODO: uninstall will be a waste of time on future solution types
-        self.uninstall()
+        if self.installed():
+            ignore = None
+            if os.path.isfile(self.dest(Constants.CONF_IGNORE)):
+                ignore = FileIgnore(self.dest(Constants.CONF_IGNORE))
+            self._remove_solution(ignore=ignore)
         self.install()
 
     def uninstall(self):
