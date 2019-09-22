@@ -9,13 +9,14 @@ from .solution.solutioner import Solutioner
 
 
 class Manager:
-    def __init__(self, installer, solution, builder, graphical):
+    def __init__(self, installer, solution, builder, graphical, *, conf_ignore=None):
         self._graphical = graphical
         self._installer = installer
         self._solution = solution
         self._builder = builder
         self._solutioner = Solutioner(self._solution,
-                                      self._installer.get_solution_path())
+                                      self._installer.get_solution_path(),
+                                      conf_ignore=conf_ignore)
         self._config = helper.Configuration(
             self._installer.get_install_path(Constants.CONFIG_FILE)
         )

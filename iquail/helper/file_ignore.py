@@ -18,9 +18,10 @@ def accept_path(path, ignore_list):
 
     accept = True
     for ignore in ignore_list:
-        not_ignore = not_pattern(ignore)
-        if fnmatch(path, ignore) ^ fnmatch(path, not_ignore):
-            accept = fnmatch(path, not_ignore)
+        if ignore != "":
+            not_ignore = not_pattern(ignore)
+            if fnmatch(path, ignore) ^ fnmatch(path, not_ignore):
+                accept = fnmatch(path, not_ignore)
     return accept
 
 

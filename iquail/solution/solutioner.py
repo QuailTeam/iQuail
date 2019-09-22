@@ -7,7 +7,10 @@ from ..constants import Constants
 
 
 class Solutioner:
-    def __init__(self, solution, dest):
+    def __init__(self, solution, dest, *, conf_ignore=None):
+        if conf_ignore is not None:
+            assert isinstance(conf_ignore, list)
+        self.conf_ignore = conf_ignore
         self._dest = dest
         self._solution = solution
 
@@ -48,6 +51,11 @@ class Solutioner:
                     self._retrieve_file(os.path.join(root, _file))
         finally:
             self._solution.close()
+        if self.conf_ignore:
+            with open(self.dest(Constants.CONF_IGNORE), "a") as f:
+                # TODO remove conf ignore on uninstall (if its self ignoring)
+                f.write("\n")
+                f.write("\n".join(self.conf_ignore))
 
     def get_iquail_update(self):
         path = self.dest(Constants.IQUAIL_TO_UPDATE)
