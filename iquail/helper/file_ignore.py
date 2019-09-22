@@ -1,5 +1,6 @@
 from fnmatch import fnmatch
-
+import os
+import shutil
 
 def accept_path(path, ignore_list):
     """ Check if path should be ignored according to ignore_list
@@ -33,3 +34,16 @@ class FileIgnore:
 
     def accept(self, path):
         return accept_path(path, self._ignore_list)
+
+    def copy_ignored(self, src, dest):
+        """Move all ignored files"""
+        for root, dirs, files in os.walk(src):
+            for f in files:
+                rel_root = os.path.relpath(root, src)
+                file_path = os.path.join(root, f)
+                dest_path = os.path.join(dest, rel_root)
+                if not self.accept(os.path.join(rel_root, f)):
+                    os.makedirs(dest_path, 0o777, True)
+                    shutil.copy(file_path, os.path.join(dest_path, f))
+
+

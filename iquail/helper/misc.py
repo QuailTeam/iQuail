@@ -152,7 +152,6 @@ def move_folder_content(src, dest, ignore_errors=False):
             if not ignore_errors:
                 raise
 
-
 def safe_remove_folder_content(src):
     """Remove folder content
     If an error happens while removing

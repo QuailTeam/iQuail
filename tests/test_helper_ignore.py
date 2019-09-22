@@ -19,4 +19,14 @@ class TestHelperIgnore(BaseTestCase):
 
         self.assertFalse(ignore.accept("./conf/test.txt"))
 
+    def test_copy_ignored(self):
+        ignore = iquail.helper.FileIgnore(self.path("Allum1", ".conf_ignore"))
+        ignore.copy_ignored(self.path("Allum1"), self.tmp())
+        self.assertFalse(os.path.exists(self.tmp("subfolder")))
+        self.assertFalse(os.path.exists(self.tmp("allum1")))
+        self.assertTrue(os.path.exists(self.tmp("test.conf")))
+        self.assertTrue(os.path.exists(self.tmp("conf", "test.txt")))
+
+
+
 
