@@ -15,7 +15,8 @@ def accept_path(path, ignore_list):
         if ignore_pattern.startswith('!'):
             return ignore_pattern[1:]
         return '!' + ignore_pattern
-
+    # TODO ignore comments
+    # TODO option to keep old config if new config is provided by solution
     accept = True
     for ignore in ignore_list:
         if ignore != "":
