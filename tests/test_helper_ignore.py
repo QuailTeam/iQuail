@@ -26,7 +26,3 @@ class TestHelperIgnore(BaseTestCase):
         self.assertFalse(os.path.exists(self.tmp("allum1")))
         self.assertTrue(os.path.exists(self.tmp("test.conf")))
         self.assertTrue(os.path.exists(self.tmp("conf", "test.txt")))
-
-
-
-

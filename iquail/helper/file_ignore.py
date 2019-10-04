@@ -17,7 +17,6 @@ def accept_path(path, ignore_list):
             return ignore_pattern[1:]
         return '!' + ignore_pattern
 
-    # TODO ignore comments
     # TODO option to keep old config if new config is provided by solution
     accept = True
     for ignore in ignore_list:
@@ -29,8 +28,8 @@ def accept_path(path, ignore_list):
 
 
 def _format_lines(line):
-    line = line.split("#")[0] # remove comments
-    line = line.replace(" ", "") # remove all spaces
+    line = line.split("#")[0]  # remove comments
+    line = line.replace(" ", "")  # remove all spaces
     return line
 
 
