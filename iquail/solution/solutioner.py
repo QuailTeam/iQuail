@@ -25,7 +25,8 @@ class Solutioner:
         try:
             misc.safe_remove_folder_content(self.dest(), ignore=ignore)
         except Exception as e:
-            raise SolutionNotRemovableError("Can't remove %s" % self.dest()) from e
+            raise SolutionNotRemovableError(
+                "Can't remove %s" % self.dest()) from e
 
     def dest(self, *args):
         return os.path.realpath(os.path.join(self._dest, *args))
@@ -34,14 +35,14 @@ class Solutioner:
         tmpfile = self._solution.retrieve_file(relpath)
         shutil.move(tmpfile, self.dest(os.path.dirname(relpath)))
 
-    def install(self):
+    def install(self, ignore=None):
         """ Download solution to dest folder
         (open & setup the solution before using download)
         """
         self._solution.open()
         try:
             if os.path.exists(self.dest()):
-                self._remove_solution()
+                self._remove_solution(ignore)
             os.makedirs(self.dest(), 0o777, True)
             for root, dirs, files in self._solution.walk():
                 for _dir in dirs:
@@ -73,7 +74,7 @@ class Solutioner:
             if os.path.isfile(self.dest(Constants.CONF_IGNORE)):
                 ignore = FileIgnore(self.dest(Constants.CONF_IGNORE))
             self._remove_solution(ignore=ignore)
-        self.install()
+        self.install(ignore)
 
     def uninstall(self):
         if self.installed():
