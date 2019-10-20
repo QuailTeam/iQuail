@@ -15,6 +15,7 @@ class Manager:
         self._solution = solution
         self._builder = builder
         self._solutioner = Solutioner(self._solution,
+                                      self,
                                       self._installer.get_solution_path(),
                                       conf_ignore=conf_ignore)
         self._config = helper.Configuration(
