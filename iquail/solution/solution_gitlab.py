@@ -34,15 +34,15 @@ class SolutionGitLab(SolutionBase):
         (repo_owner, repo_name)
         """
         re1 = '.*?'  # Non-greedy match on filler
-        re2 = '(?:[a-z][a-z]+)'  # Uninteresting: word
+        re2 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
         re3 = '.*?'  # Non-greedy match on filler
-        re4 = '(?:[a-z][a-z]+)'  # Uninteresting: word
+        re4 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
         re5 = '.*?'  # Non-greedy match on filler
-        re6 = '(?:[a-z][a-z]+)'  # Uninteresting: word
+        re6 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
         re7 = '.*?'  # Non-greedy match on filler
-        re8 = '((?:[a-z][a-z]+))'  # Word 1
+        re8 = '((?:[a-z][a-z0-9_]*))'  # Variable Name 1
         re9 = '.*?'  # Non-greedy match on filler
-        re10 = '((?:[a-z][a-z0-9_]*))'  # Variable Name 1
+        re10 = '((?:[a-z][a-z0-9_]*))'  # Variable Name 2
 
         rg = re.compile(re1+re2+re3+re4+re5+re6+re7+re8 +
                         re9+re10, re.IGNORECASE | re.DOTALL)
