@@ -7,6 +7,7 @@ import ctypes
 import platform
 import tempfile
 
+from iquail.helper.linux_polkit_file import polkit_check
 from ..constants import Constants
 
 OS_LINUX = platform.system() == 'Linux'
@@ -91,6 +92,26 @@ def _delete_atexit(path_to_delete):
     atexit.register(_delete_from_tmp)
 
 
+def exit_and_replace(dest, src, run=False):
+    """On windows we can't remove/move binaries being run.
+    This function will remove a file or folder at exit
+    to be able to move itself
+    """
+
+    assert os.path.isfile(src)
+    assert not os.path.isdir(dest)
+
+    tmpdir = tempfile.mkdtemp()
+    newscript = shutil.copy2(get_script(), tmpdir)
+    args = [newscript, Constants.ARGUMENT_REPLACE, dest + Constants.PATH_SEP + src]
+    if run:
+        args.append(Constants.ARGUMENT_RUN)
+    if running_from_script():
+        os.execl(sys.executable, sys.executable, *args)
+    else:
+        os.execl(newscript, *args)
+
+
 def self_remove_directory(directory):
     """Remove directory but if we are running from a compiled binary
     it will remove the directory only when exiting.
@@ -102,17 +123,16 @@ def self_remove_directory(directory):
         _delete_atexit(directory)
 
 
-def rerun_as_admin(graphical):
+def rerun_as_admin(graphical, uid=None):
     if OS_LINUX:
-        cmd = None
-        if graphical is False:
-            cmd = ['sudo', '-A']
-        elif shutil.which('gksudo'):
-            cmd = ['gksudo', '--']
-        elif shutil.which('kdesudo'):
-            cmd = ['kdesudo']
-        # TODO fix: cmd can be None
-        sys.exit(os.execvp(cmd[0], cmd + sys.argv))
+        cmd = ['sudo'] if graphical is False else ['pkexec']
+        cmd = cmd + [os.path.realpath(os.path.basename(sys.argv[0]))]
+        if cmd[0] == 'pkexec':
+            if polkit_check(uid) is False:
+                cmd = cmd + [Constants.ARGUMENT_INSTALL_POLKIT]
+            elif Constants.ARGUMENT_INSTALL_POLKIT in cmd:
+                cmd.remove(Constants.ARGUMENT_INSTALL_POLKIT)
+        os.execvp(cmd[0], cmd + sys.argv[1:])
     elif OS_WINDOWS:
         if not ctypes.windll.shell32.IsUserAnAdmin():
             ctypes.windll.shell32.ShellExecuteW(None,
@@ -120,7 +140,7 @@ def rerun_as_admin(graphical):
                                                 sys.executable,
                                                 ' '.join(sys.argv),
                                                 None, 1)
-    exit(0)
+    ##TODO MACOS
 
 
 def move_folder_content(src, dest, ignore_errors=False):
@@ -134,7 +154,7 @@ def move_folder_content(src, dest, ignore_errors=False):
                 raise
 
 
-def safe_remove_folder_content(src):
+def safe_remove_folder_content(src, ignore=None):
     """Remove folder content
     If an error happens while removing
     the content will be untouched
@@ -142,6 +162,9 @@ def safe_remove_folder_content(src):
     tmp_dir = tempfile.mkdtemp()
     try:
         move_folder_content(src, tmp_dir)
+        if ignore is not None:
+            # move back files that shouldn't have been removed
+            ignore.copy_ignored(tmp_dir, src)
     except Exception:
         # rollback move on exception
         move_folder_content(tmp_dir, src, ignore_errors=True)

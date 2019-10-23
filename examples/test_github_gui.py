@@ -19,5 +19,5 @@ iquail.run(
         iquail.builder.CmdIcon('icon.ico'),
         iquail.builder.CmdNoconsole()
     ),
-    controller=iquail.ControllerTkinter()
+    controller=iquail.ControllerTkinter(eula="This is a test")
 )

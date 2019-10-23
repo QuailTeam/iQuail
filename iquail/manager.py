@@ -1,8 +1,6 @@
 import os
-import signal
 import stat
 import sys
-import typing
 from .helper import misc
 
 from . import helper
@@ -11,13 +9,15 @@ from .solution.solutioner import Solutioner
 
 
 class Manager:
-    def __init__(self, installer, solution, builder, graphical):
+    def __init__(self, installer, solution, builder, graphical, *, conf_ignore=None):
         self._graphical = graphical
         self._installer = installer
         self._solution = solution
         self._builder = builder
         self._solutioner = Solutioner(self._solution,
-                                      self._installer.get_solution_path())
+                                      self,
+                                      self._installer.get_solution_path(),
+                                      conf_ignore=conf_ignore)
         self._config = helper.Configuration(
             self._installer.get_install_path(Constants.CONFIG_FILE)
         )
@@ -25,6 +25,10 @@ class Manager:
             # If iquail is not installed the conf doesn't exist yet
             self.config.read()
             self.apply_conf()
+
+    @property
+    def uid(self):
+        return self._installer.uid
 
     def apply_conf(self):
         """Apply configuration on Manager's arguments
@@ -91,8 +95,7 @@ class Manager:
     def install_part_solution(self):
         """part 1 of the installation will install the solution
         """
-        #permission checked here because tkinter calls this method directly instead of install()
-        self.check_permissions()
+        # permission checked here because tkinter calls this method directly instead of install()
         self.apply_conf()  # because conf have been just selected
         self._solutioner.install()
         self._set_solution_installed_version()
@@ -117,14 +120,12 @@ class Manager:
     def update(self):
         """Update process"""
         # TODO: kill solution here
-        self.check_permissions()
         self._solutioner.update()
         self._set_solution_installed_version()
 
     def uninstall(self):
         """ Uninstall process
         """
-        self.check_permissions()
         self._installer.unregister()
         self._solutioner.uninstall()
 
@@ -134,16 +135,19 @@ class Manager:
 
     def run(self):
         """Run solution"""
-        # self.config.save() config could be used for "don't ask me again to update" feature
+        # TODO: self.config.save() config could be used for "don't ask me again to update" feature
         binary = self._installer.binary
+        if self.solutioner.get_iquail_update() is not None:
+            # TODO: verify binary
+            misc.exit_and_replace(misc.get_script(), self.solutioner.get_iquail_update(), run=True)
         self._chmod_binary()
         args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
         binary_args = [os.path.basename(binary)] + args
         os.chdir(self._installer.get_solution_path())
         os.execl(binary, *binary_args)
 
-    def check_permissions(self):
+    def check_permissions(self, uid):
         if self._installer.install_systemwide and os.geteuid() != 0:
-            print('Root access is required for further action, relaunching as root')
-            misc.rerun_as_admin(self._graphical)
-
+            if self._graphical is False:
+                print('Root access is required for further action, relaunching as root')
+            misc.rerun_as_admin(self._graphical, uid)

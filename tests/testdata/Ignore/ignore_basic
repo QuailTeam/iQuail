@@ -1,0 +1,3 @@
+conf_file
+*.conf # this is a test comment
+!not_conf.conf

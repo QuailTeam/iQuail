@@ -1,14 +1,6 @@
 #!/usr/bin/python3
 
-import os
-import os.path
 import iquail
-import platform
-
-
-def print_progress(percent):
-    print("%s%%" % percent)
-
 
 if iquail.helper.OS_LINUX:
     iquail.run(
@@ -19,7 +11,7 @@ if iquail.helper.OS_LINUX:
             icon='icon.jpeg',
             binary='allum1',
             console=True,
-            launch_with_quail=False
+            launch_with_quail=True
         ),
         builder=iquail.builder.Builder(
             iquail.builder.CmdNoconsole()
@@ -32,11 +24,12 @@ if iquail.helper.OS_WINDOWS:
         solution=iquail.SolutionPacked(path='OpenHardwareMonitor'),
         installer=iquail.Installer(
             publisher="OHM",
+            requires_root=True,
             name='OpenHardwareMonitor',
             icon='OpenHardwareMonitor.exe',
             binary='OpenHardwareMonitor.exe',
             console=True,
-            launch_with_quail=False
+            launch_with_quail=True
         ),
         builder=iquail.builder.Builder(
             iquail.builder.CmdIcon('icon.ico'),

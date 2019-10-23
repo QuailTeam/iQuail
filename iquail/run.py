@@ -26,20 +26,42 @@ def parse_args():
                         is empty, the directory will be removed
                         (this function is used by iquail for windows uninstall)
                         """)
+    parser.add_argument(Constants.ARGUMENT_REPLACE,
+                        type=str,
+                        help="""replace file:
+                            dest:src
+                            this function is used by iquail for windows self update
+                            """)
+    parser.add_argument(Constants.ARGUMENT_RUN,
+                        help="Before exiting the solution will be run",
+                        action="store_true")
+    parser.add_argument(Constants.ARGUMENT_INSTALL_POLKIT,
+                        action="store_true",
+                        help="Tells iQuail to install a polkit authorization file in /usr/bin/polkit-1/actions and "
+                             "then rerun itself with pkexec (Linux only)")
+
     return parser.parse_known_args()
 
 
-def run(solution, installer, builder=None, controller=None):
+def run(solution, installer, builder=None, controller=None, conf_ignore=None):
     """run config"""
     (args, unknown) = parse_args()
+
+    # chdir to the directory where the executable is at
+    # os.chdir(os.path.dirname(sys.argv[0]))
+
     if not builder:
         builder = Builder()
     if not controller:
         controller = ControllerConsole()
-    manager = Manager(installer, solution, builder, controller.is_graphical())
+    manager = Manager(installer, solution, builder, controller.is_graphical(),
+                      conf_ignore=conf_ignore)
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)
+    elif args.iquail_replace:
+        dest, src = args.iquail_replace.split(Constants.PATH_SEP)
+        os.replace(src, dest)
     elif args.iquail_build:
         manager.build()
     elif args.iquail_uninstall:
@@ -55,3 +77,6 @@ def run(solution, installer, builder=None, controller=None):
                 controller.start_uninstall()
             else:
                 controller.start_install()
+    if args.iquail_run:
+        controller.start_run_or_update()
+

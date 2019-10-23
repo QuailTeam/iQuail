@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import Text
+from tkinter import END
+import sys
 from tkinter.font import Font
 
 from ...solution.solution_base import SolutionProgress
@@ -8,15 +11,42 @@ from .frames import FrameBaseInProgress, FrameBaseAccept, FrameBase, FrameBaseTw
 from .error_reporter import ErrorReporter
 
 
+class FrameAcceptEULA(FrameBase):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        label = tk.Label(self,
+                         text="Do you accept the End-User\n"
+                              "License agreement",
+                         font=controller.title_font)
+        label.pack(side="top", fill="x", pady=10, padx=10)
+        button1 = tk.Button(self,
+                            text="I accept",
+                            command=self.accept_eula)
+        button1.pack(side="bottom", expand=True, padx=10, pady=1)
+
+        text = Text(self)
+        text.pack()
+        text.insert(END, self.controller.eula)
+
+    def accept_eula(self):
+        if self.controller.install_custom_frame is not None:
+            self.controller.switch_frame(self.controller.install_custom_frame)
+        else:
+            self.controller.switch_frame(FrameInstalling)
+
+
 class FrameAcceptInstall(FrameBaseAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         question="%s installer\nWould you like to install this program?" %
+                         question="%s installer\nWould you like to install "
+                                  "this program?" %
                                   controller.manager.get_name(),
                          positive_str="Install!")
 
     def accept(self):
-        if self.controller.install_custom_frame is not None:
+        if self.controller.eula is not None:
+            self.controller.switch_frame(FrameAcceptEULA)
+        elif self.controller.install_custom_frame is not None:
             self.controller.switch_frame(self.controller.install_custom_frame)
         else:
             self.controller.switch_frame(FrameInstalling)
@@ -43,7 +73,7 @@ class FrameInstalling(FrameBaseInProgress):
 class FrameInstallFinished(FrameBaseAccept):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,
-                         question="%s successfully installed!" %
+                         question="%s\nsuccessfully installed!" %
                                   controller.manager.get_name(),
                          positive_str="exit")
 
@@ -123,10 +153,13 @@ class ControllerTkinter(ControllerBase):
 
     def __init__(self,
                  install_custom_frame=None,
-                 ask_for_update=False):
+                 ask_for_update=False,
+                 *args,
+                 **kwargs):
         """ Controller tkinter
         :param install_custom_frame: An instance of FrameBase, this frame will be called during installation
         """
+        super().__init__(*args, **kwargs)
         self.tk = None
         self._base_frame = None
         self._frame = None

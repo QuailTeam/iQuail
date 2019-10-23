@@ -24,17 +24,22 @@ class InstallerBase(ABC):
                  console=False,
                  binary_options='',
                  install_path=None,
+                 requires_root=False,
                  launch_with_quail=True):
         self._install_systemwide = install_systemwide
         self._launch_with_quail = launch_with_quail
         self._binary_name = binary
         self._binary_options = binary_options
         self._name = name
+        self._requires_root = requires_root
         self._icon = icon
         self._publisher = publisher
         self._console = console
         self._install_path = self.build_install_path() if install_path is None else install_path
         self._solution_path = os.path.join(self._install_path, 'solution')
+        self._launcher_name = "iquail_launcher"
+        if self.requires_root:
+            self._launcher_name = "setup_" + self._launcher_name
 
 
     def get_solution_icon(self):
@@ -51,11 +56,15 @@ class InstallerBase(ABC):
         return self._binary_options
 
     @property
-    def launch_with_iquail(self):
+    def launch_with_quail(self):
         """Use iquail to launch the binary
         (otherwise the shortcuts will launch the binary directly)
         """
         return self._launch_with_quail
+
+    @property
+    def requires_root(self):
+        return self._requires_root
 
     @property
     def iquail_binary(self):
@@ -63,8 +72,8 @@ class InstallerBase(ABC):
         script_name = helper.get_script_name()
         if "." in script_name:
             extension = script_name.split(".")[-1]
-            return self.get_install_path(Constants.IQUAIL_LAUNCHER_NAME + "." + extension)
-        return self.get_install_path(Constants.IQUAIL_LAUNCHER_NAME)
+            return self.get_install_path(self._launcher_name + "." + extension)
+        return self.get_install_path(self._launcher_name)
 
     @property
     def launch_command(self):
@@ -73,12 +82,12 @@ class InstallerBase(ABC):
     @property
     def launcher_binary(self):
         """Binary which will be launched by the main shortcut"""
-        return self.iquail_binary if self.launch_with_iquail else self.binary
+        return self.iquail_binary if self.launch_with_quail else self.binary
 
     @property
     def binary(self):
         """Binary name (which must be at the root directory of your solution"""
-        return self.get_solution_path(self._binary_name)
+        return os.path.realpath(self.get_solution_path(self._binary_name))
 
     @property
     def name(self):
@@ -99,7 +108,9 @@ class InstallerBase(ABC):
     @property
     def uid(self):
         """Get application unique id"""
-        return self.name + "_" + md5(self.publisher.encode('utf-8')).hexdigest()
+        uid = self.name + "-" + self.publisher
+        uid = uid.replace(" ", "-")
+        return uid
 
     def build_root_path(self):
         return os.path.join(str(pathlib.Path.home()), Constants.IQUAIL_ROOT_NAME)
