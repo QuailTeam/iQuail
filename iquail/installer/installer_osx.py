@@ -9,7 +9,7 @@ class InstallerOsx(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._bundle_install_path =  os.path.join(os.sep, 'Applications', self.name + '.app')
+        self._bundle_install_path = os.path.join(os.sep, 'Applications', self.name + '.app')
 
     """ We need to put a syslink into /usr/local/bin or into a local folder inside the user's home directory"""
     def _register(self):
