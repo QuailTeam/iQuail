@@ -54,8 +54,6 @@ class PlistCreator:
 
     def __create_tree(self) -> ET.Element:
         root = ET.Element('plist', {'version':'1.0'})
-        # This is a test, need to use a real
-        #self.__add_icon(root, 'icon')
         return root
 
     def write_file(self):

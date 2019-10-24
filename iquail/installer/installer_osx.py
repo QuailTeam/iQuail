@@ -18,7 +18,7 @@ class InstallerOsx(InstallerBase):
         plist = PlistCreator(self.name, '/Applications', {})
         plist.write_file()
         self._build_launcher()
-        #self.__add_to_path(self.binary, self._binary_name)
+        #self.add_to_path(self.binary, self._binary_name)
 
     def _unregister(self):
         self.__remove_from_path(self.binary)
@@ -26,6 +26,7 @@ class InstallerOsx(InstallerBase):
     def _registered(self):
         if not os.path.exists(self.build_symlink_path(self.binary)):
             return False
+        return True
 
     def __add_to_path(self, binary, name):
         os.symlink(binary, self.build_symlink_path(name))
