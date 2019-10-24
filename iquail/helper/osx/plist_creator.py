@@ -59,11 +59,18 @@ class PlistCreator:
     def write_file(self):
         self.__create_header()
         tree = self.__create_tree()
+        self.__write_dict_to_file(tree)
         self.__indent_tree(tree)
         tree_data = ET.tostring(tree, encoding='unicode')
         with open(self.__filename, 'w+') as f:
             total_data = self.__data + tree_data
             f.write(total_data)
+
+    def __write_dict_to_file(self, root: ET.Element):
+        for key, value in self.plist_dict.items():
+            root.append(self.__make_key_with_text('key', key))
+            root.append(self.__make_key_with_text('string', value))
+
 
 
 
