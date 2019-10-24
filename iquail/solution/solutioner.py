@@ -1,5 +1,6 @@
 import shutil
 import os
+import sys
 from ..errors import SolutionNotRemovableError
 from ..helper import misc
 from ..helper import FileIgnore
@@ -7,12 +8,13 @@ from ..constants import Constants
 
 
 class Solutioner:
-    def __init__(self, solution, dest, *, conf_ignore=None):
+    def __init__(self, solution, manager, dest, *, conf_ignore=None):
         if conf_ignore is not None:
             assert isinstance(conf_ignore, list)
         self.conf_ignore = conf_ignore
         self._dest = dest
         self._solution = solution
+        solution.setup(self, manager)
 
     def _remove_solution(self, ignore=None):
         """Remove solution
@@ -32,6 +34,9 @@ class Solutioner:
         return os.path.realpath(os.path.join(self._dest, *args))
 
     def _retrieve_file(self, relpath):
+        if os.path.exists(self.dest(relpath)):
+            print("Ignored file: " + relpath, file=sys.stderr)
+            return
         tmpfile = self._solution.retrieve_file(relpath)
         shutil.move(tmpfile, self.dest(os.path.dirname(relpath)))
 
@@ -69,8 +74,8 @@ class Solutioner:
 
     def update(self):
         # TODO: uninstall will be a waste of time on future solution types
+        ignore = None
         if self.installed():
-            ignore = None
             if os.path.isfile(self.dest(Constants.CONF_IGNORE)):
                 ignore = FileIgnore(self.dest(Constants.CONF_IGNORE))
             self._remove_solution(ignore=ignore)
