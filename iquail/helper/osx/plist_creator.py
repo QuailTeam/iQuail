@@ -67,10 +67,11 @@ class PlistCreator:
             f.write(total_data)
 
     def __write_dict_to_file(self, root: ET.Element):
+        elem = ET.Element('dict')
         for key, value in self.plist_dict.items():
-            root.append(self.__make_key_with_text('key', key))
-            root.append(self.__make_key_with_text('string', value))
-
+            elem.append(self.__make_key_with_text('key', key))
+            elem.append(self.__make_key_with_text('string', value))
+        root.append(elem)
 
 
 
