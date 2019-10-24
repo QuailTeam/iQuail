@@ -16,7 +16,7 @@ class InstallerOsx(InstallerBase):
         bundle = BundleTemplate(self.name)
         bundle.make()
         plist = PlistCreator(self.name, '/Applications', {})
-        plist.write_file()
+        plist.build_tree_and_write_file()
         self._build_launcher()
         #self.add_to_path(self.binary, self._binary_name)
 

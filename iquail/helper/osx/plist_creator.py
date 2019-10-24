@@ -49,29 +49,30 @@ class PlistCreator:
         root.append(self.__make_key_with_text('key', 'CFBundleIconFile'))
         root.append(self.__make_key_with_text('string', icon_name))
 
-    def __create_header(self):
-        self.__data += self.__plist_header
-
     def __create_tree(self) -> ET.Element:
         root = ET.Element('plist', {'version':'1.0'})
         return root
 
-    def write_file(self):
-        self.__create_header()
+    def build_tree_and_write_file(self):
         tree = self.__create_tree()
-        self.__write_dict_to_file(tree)
-        self.__indent_tree(tree)
-        tree_data = ET.tostring(tree, encoding='unicode')
-        with open(self.__filename, 'w+') as f:
-            total_data = self.__data + tree_data
-            f.write(total_data)
 
-    def __write_dict_to_file(self, root: ET.Element):
+        self.__data += self.__plist_header
+        self.__add_dict_content_to_tree(tree)
+        self.__indent_tree(tree)
+        self.__write_to_file(tree)
+
+    def __add_dict_content_to_tree(self, root: ET.Element):
         elem = ET.Element('dict')
         for key, value in self.plist_dict.items():
             elem.append(self.__make_key_with_text('key', key))
             elem.append(self.__make_key_with_text('string', value))
         root.append(elem)
+
+    def __write_to_file(self, tree):
+        tree_data = ET.tostring(tree, encoding='unicode')
+        with open(self.__filename, 'w+') as f:
+            total_data = self.__data + tree_data
+            f.write(total_data)
 
 
 

@@ -18,5 +18,5 @@ if iquail.helper.OS_OSX:
 
         def test_plist_creation(self):
             plist_creator = PlistCreator('test', self._tmpdir)
-            plist_creator.write_file()
+            plist_creator.build_tree_and_write_file()
             assert os.path.exists(os.path.join(self._test_folder_path, 'Contents', 'info.plist'))
