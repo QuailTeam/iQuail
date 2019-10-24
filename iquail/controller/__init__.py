@@ -1,6 +1,8 @@
+import sys
+
 from .controller_base import ControllerBase
 try:
     from .controller_tkinter import ControllerTkinter
-except:
-    print("No display found or tkinter missing, console mode enabled !")
+except ImportError as e:
+    print(f"Tkinter not found....", file=sys.stderr)
 from .controller_console import ControllerConsole
