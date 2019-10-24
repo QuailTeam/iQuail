@@ -2,7 +2,7 @@ import os
 
 
 class BundleTemplate:
-    def __init__(self, bundle_name: str, base_dir='/Application'):
+    def __init__(self, bundle_name: str, base_dir='/Applications'):
         self.full_path = os.path.join(base_dir, bundle_name + ".app")
         self.names = [
                     self.full_path,
