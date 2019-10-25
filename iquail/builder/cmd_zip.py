@@ -1,12 +1,16 @@
 import os
 import zipfile
+import logging
 from .. import helper
 from .cmd_base import CmdBase
+
+logger = logging.getLogger(__name__)
 
 
 class CmdZip(CmdBase):
     """ Zip a folder and add it to the executable
     """
+
     def __init__(self, path, zip_name, zip_clean=True):
         super().__init__()
         if isinstance(path, list):
@@ -24,7 +28,8 @@ class CmdZip(CmdBase):
                 file_path = os.path.join(root, file)
                 zipf.write(file_path,
                            arcname=os.path.relpath(file_path, self._path))
-                print(os.path.relpath(file_path, self._path))
+                logger.info("Adding file to zip: " +
+                            os.path.relpath(file_path, self._path))
         zipf.close()
 
     def post_build(self):

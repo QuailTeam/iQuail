@@ -82,7 +82,9 @@ class Manager:
 
     def get_solution_version(self):
         """Get version from solution"""
-        return self._solution.get_version_string()
+        version = self._solution.get_version_string()
+        logger.info("Manager got solution version: " + str(version))
+        return version
 
     def get_installed_version(self):
         """Get installed version"""
@@ -157,6 +159,7 @@ class Manager:
     def check_permissions(self, uid):
         if self._installer.install_systemwide and os.geteuid() != 0:
             if self._graphical is False:
-                print('Root access is required for further action, relaunching as root')
+                logger.error(
+                    'Root access is required for further action, relaunching as root')
             logger.info("Re-running as admin with UID %s" % str(uid))
             misc.rerun_as_admin(self._graphical, uid)

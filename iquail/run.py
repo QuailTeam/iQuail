@@ -2,6 +2,8 @@ import sys
 import argparse
 import shutil
 import os
+import logging
+
 from contextlib import suppress
 from .constants import Constants
 from . import helper
@@ -9,6 +11,8 @@ from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
 from .helper import misc
+
+logger = logging.getLogger(__name__)
 
 
 def parse_args():
@@ -71,7 +75,7 @@ def run(solution, installer, builder=None, controller=None, conf_ignore=None):
             controller.start_run_or_update()
         else:
             if manager.is_installed():
-                print(misc.get_script_path())
+                logger.info(misc.get_script_path())
                 # program is installed but we are not launched from the installed folder
                 # TODO: ask repair/uninstall
                 controller.start_uninstall()
@@ -79,4 +83,3 @@ def run(solution, installer, builder=None, controller=None, conf_ignore=None):
                 controller.start_install()
     if args.iquail_run:
         controller.start_run_or_update()
-
