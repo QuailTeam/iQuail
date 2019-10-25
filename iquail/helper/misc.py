@@ -36,7 +36,7 @@ def cache_result(func):
 
 
 def get_side_img_path():
-    return get_module_path("side_img.gif")
+    return get_module_path(Constants.SIDE_IMG_NAME)
 
 
 def get_module_path(*args):
@@ -102,7 +102,8 @@ def exit_and_replace(dest, src, run=False):
 
     tmpdir = tempfile.mkdtemp()
     newscript = shutil.copy2(get_script(), tmpdir)
-    args = [newscript, Constants.ARGUMENT_REPLACE, dest + Constants.PATH_SEP + src]
+    args = [newscript, Constants.ARGUMENT_REPLACE,
+            dest + Constants.PATH_SEP + src]
     if run:
         args.append(Constants.ARGUMENT_RUN)
     if running_from_script():
@@ -139,7 +140,7 @@ def rerun_as_admin(graphical, uid=None):
                                                 sys.executable,
                                                 ' '.join(sys.argv),
                                                 None, 1)
-    ##TODO MACOS
+    # TODO MACOS
 
 
 def move_folder_content(src, dest, ignore_errors=False):
