@@ -1,6 +1,9 @@
 from fnmatch import fnmatch
 import os
 import shutil
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def accept_path(path, ignore_list):
@@ -24,6 +27,8 @@ def accept_path(path, ignore_list):
             not_ignore = not_pattern(ignore)
             if fnmatch(path, ignore) ^ fnmatch(path, not_ignore):
                 accept = fnmatch(path, not_ignore)
+                logger.debug("Accepted: %s : %s" % (path, not_ignore))
+
     return accept
 
 
@@ -47,11 +52,13 @@ class FileIgnore:
 
     def copy_ignored(self, src, dest):
         """Move all ignored files"""
-        for root, dirs, files in os.walk(src):
+        for root, _, files in os.walk(src):
             for f in files:
                 rel_root = os.path.relpath(root, src)
                 file_path = os.path.join(root, f)
                 dest_path = os.path.join(dest, rel_root)
                 if not self.accept(os.path.join(rel_root, f)):
+                    logger.debug("Copying %s to %s" %
+                                 (file_path, os.path.join(dest_path, f)))
                     os.makedirs(dest_path, 0o777, True)
                     shutil.copy(file_path, os.path.join(dest_path, f))

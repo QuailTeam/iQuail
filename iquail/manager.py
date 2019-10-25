@@ -1,11 +1,15 @@
 import os
 import stat
 import sys
-from .helper import misc
+import logging
 
 from . import helper
+from .helper import misc
 from .constants import Constants
 from .solution.solutioner import Solutioner
+
+
+logger = logging.getLogger(__name__)
 
 
 class Manager:
@@ -106,6 +110,7 @@ class Manager:
         self._installer.register()
         self._chmod_binary()
         self.config.save()
+        logger.info("Saved config")
 
     def install(self):
         """Installation process was split in multiple parts
@@ -120,6 +125,7 @@ class Manager:
     def update(self):
         """Update process"""
         # TODO: kill solution here
+        logger.info("Updating...")
         self._solutioner.update()
         self._set_solution_installed_version()
 
@@ -139,15 +145,18 @@ class Manager:
         binary = self._installer.binary
         if self.solutioner.get_iquail_update() is not None:
             # TODO: verify binary
-            misc.exit_and_replace(misc.get_script(), self.solutioner.get_iquail_update(), run=True)
+            misc.exit_and_replace(
+                misc.get_script(), self.solutioner.get_iquail_update(), run=True)
         self._chmod_binary()
         args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
         binary_args = [os.path.basename(binary)] + args
         os.chdir(self._installer.get_solution_path())
+        logger.info("Running: %s with args: %s" % (binary, str(binary_args)))
         os.execl(binary, *binary_args)
 
     def check_permissions(self, uid):
         if self._installer.install_systemwide and os.geteuid() != 0:
             if self._graphical is False:
                 print('Root access is required for further action, relaunching as root')
+            logger.info("Re-running as admin with UID %s" % str(uid))
             misc.rerun_as_admin(self._graphical, uid)
