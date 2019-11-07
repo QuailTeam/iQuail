@@ -158,6 +158,7 @@ class Manager:
 
     def check_permissions(self, uid):
         if self._installer.install_systemwide and os.geteuid() != 0:
+            # TODO fix os.geteuid doesn't exist on windows
             if self._graphical is False:
                 logger.error(
                     'Root access is required for further action, relaunching as root')

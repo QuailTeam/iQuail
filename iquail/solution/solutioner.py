@@ -39,7 +39,7 @@ class Solutioner:
         return os.path.realpath(os.path.join(self._dest, *args))
 
     def _retrieve_file(self, relpath):
-        logger.info("Solutioner: retrieving file: " + relpath)
+        logger.debug("Solutioner: retrieving file: " + relpath)
         if os.path.exists(self.dest(relpath)):
             logger.warning("Solutioner: ignored file: " + relpath)
             return
