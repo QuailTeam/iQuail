@@ -43,7 +43,7 @@ def parse_args():
     return parser.parse_known_args()
 
 
-def run(solution, installer, builder=None, controller=None):
+def run(solution, installer, builder=None, controller=None, conf_ignore=None):
     """run config"""
     (args, unknown) = parse_args()
 
@@ -54,7 +54,8 @@ def run(solution, installer, builder=None, controller=None):
         builder = Builder()
     if not controller:
         controller = ControllerConsole()
-    manager = Manager(installer, solution, builder, controller.is_graphical())
+    manager = Manager(installer, solution, builder, controller.is_graphical(),
+                      conf_ignore=conf_ignore)
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)

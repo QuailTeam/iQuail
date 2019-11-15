@@ -1,4 +1,5 @@
 import os
+from ..constants import Constants
 from .. import helper
 
 
@@ -7,7 +8,13 @@ class Builder:
     Takes BuildCmd as argument
     """
 
-    def __init__(self, *build_cmds):
+    def __init__(self, *build_cmds, side_img_override=None):
+        self._side_img = helper.get_side_img_path()
+        if side_img_override is not None:
+            assert os.path.basename(
+                side_img_override) == Constants.SIDE_IMG_NAME
+            # TODO assert or modify the image to make sure it is the correct size
+            self._side_img = side_img_override
         self._build_cmds = list(build_cmds)
 
     def register(self, builder_action):
@@ -17,7 +24,7 @@ class Builder:
     def default_build_params(self):
         params = [helper.get_script(),
                   "--onefile",
-                  '--add-data', helper.get_side_img_path() + os.path.pathsep + "iquail",
+                  '--add-data', self._side_img + os.path.pathsep + "iquail",
                   "--exclude-module", "PyInstaller"]
         if helper.OS_WINDOWS:
             # upx slows down the launch time

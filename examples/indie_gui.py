@@ -16,7 +16,8 @@ class MyInstaller(iquail.Installer):
 
 
 iquail.run(
-    solution=iquail.SolutionGitHub("indie.zip", "https://github.com/QuailTeam/cpp_indie_studio"),
+    solution=iquail.SolutionGitHub(
+        "indie.zip", "https://github.com/QuailTeam/cpp_indie_studio"),
     installer=MyInstaller(
         publisher='tek',
         name='Indie',
@@ -27,7 +28,8 @@ iquail.run(
     ),
     builder=iquail.builder.Builder(
         iquail.builder.CmdIcon('icon.png'),
-        iquail.builder.CmdNoconsole()
+        iquail.builder.CmdNoconsole(),
+        side_img_override="./side_img.gif"
     ),
     controller=iquail.ControllerTkinter(ask_for_update=True,
                                         eula="TEST")
