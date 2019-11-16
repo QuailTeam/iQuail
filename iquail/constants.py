@@ -10,6 +10,7 @@ class Constants:
     ARGUMENT_REPLACE = "--iquail_replace"
     ARGUMENT_INSTALL_POLKIT = "--iquail_install_polkit"
     ARGUMENT_RUN = "--iquail_run"
+    ARGUMENT_VALIDATE = "--iquail_validate"
     CHECKSUMS_FILE = ".integrity.json"
     INTEGRITY_IGNORE_FILE = ".integrity_ignore"
     VERSION_FILE = "solution_version.txt"

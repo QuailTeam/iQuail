@@ -11,6 +11,7 @@ from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
 from .helper import misc
+from .validate import Validate
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,9 @@ def parse_args():
                         action="store_true",
                         help="Tells iQuail to install a polkit authorization file in /usr/bin/polkit-1/actions and "
                              "then rerun itself with pkexec (Linux only)")
+    parser.add_argument(Constants.ARGUMENT_VALIDATE,
+                        type=str,
+                        help="Validate a solution")
 
     return parser.parse_known_args()
 
@@ -63,6 +67,10 @@ def run(solution, installer, builder=None, controller=None, conf_ignore=None):
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)
+    elif args.iquail_validate:
+        v = Validate(os.path.realpath(
+            args.iquail_validate), installer)
+        v.run()
     elif args.iquail_replace:
         dest, src = args.iquail_replace.split(Constants.PATH_SEP)
         os.replace(src, dest)
