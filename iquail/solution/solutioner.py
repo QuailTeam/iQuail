@@ -1,10 +1,15 @@
 import shutil
 import os
 import sys
+import logging
+
 from ..errors import SolutionNotRemovableError
 from ..helper import misc
 from ..helper import FileIgnore
 from ..constants import Constants
+
+
+logger = logging.getLogger(__name__)
 
 
 class Solutioner:
@@ -34,8 +39,9 @@ class Solutioner:
         return os.path.realpath(os.path.join(self._dest, *args))
 
     def _retrieve_file(self, relpath):
+        logger.debug("Solutioner: retrieving file: " + relpath)
         if os.path.exists(self.dest(relpath)):
-            print("Ignored file: " + relpath, file=sys.stderr)
+            logger.warning("Solutioner: ignored file: " + relpath)
             return
         tmpfile = self._solution.retrieve_file(relpath)
         shutil.move(tmpfile, self.dest(os.path.dirname(relpath)))
@@ -47,6 +53,7 @@ class Solutioner:
         self._solution.open()
         try:
             if os.path.exists(self.dest()):
+                logger.info("Solutioner destionation already exists...")
                 self._remove_solution(ignore)
             os.makedirs(self.dest(), 0o777, True)
             for root, dirs, files in self._solution.walk():

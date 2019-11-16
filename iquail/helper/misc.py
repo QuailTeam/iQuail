@@ -6,9 +6,12 @@ import copy
 import ctypes
 import platform
 import tempfile
+import logging
 
 from iquail.helper.linux_polkit_file import polkit_check
 from ..constants import Constants
+
+logger = logging.getLogger(__name__)
 
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
@@ -146,7 +149,7 @@ def rerun_as_admin(graphical, uid=None):
 def move_folder_content(src, dest, ignore_errors=False):
     """Move folder content to another folder"""
     for f in os.listdir(src):
-        # print("moved %s >> %s" % (os.path.join(src, f), dest))
+        logger.debug("moved %s >> %s" % (os.path.join(src, f), dest))
         try:
             shutil.move(os.path.join(src, f), dest)
         except:
@@ -174,22 +177,22 @@ def safe_remove_folder_content(src, ignore=None):
         shutil.rmtree(tmp_dir)
 
 
-def safe_mkdtemp(debug=False):
+def safe_mkdtemp():
     """Same as mkdtemp but removes the directory when quail exit
     """
+    # TODO remove debug var
     tmp_dir = tempfile.mkdtemp()
-    if debug:
-        print("Created: " + tmp_dir, file=sys.stderr)
+    logger.debug("Created: " + tmp_dir)
 
     def delete_tmp_dir():
         if not os.path.isdir(tmp_dir):
             return
         try:
             shutil.rmtree(tmp_dir)
-            if debug:
-                print("Removed: " + tmp_dir, file=sys.stderr)
+            logger.debug("Removed: " + tmp_dir)
         except Exception as e:
-            print("Can't remove: " + tmp_dir + " : " + str(e), file=sys.stderr)
+            logger.debug("Can't remove: " + tmp_dir +
+                         " : " + str(e))
 
     atexit.register(delete_tmp_dir)
     return tmp_dir
