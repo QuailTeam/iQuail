@@ -21,7 +21,7 @@ class QuailFS:
     def connect(self, ip, port):
         args = ' '.join([self.client_bin_path, ip, port, self.dl_path])
         try:
-            self.pipe = pexpect.spawnu(args)
+            self.pipe = pexpect.spawnu(args) #mystic bug: may block
         except pexpect.exceptions.ExceptionPexpect:
             self.error = 'Cannot open pipe'
             return False
@@ -70,3 +70,5 @@ class QuailFS:
     def disconnect(self):
         self.pipe.sendline('EXIT')
         self.pipe.expect(pexpect.EOF)
+        self.pipe.close()
+        self.pipe = None

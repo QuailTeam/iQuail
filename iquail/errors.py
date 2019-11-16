@@ -10,3 +10,7 @@ class SolutionNotRemovableError(Exception):
 class SolutionFileNotFoundError(Exception):
     """Raised if solution cannot retreive file"""
     pass
+
+class SolutionVersionNotFoundError(Exception):
+    """Raised if distant version cannot be selected"""
+    pass

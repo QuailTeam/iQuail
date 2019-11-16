@@ -10,10 +10,10 @@ iquail.run(
     installer=iquail.Installer(
         name='Allum1',
         publisher='alies',
-        icon='icon.jpeg',
+        icon='icon.jpg',
         binary='allum1',
         console=True,
-        launch_with_quail=False
+        launch_with_quail=True
     ),
     builder=iquail.builder.Builder(),
     controller=iquail.ControllerTkinter()
