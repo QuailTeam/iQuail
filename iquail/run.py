@@ -64,13 +64,13 @@ def run(solution, installer, builder=None, controller=None, conf_ignore=None):
         controller = ControllerConsole()
     manager = Manager(installer, solution, builder, controller.is_graphical(),
                       conf_ignore=conf_ignore)
+    if args.iquail_validate:
+        v = Validate(os.path.realpath(
+            args.iquail_validate), installer)
+        exit(v.run())
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)
-    elif args.iquail_validate:
-        v = Validate(os.path.realpath(
-            args.iquail_validate), installer)
-        v.run()
     elif args.iquail_replace:
         dest, src = args.iquail_replace.split(Constants.PATH_SEP)
         os.replace(src, dest)

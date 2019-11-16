@@ -6,6 +6,8 @@ from ..constants import Constants
 
 logger = logging.getLogger(__name__)
 
+TEST_PREFIX = "test_"
+
 
 class Validate:
     def __init__(self, path, installer):
@@ -19,10 +21,26 @@ class Validate:
     def isfile(self, *args):
         return os.path.isfile(self.path(*args))
 
-    def run(self):
-        assert self.isfile(self._installer.binary_name)
-        print("Binary OK")
-        if self.isfile(Constants.IQUAIL_TO_UPDATE):
-            print("Found " + Constants.IQUAIL_TO_UPDATE)
+    def test_binary(self):
+        return self.isfile(self._installer.binary_name)
+
+    def _notify_file_exists(self, f):
+        if self.isfile(f):
+            print("Found " + f)
         else:
-            print("Not found " + Constants.IQUAIL_TO_UPDATE)
+            print("Not found " + f)
+
+    def run(self):
+        attrs = dir(self)
+        tests = list(filter(lambda x: x.startswith(TEST_PREFIX), attrs))
+
+        print("Running tests...")
+        for test in tests:
+            name = test[len(TEST_PREFIX):]
+            f = getattr(self, test)
+            assert f(), test + " test failed"
+            print(test + " OK")
+        print("Running notifications...")
+        self._notify_file_exists(Constants.IQUAIL_TO_UPDATE)
+        self._notify_file_exists(Constants.CONF_IGNORE)
+        return 0
