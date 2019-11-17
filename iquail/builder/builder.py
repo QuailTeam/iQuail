@@ -1,6 +1,22 @@
 import os
+import logging
 from ..constants import Constants
 from .. import helper
+
+logger = logging.getLogger(__name__)
+
+
+def _validate_side_img(path):
+    try:
+        from PIL import Image
+        with Image.open(path) as img:
+            width, height = img.size
+            if height != 250:
+                logger.warn("Side image is not valid: height should be 250px")
+            else:
+                logger.info("Side image is valid")
+    except ImportError:
+        logger.warn("Cannot check side image: please install Pillow module")
 
 
 class Builder:
@@ -15,6 +31,7 @@ class Builder:
                 side_img_override) == Constants.SIDE_IMG_NAME
             # TODO assert or modify the image to make sure it is the correct size
             self._side_img = side_img_override
+            _validate_side_img(side_img_override)
         self._build_cmds = list(build_cmds)
 
     def register(self, builder_action):
@@ -25,7 +42,8 @@ class Builder:
         params = [helper.get_script(),
                   "--onefile",
                   '--add-data', self._side_img + os.path.pathsep + "iquail",
-                  "--exclude-module", "PyInstaller"]
+                  "--exclude-module", "PyInstaller",
+                  "--exclude-module", "PIL"]
         if helper.OS_WINDOWS:
             # upx slows down the launch time
             params.append("--noupx")
