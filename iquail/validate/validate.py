@@ -20,7 +20,7 @@ def _validate_side_img(path):
                 logger.warn("Side image not valid: height should be 250px")
                 return False
 
-            if width <= 250:
+            if width > 250:
                 logger.warn("Side image not valid: width should be <= 250px")
                 return False
             else:
