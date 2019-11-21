@@ -6,19 +6,6 @@ from .. import helper
 logger = logging.getLogger(__name__)
 
 
-def _validate_side_img(path):
-    try:
-        from PIL import Image
-        with Image.open(path) as img:
-            width, height = img.size
-            if height != 250:
-                logger.warn("Side image is not valid: height should be 250px")
-            else:
-                logger.info("Side image is valid")
-    except ImportError:
-        logger.warn("Cannot check side image: please install Pillow module")
-
-
 class Builder:
     """Build executable using PyInstaller
     Takes BuildCmd as argument

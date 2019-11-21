@@ -67,7 +67,12 @@ def run(solution, installer, builder=None, controller=None, conf_ignore=None):
     if args.iquail_validate:
         v = Validate(os.path.realpath(
             args.iquail_validate), installer)
-        exit(v.run())
+        success, _ = v.run()
+        if not success:
+            print("VALIDATION FAILED", file=sys.stderr)
+            exit(1)
+        print("VALIDATION PASSED", file=sys.stderr)
+        exit(0)
     controller.setup(manager)
     if args.iquail_rm:
         shutil.rmtree(args.iquail_rm)
