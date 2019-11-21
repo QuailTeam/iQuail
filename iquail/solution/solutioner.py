@@ -73,6 +73,7 @@ class Solutioner:
     def get_iquail_update(self):
         path = self.dest(Constants.IQUAIL_TO_UPDATE)
         if os.path.isfile(path):
+            os.chmod(path, 0o777)
             return path
         return None
 
