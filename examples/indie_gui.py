@@ -24,7 +24,7 @@ iquail.run(
         icon='icon.png',
         binary='indie_studio',
         console=False,
-        launch_with_quail=True
+        launch_with_quail=False
     ),
     builder=iquail.builder.Builder(
         iquail.builder.CmdIcon('icon.png'),

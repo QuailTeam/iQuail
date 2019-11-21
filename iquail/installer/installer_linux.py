@@ -17,6 +17,7 @@ class InstallerLinux(InstallerBase):
                               'Icon': self.get_solution_icon(),
                               'Terminal': 'true' if self.console else 'false',
                               'Type': 'Application',
+                              'Path': self.get_solution_path(),
                               'Exec': self.launch_command + ' ' +
                                       linux_exec_flags}
         if linux_desktop_conf:
