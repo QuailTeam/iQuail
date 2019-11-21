@@ -1,7 +1,7 @@
 
 class Constants:
     ARGUMENT_PATH = "--iquail_path"
-    IQUAIL_TO_UPDATE = "iquail.update.exe"  # TODO doc
+    IQUAIL_TO_UPDATE = "iquail_update.exe"  # TODO doc
     SIDE_IMG_NAME = "side_img.gif"  # TODO doc
     IQUAIL_ROOT_NAME = ".iquail"
     ARGUMENT_UNINSTALL = "--iquail_uninstall"
