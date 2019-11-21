@@ -29,7 +29,6 @@ class Builder:
         if side_img_override is not None:
             assert os.path.basename(
                 side_img_override) == Constants.SIDE_IMG_NAME
-            # TODO assert or modify the image to make sure it is the correct size
             self._side_img = side_img_override
             _validate_side_img(side_img_override)
         self._build_cmds = list(build_cmds)

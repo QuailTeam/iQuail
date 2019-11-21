@@ -180,7 +180,6 @@ def safe_remove_folder_content(src, ignore=None):
 def safe_mkdtemp():
     """Same as mkdtemp but removes the directory when quail exit
     """
-    # TODO remove debug var
     tmp_dir = tempfile.mkdtemp()
     logger.debug("Created: " + tmp_dir)
 

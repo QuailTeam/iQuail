@@ -146,7 +146,7 @@ class Manager:
         # TODO: self.config.save() config could be used for "don't ask me again to update" feature
         binary = self._installer.binary
         if self.solutioner.get_iquail_update() is not None:
-            # TODO: verify binary
+            # TODO: verify binary (run validations)
             misc.exit_and_replace(
                 misc.get_script(), self.solutioner.get_iquail_update(), run=True)
         self._chmod_binary()

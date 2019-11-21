@@ -76,6 +76,7 @@ class InstallerLinux(InstallerBase):
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:
             # TODO launch with self.launcher_binary?
+            # TODO check is it changing dir properly?
             self.add_to_path(self.binary, self._binary_name)
 
     def _unregister(self):
