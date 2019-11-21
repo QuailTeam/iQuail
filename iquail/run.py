@@ -66,7 +66,7 @@ def run(solution, installer, builder=None, controller=None, conf_ignore=None):
                       conf_ignore=conf_ignore)
     if args.iquail_validate:
         v = Validate(os.path.realpath(
-            args.iquail_validate), installer)
+            args.iquail_validate), installer, builder)
         success, _ = v.run()
         if not success:
             print("VALIDATION FAILED", file=sys.stderr)

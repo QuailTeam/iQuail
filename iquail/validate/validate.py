@@ -11,16 +11,24 @@ TEST_PREFIX = "test_"
 
 
 def _validate_side_img(path):
+    # TODO unittest side img validation
     try:
         from PIL import Image
         with Image.open(path) as img:
             width, height = img.size
             if height != 250:
-                logger.warn("Side image is not valid: height should be 250px")
+                logger.warn("Side image not valid: height should be 250px")
+                return False
+
+            if width <= 250:
+                logger.warn("Side image not valid: width should be <= 250px")
+                return False
             else:
                 logger.info("Side image is valid")
+                return True
     except ImportError:
         logger.warn("Cannot check side image: please install Pillow module")
+    return False
 
 
 class TestResult:
@@ -58,10 +66,11 @@ class TestResult:
 
 
 class Validate:
-    def __init__(self, path, installer):
+    def __init__(self, path, installer, builder):
         assert os.path.exists(path)
         self._path = path
         self._installer = installer
+        self._builder = builder
 
     def path(self, *args):
         return os.path.join(self._path, *args)
@@ -85,6 +94,10 @@ class Validate:
         success = self.isfile(Constants.CONF_IGNORE)
         # TODO add tests
         return TestResult("conf_ignore", success, is_critical=False)
+
+    def test_side_img(self):
+        success = _validate_side_img(self._builder.side_img)
+        return TestResult("side_img", success, is_critical=False)
 
     def run(self):
         success = True

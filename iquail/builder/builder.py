@@ -14,10 +14,15 @@ class Builder:
     def __init__(self, *build_cmds, side_img_override=None):
         self._side_img = helper.get_side_img_path()
         if side_img_override is not None:
-            assert os.path.basename(
-                side_img_override) == Constants.SIDE_IMG_NAME
+            if os.path.basename(side_img_override) != Constants.SIDE_IMG_NAME:
+                raise AssertionError(
+                    "side_img must of named: %s" % Constants.SIDE_IMG_NAME)
             self._side_img = side_img_override
         self._build_cmds = list(build_cmds)
+
+    @property
+    def side_img(self):
+        return self._side_img
 
     def register(self, builder_action):
         """see builder_action for more information"""
@@ -41,7 +46,6 @@ class Builder:
         return params
 
     def pre_build(self):
-        _validate_side_img(self._side_img)
         for build_cmd in self._build_cmds:
             build_cmd.pre_build()
 
