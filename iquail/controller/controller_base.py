@@ -25,15 +25,18 @@ class ControllerBase(ABC):
     @property
     def manager(self):
         if self.__manager is None:
-            raise AssertionError("manager is None, You must call Controller.setup() first")
+            raise AssertionError(
+                "manager is None, You must call Controller.setup() first")
         return self.__manager
 
     def excepthook(self, exctype, value, tb):
         exc_info = ExceptionInfo(exctype, value, tb)
         if isinstance(value, SolutionNotRemovableError):
             self.callback_solution_not_removable_error(exc_info)
-        if isinstance(value, SolutionUnreachableError):
+        elif isinstance(value, SolutionUnreachableError):
             self.callback_solution_unreachable_error(exc_info)
+        elif isinstance(value, KeyboardInterrupt):
+            sys.__excepthook__(exctype, value, tb)
         else:
             self._excepthook(exc_info)
 
