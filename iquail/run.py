@@ -11,7 +11,6 @@ from .builder import Builder
 from .manager import Manager
 from .controller import ControllerConsole
 from .helper import misc
-from .validate import Validate
 
 logger = logging.getLogger(__name__)
 
@@ -65,9 +64,7 @@ def run(solution, installer, builder=None, controller=None, conf_ignore=None):
     manager = Manager(installer, solution, builder, controller.is_graphical(),
                       conf_ignore=conf_ignore)
     if args.iquail_validate:
-        v = Validate(os.path.realpath(
-            args.iquail_validate), installer, builder)
-        success, _ = v.run()
+        success, _ = manager.validate_solution(args.iquail_validate)
         if not success:
             print("VALIDATION FAILED", file=sys.stderr)
             exit(1)

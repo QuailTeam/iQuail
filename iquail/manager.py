@@ -7,6 +7,7 @@ from . import helper
 from .helper import misc
 from .constants import Constants
 from .solution.solutioner import Solutioner
+from .validate import Validate
 
 
 logger = logging.getLogger(__name__)
@@ -140,6 +141,11 @@ class Manager:
     def is_installed(self):
         """Check if solution is installed"""
         return self._solutioner.installed()  # and self._installer.registered()
+
+    def validate_solution(self, path):
+        v = Validate(os.path.realpath(
+            path), self._installer, self._builder)
+        return v.run()
 
     def run(self):
         """Run solution"""
