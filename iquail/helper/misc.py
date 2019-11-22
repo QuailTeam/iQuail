@@ -47,7 +47,10 @@ def get_module_path(*args):
 
 
 def get_script():
-    return os.path.realpath(sys.argv[0])
+    called = sys.argv[0]
+    if not os.path.isfile(called) and shutil.which(called):
+        called = shutil.which(called)
+    return os.path.realpath(called)
 
 
 def get_script_name():

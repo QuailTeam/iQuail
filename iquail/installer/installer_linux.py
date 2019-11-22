@@ -76,9 +76,7 @@ class InstallerLinux(InstallerBase):
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:
-            # TODO launch with self.launcher_binary?
-            # TODO check is it changing dir properly?
-            self.add_to_path(self.binary, self._binary_name)
+            self.add_to_path(self.iquail_binary, self._binary_name)
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)
