@@ -6,7 +6,7 @@ import logging
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename=os.path.join(os.path.dirname(__file__), 'iquail.log'),
+    filename=os.path.join(os.path.dirname(__file__), '..', 'iquail.log'),
 )
 
 if not iquail.helper.OS_WINDOWS:

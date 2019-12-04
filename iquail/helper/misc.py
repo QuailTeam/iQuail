@@ -160,10 +160,12 @@ def move_folder_content(src, dest, ignore_errors=False):
                 raise
 
 
-def safe_remove_folder_content(src, ignore=None):
-    """Remove folder content
+def safe_move_folder_content(src, ignore=None, remove=False):
+    """Move or remove folder content
     If an error happens while removing
     the content will be untouched
+    If remove=False then src will be moved to a tmp dir
+    tmp dir is returned
     """
     tmp_dir = tempfile.mkdtemp()
     try:
@@ -177,7 +179,10 @@ def safe_remove_folder_content(src, ignore=None):
         raise
     finally:
         # TODO chmod -R +w ?
-        shutil.rmtree(tmp_dir)
+        if remove:
+            shutil.rmtree(tmp_dir)
+            return None
+    return tmp_dir
 
 
 def safe_mkdtemp():
