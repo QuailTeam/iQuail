@@ -167,7 +167,7 @@ def safe_move_folder_content(src, ignore=None, remove=False):
     If remove=False then src will be moved to a tmp dir
     tmp dir is returned
     """
-    tmp_dir = tempfile.mkdtemp()
+    tmp_dir = safe_mkdtemp()
     try:
         move_folder_content(src, tmp_dir)
         if ignore is not None:
@@ -189,16 +189,16 @@ def safe_mkdtemp():
     """Same as mkdtemp but removes the directory when quail exit
     """
     tmp_dir = tempfile.mkdtemp()
-    logger.debug("Created: " + tmp_dir)
+    logger.info("Created: " + tmp_dir)
 
     def delete_tmp_dir():
         if not os.path.isdir(tmp_dir):
             return
         try:
             shutil.rmtree(tmp_dir)
-            logger.debug("Removed: " + tmp_dir)
+            logger.info("Removed: " + tmp_dir)
         except Exception as e:
-            logger.debug("Can't remove: " + tmp_dir +
+            logger.error("Can't remove: " + tmp_dir +
                          " : " + str(e))
 
     atexit.register(delete_tmp_dir)
