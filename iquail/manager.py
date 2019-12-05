@@ -156,7 +156,7 @@ class Manager:
             misc.exit_and_replace(
                 misc.get_script(), self.solutioner.get_iquail_update(), run=True)
         self._chmod_binary()
-        args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
+        args = misc.filter_iquail_args(sys.argv[1:])
         binary_args = [os.path.basename(binary)] + args
         os.chdir(self._installer.get_solution_path())
         logger.info("Running: %s with args: %s" % (binary, str(binary_args)))

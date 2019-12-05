@@ -222,3 +222,23 @@ def safe_mkdtemp():
 
     atexit.register(delete_tmp_dir)
     return tmp_dir
+
+
+def filter_iquail_args(args):
+    composed_arg_list = [
+        # list of args composed of a variable
+        Constants.ARGUMENT_REPLACE,
+        Constants.ARGUMENT_VALIDATE,
+        Constants.ARGUMENT_RM,
+    ]
+    ignore_next = False
+    res = []
+    for arg in args:
+        if ignore_next:
+            ignore_next = False
+            continue
+        if "--iquail" not in arg:
+            res.append(arg)
+        if arg in composed_arg_list:
+            ignore_next = True
+    return res
