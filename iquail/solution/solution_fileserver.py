@@ -86,10 +86,40 @@ class SolutionFileServer(SolutionBase):
     def _get_tmp_path(self, relpath):
         return os.path.join(self._tmpdir, relpath)
 
+    def _decompress(self, relpath):
+        source_path = self.retrieve_current_file(relpath)
+        print('Retreiving %s' % relpath)
+        if source_path == None:
+            print('  FAILED')
+            return
+        print('  SUCCESS')
+        diff_path = self._get_tmp_path(relpath)
+        target_path = '/tmp/lol/' + relpath
+        source = open(source_path)
+        diff = open(diff_path)
+        target = open(target_path, 'w')
+        for line in diff.readlines():
+            if line != "\n":
+                try:
+                    (header, arg) = line.split(':')
+                    if header == 'INSERT':
+                        (off, _, length) = arg.split()
+                        source.seek(int(off))
+                        target.write(source.read(int(length) + 1))
+                    elif header == 'COPY':
+                        target.write(arg[1])
+                except Exception as e:
+                    print(e) #TODO handle
+                    break
+        target.close()
+        source.close()
+        diff.close()
+
     def retrieve_file(self, relpath):
         if not self._serv.get_file(relpath):
-            raise SolutionFileNotFoundError('FileServer.get_file() failed')
+            raise SolutionFileNotFoundError('FileServer.get_file() failed') #TODO: inherit Err
         # if patch: uncompress
+        self._decompress(relpath)
         self._nbrFilesDownloaded += 1
         self._update_progress(percent=(100*self._nbrFilesDownloaded)/self._nbrFiles, status='downloading', log=relpath+'\n')
         return self._get_tmp_path(relpath)
