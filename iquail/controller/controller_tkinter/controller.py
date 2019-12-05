@@ -166,7 +166,8 @@ class ControllerTkinter(ControllerBase):
         self.title_font = None
         self._ask_for_update = ask_for_update
         tk.Tk.report_callback_exception = self.excepthook
-        assert install_custom_frame is None or issubclass(install_custom_frame, FrameBase)
+        assert install_custom_frame is None or issubclass(
+            install_custom_frame, FrameBase)
         self.install_custom_frame = install_custom_frame
 
     @property
@@ -189,7 +190,8 @@ class ControllerTkinter(ControllerBase):
         self.root_frame.pack(side="top", fill="both", expand=True)
         self.root_frame.grid_rowconfigure(0, weight=1)
         self.root_frame.grid_columnconfigure(0, weight=1)
-        self.title_font = Font(family='Helvetica', size=15, weight="bold", slant="italic")
+        self.title_font = Font(family='Helvetica', size=15,
+                               weight="bold", slant="italic")
         self.medium_font = Font(family='Helvetica', size=11)
         # Select frame
         self.switch_frame(frame)
@@ -211,7 +213,8 @@ class ControllerTkinter(ControllerBase):
         self._frame.tkraise()
 
     def _excepthook(self, exception_info):
-        reporter = ErrorReporter("Automatic bug report", exception_info.traceback_str)
+        reporter = ErrorReporter(
+            "Automatic bug report", exception_info.traceback_str)
         reporter.show()
         self.quit_tk()
 

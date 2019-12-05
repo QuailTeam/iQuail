@@ -14,7 +14,8 @@ iquail.run(
     ),
     builder=iquail.builder.Builder(
         iquail.builder.CmdIcon('icon.ico'),
-        iquail.builder.CmdNoconsole()
+        iquail.builder.CmdNoconsole(),
+        side_img_override="side_img.gif",
     ),
     controller=iquail.ControllerTkinter()
 )

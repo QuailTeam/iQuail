@@ -1,5 +1,8 @@
+import logging
 import configparser
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 class ConfVar:
@@ -54,5 +57,6 @@ class Configuration:
                 if isinstance(var_value, ConfVar):
                     value = var_value.cast(self.get(var_value.key))
                     if value is not None:
+                        logger.info("Applying conf var: %s = %s" %
+                                    (var_name, str(value)))
                         setattr(instance, var_name, value)
-
