@@ -68,7 +68,7 @@ class SolutionBase(ABC, builder.BuilderAction):
 
     def retrieve_current_file(self, *relpath):
         res = self.__solutioner.backup_dest(*relpath)
-        if os.path.isfile(res):
+        if res is not None and os.path.isfile(res):
             return res
         # TODO copy res in tmp before returning
         return None
