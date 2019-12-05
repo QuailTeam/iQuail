@@ -16,6 +16,25 @@ logger = logging.getLogger(__name__)
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
 
+_OVERRIDE_TMP_DIR = None
+
+
+def set_override_tmpdir(path):
+    global _OVERRIDE_TMP_DIR
+    if os.path.exists(path):
+        shutil.rmtree(path, ignore_errors=True)
+    os.makedirs(path, 0o777, exist_ok=True)
+    _OVERRIDE_TMP_DIR = path
+
+
+def my_mkdtemp():
+    global _OVERRIDE_TMP_DIR
+    if _OVERRIDE_TMP_DIR is not None and os.path.isdir(_OVERRIDE_TMP_DIR):
+        d = tempfile.mkdtemp(dir=_OVERRIDE_TMP_DIR)
+    else:
+        d = tempfile.mkdtemp()
+    return d
+
 
 def cache_result(func):
     """ Decorator to save the return value of a function
@@ -86,7 +105,7 @@ def _delete_atexit(path_to_delete):
     assert os.path.isdir(path_to_delete)
 
     def _delete_from_tmp():
-        tmpdir = tempfile.mkdtemp()
+        tmpdir = my_mkdtemp()
         newscript = shutil.copy2(get_script(), tmpdir)
         args = (newscript, Constants.ARGUMENT_RM, path_to_delete)
         if running_from_script():
@@ -106,7 +125,7 @@ def exit_and_replace(dest, src, run=False):
     assert os.path.isfile(src)
     assert not os.path.isdir(dest)
 
-    tmpdir = tempfile.mkdtemp()
+    tmpdir = my_mkdtemp()
     newscript = shutil.copy2(get_script(), tmpdir)
     args = [newscript, Constants.ARGUMENT_REPLACE,
             dest + Constants.PATH_SEP + src]
@@ -188,7 +207,7 @@ def safe_move_folder_content(src, ignore=None, remove=False):
 def safe_mkdtemp():
     """Same as mkdtemp but removes the directory when quail exit
     """
-    tmp_dir = tempfile.mkdtemp()
+    tmp_dir = my_mkdtemp()
     logger.info("Created: " + tmp_dir)
 
     def delete_tmp_dir():

@@ -1,6 +1,8 @@
 bug fix freedesktop linux path
 fixed iquail_update permission bug
 fixed PATH option linux
+override tmp dir
+fix bug for josso
 
 Override side img
 Logging
