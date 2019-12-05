@@ -83,6 +83,7 @@ def get_script_path():
 def running_from_installed_binary():
     # TODO: unittest
     split_script_path = os.path.normpath(get_script_path()).split(os.path.sep)
+    logger.debug("split_script_path = " + str(split_script_path))
     # split script path should look like [..,".iquail", "project_name"]
     if len(split_script_path) < 2:
         return False
