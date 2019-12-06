@@ -6,7 +6,8 @@ if not iquail.helper.OS_LINUX:
     raise AssertionError("This test solution is linux only")
 
 iquail.run(
-    solution=iquail.SolutionFileServer('localhost', '4242', '/home/tetra/rendu/Quail/iQuailFileServer/build/iQuailClient'),
+    solution=iquail.SolutionFileServer('localhost', '4242',
+                                       '../iQuailFileServer', './build_fs'),
     installer=iquail.Installer(
         name='Allum1',
         publisher='alies',

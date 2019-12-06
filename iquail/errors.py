@@ -18,3 +18,7 @@ class SolutionVersionNotFoundError(SolutionUnreachableError):
 class SolutionDecompressionError(SolutionUnreachableError):
     """Raised if distant version cannot be selected"""
     pass
+
+class BuilderError(Exception):
+    """Raised if solution is not reachable"""
+    pass

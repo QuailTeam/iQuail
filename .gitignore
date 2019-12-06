@@ -4,6 +4,7 @@ __pycache__/
 *#
 dist/
 build/
+build_fs/
 *.spec
 
 venv

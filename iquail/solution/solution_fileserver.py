@@ -1,22 +1,29 @@
 import os
+import sys
 import shutil
 from .solution_base import SolutionBase
 from .solution_fileserver_wrapper import QuailFS
+from ..builder.cmd_fileserver_client import CmdFileserverClient
 from ..errors import SolutionUnreachableError
 from ..errors import SolutionFileNotFoundError
 from ..errors import SolutionVersionNotFoundError
 from ..errors import SolutionDecompressionError
 from ..helper import misc
 
-#TODO: rm
-import sys
-
 class SolutionFileServer(SolutionBase):
-    def __init__(self, host, port, client_bin_path):
+    def __init__(self, host, port, fileserver_path, build_path):
         super().__init__()
+        self._binary_name = 'iQuailClient'
         self._host = host
         self._port = port
-        self._client_bin_path = client_bin_path
+        self._fileserver_path = fileserver_path
+        self._fileserver_path = os.path.abspath(self._fileserver_path)
+        self._build_path = build_path
+        self._build_path = os.path.abspath(self._build_path)
+        if misc.running_from_script():
+            self._client_bin_path = os.path.join(self._build_path, self._binary_name)
+        else:
+            self._client_bin_path = os.path.join(sys._MEIPASS, self._binary_name)
         self._tmpdir = None
         self._serv = None
         self._files = None
@@ -144,3 +151,8 @@ class SolutionFileServer(SolutionBase):
         self._nbrFilesDownloaded += 1
         self._update_progress(percent=(100*self._nbrFilesDownloaded)/self._nbrFiles, status='downloading', log=relpath+'\n')
         return self._get_tmp_path(relpath)
+
+    def builder_cmds(self):
+        cmds = super().builder_cmds() + [CmdFileserverClient(
+            self._fileserver_path, self._build_path, self._binary_name)]
+        return cmds
