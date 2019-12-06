@@ -5,7 +5,11 @@ from .solution_fileserver_wrapper import QuailFS
 from ..errors import SolutionUnreachableError
 from ..errors import SolutionFileNotFoundError
 from ..errors import SolutionVersionNotFoundError
+from ..errors import SolutionDecompressionError
 from ..helper import misc
+
+#TODO: rm
+import sys
 
 class SolutionFileServer(SolutionBase):
     def __init__(self, host, port, client_bin_path):
@@ -86,7 +90,35 @@ class SolutionFileServer(SolutionBase):
     def _get_tmp_path(self, relpath):
         return os.path.join(self._tmpdir, relpath)
 
-    def _decompress(self, relpath):
+    def _decompress(self, sourcename, targetname, diffname):
+        def bytes_from_file(filename, chunksize=8192):
+            with open(filename, "rb") as f:
+                while True:
+                    chunk = f.read(chunksize)
+                    if chunk:
+                        for b in chunk:
+                            yield b
+                    else:
+                        break
+        target = open(targetname, 'w+b')
+        source = open(sourcename, 'rb')
+        buffer = b''
+        for byte in bytes_from_file(diffname):
+            if byte == ord(b'\n') and len(buffer):
+                (header, arg) = buffer.split(b':', maxsplit=1)
+                if header == b'INSERT':
+                    (off, _, length) = arg.split()
+                    source.seek(int(off))
+                    target.write(source.read(int(length) + 1))
+                elif header == b'COPY' and len(arg) > 1:
+                    target.write(bytes([arg[1]]))
+                buffer = b''
+            else:
+                buffer += bytes([byte])
+        target.close()
+        source.close()
+
+    def _try_decompress(self, relpath):
         source_path = self.retrieve_current_file(relpath)
         print('Retreiving %s' % relpath)
         if source_path == None:
@@ -94,32 +126,21 @@ class SolutionFileServer(SolutionBase):
             return
         print('  SUCCESS')
         diff_path = self._get_tmp_path(relpath)
-        target_path = '/tmp/lol/' + relpath
-        source = open(source_path)
-        diff = open(diff_path)
-        target = open(target_path, 'w')
-        for line in diff.readlines():
-            if line != "\n":
-                try:
-                    (header, arg) = line.split(':')
-                    if header == 'INSERT':
-                        (off, _, length) = arg.split()
-                        source.seek(int(off))
-                        target.write(source.read(int(length) + 1))
-                    elif header == 'COPY':
-                        target.write(arg[1])
-                except Exception as e:
-                    print(e) #TODO handle
-                    break
-        target.close()
-        source.close()
-        diff.close()
+        target_path = diff_path
+        diff_path = diff_path + '_diff'
+        os.rename(target_path, diff_path)
+        self._decompress(source_path, target_path, diff_path)
+        os.remove(diff_path)
 
     def retrieve_file(self, relpath):
         if not self._serv.get_file(relpath):
-            raise SolutionFileNotFoundError('FileServer.get_file() failed') #TODO: inherit Err
-        # if patch: uncompress
-        self._decompress(relpath)
+            raise SolutionFileNotFoundError('FileServer.get_file() failed')
+        try:
+            self._try_decompress(relpath)
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info() #TODO: rm
+            print(e, exc_type, exc_tb.tb_lineno) #TODO: rm
+            raise SolutionDecompressionError('Unexcpected error in decompression: ' + str(e))
         self._nbrFilesDownloaded += 1
         self._update_progress(percent=(100*self._nbrFilesDownloaded)/self._nbrFiles, status='downloading', log=relpath+'\n')
         return self._get_tmp_path(relpath)
