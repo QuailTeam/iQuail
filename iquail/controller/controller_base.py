@@ -1,7 +1,11 @@
 from abc import ABC, abstractmethod
 import sys
+import logging
 from ..errors import SolutionUnreachableError, SolutionNotRemovableError
 from ..helper.traceback_info import ExceptionInfo
+
+
+logger = logging.getLogger(__name__)
 
 
 class ControllerBase(ABC):
@@ -31,6 +35,7 @@ class ControllerBase(ABC):
 
     def excepthook(self, exctype, value, tb):
         exc_info = ExceptionInfo(exctype, value, tb)
+        logger.error(exc_info.traceback_str)
         if isinstance(value, SolutionNotRemovableError):
             self.callback_solution_not_removable_error(exc_info)
         elif isinstance(value, SolutionUnreachableError):

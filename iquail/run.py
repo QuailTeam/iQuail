@@ -76,6 +76,9 @@ def run(solution, installer, builder=None, controller=None, conf_ignore=None):
     elif args.iquail_replace:
         dest, src = args.iquail_replace.split(Constants.PATH_SEP)
         os.replace(src, dest)
+        if args.iquail_run:
+            # launch new quail version
+            manager.restart_quail()
     elif args.iquail_build:
         manager.build()
     elif args.iquail_uninstall:

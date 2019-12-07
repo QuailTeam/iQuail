@@ -28,8 +28,9 @@ class FrameSelectMiniOrFull(iquail.controller_tkinter.FrameBaseConfigure):
 
 
 iquail.run(
-    solution=iquail.SolutionGitHub(iquail.ConfVar(
-        "zip_url"), "https://github.com/cmderdev/cmder"),
+    solution=iquail.SolutionGitHub(
+        iquail.ConfVar("zip_url", default_value="cmder_mini.zip"),
+        "https://github.com/cmderdev/cmder"),
     installer=iquail.Installer(
         publisher='cmderdev',
         name='Cmder',

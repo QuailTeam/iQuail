@@ -24,19 +24,30 @@ class Solutioner:
         self._backup_dir = None
         solution.setup(self, manager)
 
-    def _remove_solution(self, ignore=None, remove=True):
-        """Remove solution
-        If the root solution isn't removable it will be ignored with this function
-                def onerror(func, path, exc_info):
-            if self.dest() != path:
-                raise OSError("Cannot delete " + path)
-        shutil.rmtree(self.dest(), onerror=onerror)
-        """
+    def _remove_moved_solution(self):
+        """Remove self._backup_dir"""
+        try:
+            if self._backup_dir is not None:
+                misc.safe_move_folder_content(self._backup_dir, remove=True)
+            self._backup_dir = None
+        except:
+            logger.log("Can't remove _backup_dir")
+            pass
+
+    def _move_solution(self, ignore=None):
+        """Move solution to self._backup_dir"""
         try:
             result_dir = misc.safe_move_folder_content(
-                self.dest(), ignore=ignore, remove=remove)
-            if result_dir is not None:
-                self._backup_dir = result_dir
+                self.dest(), ignore=ignore, remove=False)
+            self._backup_dir = result_dir
+        except Exception as e:
+            raise SolutionNotRemovableError(
+                "Can't remove %s" % self.dest()) from e
+
+    def _remove_solution(self, ignore=None):
+        try:
+            misc.safe_move_folder_content(
+                self.dest(), ignore=ignore, remove=True)
         except Exception as e:
             raise SolutionNotRemovableError(
                 "Can't remove %s" % self.dest()) from e
@@ -97,15 +108,9 @@ class Solutioner:
         if self.installed():
             if os.path.isfile(self.dest(Constants.CONF_IGNORE)):
                 ignore = FileIgnore(self.dest(Constants.CONF_IGNORE))
-            self._remove_solution(ignore=ignore, remove=False)
+            self._move_solution(ignore=ignore)
         self.install(ignore)
-        try:
-            if self._backup_dir is not None:
-                misc.safe_move_folder_content(self._backup_dir, remove=True)
-            self._backup_dir = None
-        except:
-            logger.log("Can't remove _backup_dir")
-            pass
+        self._remove_moved_solution()
 
     def uninstall(self):
         if self.installed():
