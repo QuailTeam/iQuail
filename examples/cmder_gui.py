@@ -37,7 +37,6 @@ iquail.run(
         binary='Cmder.exe',
         console=False,
         launch_with_quail=True,
-        is_large_solution=True,
     ),
     builder=iquail.builder.Builder(
         iquail.builder.CmdIcon('icon.ico'),
