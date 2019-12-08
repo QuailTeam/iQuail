@@ -77,7 +77,7 @@ class SolutionFileServer(SolutionBase):
     def _parse_ls(self, lines):
         dirs, files = [], []
         for line in lines:
-            ftype, fsize, fname = line.split()
+            ftype, fsize, fname = line.split(' ', 2)
             if ftype == 'd':
                 dirs.append(fname)
             else:
@@ -127,11 +127,11 @@ class SolutionFileServer(SolutionBase):
 
     def _try_decompress(self, relpath):
         source_path = self.retrieve_current_file(relpath)
-        print('Retreiving %s' % relpath)
+        #print('Retreiving %s' % relpath)
         if source_path == None:
-            print('  FAILED')
+            #print('  FAILED')
             return
-        print('  SUCCESS')
+        #print('  SUCCESS')
         diff_path = self._get_tmp_path(relpath)
         target_path = diff_path
         diff_path = diff_path + '_diff'
