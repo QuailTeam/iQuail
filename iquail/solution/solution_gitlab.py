@@ -24,7 +24,7 @@ class SolutionGitLab(SolutionBase):
     def __init__(self, zip_name, repo_url, project_id):
         super().__init__()
         self._solution_zip = None
-        self._repo_url = repo_url
+        self._repo_url = repo_url.strip('/')
         self._zip_name = zip_name
         self._project_id = project_id
 
@@ -61,7 +61,7 @@ class SolutionGitLab(SolutionBase):
         m = rg.search(release['description'])
         file_path = m.group(1)
         owner, repo_name = self._parse_gitlab_url()
-        return "https://gitlab.com/%s/%s/%s" % (owner, repo_name, file_path)
+        return "https://gitlab.com/%s/%s%s" % (owner, repo_name, file_path)
 
     @cache_result
     def _get_releases(self):

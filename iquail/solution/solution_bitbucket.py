@@ -24,7 +24,7 @@ class SolutionBitBucket(SolutionBase):
     def __init__(self, zip_name, repo_url):
         super().__init__()
         self._solution_zip = None
-        self._repo_url = repo_url
+        self._repo_url = repo_url.strip('/')
         self._zip_name = zip_name
 
     @cache_result
