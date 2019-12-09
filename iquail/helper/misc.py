@@ -6,12 +6,34 @@ import copy
 import ctypes
 import platform
 import tempfile
+import logging
 
 from iquail.helper.linux_polkit_file import polkit_check
 from ..constants import Constants
 
+logger = logging.getLogger(__name__)
+
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
+
+_OVERRIDE_TMP_DIR = None
+
+
+def set_override_tmpdir(path):
+    global _OVERRIDE_TMP_DIR
+    if os.path.exists(path):
+        shutil.rmtree(path, ignore_errors=True)
+    os.makedirs(path, 0o777, exist_ok=True)
+    _OVERRIDE_TMP_DIR = path
+
+
+def my_mkdtemp():
+    global _OVERRIDE_TMP_DIR
+    if _OVERRIDE_TMP_DIR is not None and os.path.isdir(_OVERRIDE_TMP_DIR):
+        d = tempfile.mkdtemp(dir=_OVERRIDE_TMP_DIR)
+    else:
+        d = tempfile.mkdtemp()
+    return d
 
 
 def cache_result(func):
@@ -36,7 +58,7 @@ def cache_result(func):
 
 
 def get_side_img_path():
-    return get_module_path("side_img.gif")
+    return get_module_path(Constants.SIDE_IMG_NAME)
 
 
 def get_module_path(*args):
@@ -44,7 +66,10 @@ def get_module_path(*args):
 
 
 def get_script():
-    return os.path.realpath(sys.argv[0])
+    called = sys.argv[0]
+    if not os.path.isfile(called) and shutil.which(called):
+        called = shutil.which(called)
+    return os.path.realpath(called)
 
 
 def get_script_name():
@@ -58,6 +83,7 @@ def get_script_path():
 def running_from_installed_binary():
     # TODO: unittest
     split_script_path = os.path.normpath(get_script_path()).split(os.path.sep)
+    logger.debug("split_script_path = " + str(split_script_path))
     # split script path should look like [..,".iquail", "project_name"]
     if len(split_script_path) < 2:
         return False
@@ -80,7 +106,7 @@ def _delete_atexit(path_to_delete):
     assert os.path.isdir(path_to_delete)
 
     def _delete_from_tmp():
-        tmpdir = tempfile.mkdtemp()
+        tmpdir = my_mkdtemp()
         newscript = shutil.copy2(get_script(), tmpdir)
         args = (newscript, Constants.ARGUMENT_RM, path_to_delete)
         if running_from_script():
@@ -100,9 +126,10 @@ def exit_and_replace(dest, src, run=False):
     assert os.path.isfile(src)
     assert not os.path.isdir(dest)
 
-    tmpdir = tempfile.mkdtemp()
+    tmpdir = my_mkdtemp()
     newscript = shutil.copy2(get_script(), tmpdir)
-    args = [newscript, Constants.ARGUMENT_REPLACE, dest + Constants.PATH_SEP + src]
+    args = [newscript, Constants.ARGUMENT_REPLACE,
+            dest + Constants.PATH_SEP + src]
     if run:
         args.append(Constants.ARGUMENT_RUN)
     if running_from_script():
@@ -139,13 +166,13 @@ def rerun_as_admin(graphical, uid=None):
                                                 sys.executable,
                                                 ' '.join(sys.argv),
                                                 None, 1)
-    ##TODO MACOS
+    # TODO MACOS
 
 
 def move_folder_content(src, dest, ignore_errors=False):
     """Move folder content to another folder"""
     for f in os.listdir(src):
-        # print("moved %s >> %s" % (os.path.join(src, f), dest))
+        logger.debug("moved %s >> %s" % (os.path.join(src, f), dest))
         try:
             shutil.move(os.path.join(src, f), dest)
         except:
@@ -153,12 +180,14 @@ def move_folder_content(src, dest, ignore_errors=False):
                 raise
 
 
-def safe_remove_folder_content(src, ignore=None):
-    """Remove folder content
+def safe_move_folder_content(src, ignore=None, remove=False):
+    """Move or remove folder content
     If an error happens while removing
     the content will be untouched
+    If remove=False then src will be moved to a tmp dir
+    tmp dir is returned
     """
-    tmp_dir = tempfile.mkdtemp()
+    tmp_dir = safe_mkdtemp()
     try:
         move_folder_content(src, tmp_dir)
         if ignore is not None:
@@ -170,25 +199,47 @@ def safe_remove_folder_content(src, ignore=None):
         raise
     finally:
         # TODO chmod -R +w ?
-        shutil.rmtree(tmp_dir)
+        if remove:
+            shutil.rmtree(tmp_dir)
+            return None
+    return tmp_dir
 
 
-def safe_mkdtemp(debug=False):
+def safe_mkdtemp():
     """Same as mkdtemp but removes the directory when quail exit
     """
-    tmp_dir = tempfile.mkdtemp()
-    if debug:
-        print("Created: " + tmp_dir, file=sys.stderr)
+    tmp_dir = my_mkdtemp()
+    logger.info("Created: " + tmp_dir)
 
     def delete_tmp_dir():
         if not os.path.isdir(tmp_dir):
             return
         try:
             shutil.rmtree(tmp_dir)
-            if debug:
-                print("Removed: " + tmp_dir, file=sys.stderr)
+            logger.info("Removed: " + tmp_dir)
         except Exception as e:
-            print("Can't remove: " + tmp_dir + " : " + str(e), file=sys.stderr)
+            logger.error("Can't remove: " + tmp_dir +
+                         " : " + str(e))
 
     atexit.register(delete_tmp_dir)
     return tmp_dir
+
+
+def filter_iquail_args(args):
+    composed_arg_list = [
+        # list of args composed of a variable
+        Constants.ARGUMENT_REPLACE,
+        Constants.ARGUMENT_VALIDATE,
+        Constants.ARGUMENT_RM,
+    ]
+    ignore_next = False
+    res = []
+    for arg in args:
+        if ignore_next:
+            ignore_next = False
+            continue
+        if "--iquail" not in arg:
+            res.append(arg)
+        if arg in composed_arg_list:
+            ignore_next = True
+    return res

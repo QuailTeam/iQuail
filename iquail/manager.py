@@ -1,11 +1,16 @@
 import os
 import stat
 import sys
-from .helper import misc
+import logging
 
 from . import helper
+from .helper import misc
 from .constants import Constants
 from .solution.solutioner import Solutioner
+from .validate import Validate
+
+
+logger = logging.getLogger(__name__)
 
 
 class Manager:
@@ -15,6 +20,7 @@ class Manager:
         self._solution = solution
         self._builder = builder
         self._solutioner = Solutioner(self._solution,
+                                      self,
                                       self._installer.get_solution_path(),
                                       conf_ignore=conf_ignore)
         self._config = helper.Configuration(
@@ -77,7 +83,9 @@ class Manager:
 
     def get_solution_version(self):
         """Get version from solution"""
-        return self._solution.get_version_string()
+        version = self._solution.get_version_string()
+        logger.info("Manager got solution version: " + str(version))
+        return version
 
     def get_installed_version(self):
         """Get installed version"""
@@ -105,6 +113,7 @@ class Manager:
         self._installer.register()
         self._chmod_binary()
         self.config.save()
+        logger.info("Saved config")
 
     def install(self):
         """Installation process was split in multiple parts
@@ -119,6 +128,7 @@ class Manager:
     def update(self):
         """Update process"""
         # TODO: kill solution here
+        logger.info("Updating...")
         self._solutioner.update()
         self._set_solution_installed_version()
 
@@ -132,21 +142,39 @@ class Manager:
         """Check if solution is installed"""
         return self._solutioner.installed()  # and self._installer.registered()
 
+    def validate_solution(self, path):
+        v = Validate(os.path.realpath(
+            path), self._installer, self._builder)
+        return v.run()
+
+    def restart_quail(self):
+        os.chdir(self._installer.get_solution_path())
+        binary = self._installer.launcher_binary
+        binary_args = [binary] + misc.filter_iquail_args(sys.argv[1:])
+        logger.info("Restarting quail: %s with args: %s" %
+                    (binary, str(binary_args)))
+        os.execl(binary, *binary_args)
+
     def run(self):
         """Run solution"""
         # TODO: self.config.save() config could be used for "don't ask me again to update" feature
         binary = self._installer.binary
         if self.solutioner.get_iquail_update() is not None:
-            # TODO: verify binary
-            misc.exit_and_replace(misc.get_script(), self.solutioner.get_iquail_update(), run=True)
+            # TODO: verify binary (run validations)
+            misc.exit_and_replace(
+                misc.get_script(), self.solutioner.get_iquail_update(), run=True)
         self._chmod_binary()
-        args = list(filter(lambda x: "--iquail" not in x, sys.argv[1:]))
+        args = misc.filter_iquail_args(sys.argv[1:])
         binary_args = [os.path.basename(binary)] + args
         os.chdir(self._installer.get_solution_path())
+        logger.info("Running: %s with args: %s" % (binary, str(binary_args)))
         os.execl(binary, *binary_args)
 
     def check_permissions(self, uid):
         if self._installer.install_systemwide and os.geteuid() != 0:
+            # TODO fix os.geteuid doesn't exist on windows
             if self._graphical is False:
-                print('Root access is required for further action, relaunching as root')
+                logger.error(
+                    'Root access is required for further action, relaunching as root')
+            logger.info("Re-running as admin with UID %s" % str(uid))
             misc.rerun_as_admin(self._graphical, uid)

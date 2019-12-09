@@ -9,6 +9,7 @@ class SolutionProgress:
     """Class returned in callback to notify progress
     (see SolutionBase._update_progress
     """
+
     def __init__(self, percent, status, log):
         self.percent = percent
         self.status = status
@@ -26,6 +27,8 @@ class SolutionBase(ABC, builder.BuilderAction):
 
     def __init__(self):
         self._progress_hook = None
+        self.__solutioner = None
+        self.__manager = None
 
     def __enter__(self):
         self.open()
@@ -45,6 +48,30 @@ class SolutionBase(ABC, builder.BuilderAction):
         """
         if self._progress_hook:
             self._progress_hook(SolutionProgress(percent, status, log))
+
+    """Setup manager and installer
+    """
+
+    def setup(self, solutioner, manager):
+        self.__solutioner = solutioner
+        self.__manager = manager
+
+    """Get installed version of the solution, if there is one"""
+
+    def get_installed_version(self):
+        return self.__manager.get_installed_version()
+
+    """Get current installed file with relative path
+    If the file exists then return the absolute path
+    else return None
+    """
+
+    def retrieve_current_file(self, *relpath):
+        res = self.__solutioner.backup_dest(*relpath)
+        if res is not None and os.path.isfile(res):
+            return res
+        # TODO copy res in tmp before returning
+        return None
 
     def get_version_string(self):
         """ return version string of a solution

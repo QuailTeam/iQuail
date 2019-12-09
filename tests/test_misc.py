@@ -17,29 +17,29 @@ class TestMisc(BaseTestCase):
         self.verifier = iquail.helper.IntegrityVerifier(self.test_dir)
         self.verifier.dump()
 
-    def test_safe_remove_folder_content(self):
-        misc.safe_remove_folder_content(self.test_dir)
+    def test_safe_move_folder_content(self):
+        misc.safe_move_folder_content(self.test_dir)
         self.assertListEqual(os.listdir(self.test_dir), [])
 
-    def test_safe_remove_folder_content_error(self):
+    def test_safe_move_folder_content_error(self):
         subfolder = os.path.join(self.test_dir, "subfolder")
         os.chmod(subfolder, 0o555)
         try:
             with open(os.path.join(subfolder, "testfile.txt"), "a") as f:
-                self.assertRaises(Exception, misc.safe_remove_folder_content, self.test_dir)
+                self.assertRaises(
+                    Exception, misc.safe_move_folder_content, self.test_dir)
                 self.assertListEqual(self.verifier.verify_all(), [])
         finally:
             os.chmod(subfolder, 0o777)
-
 
     def test_running_from_installed_binary(self):
         misc.get_script_path = lambda: "/test/test/test/test"
         assert misc.running_from_installed_binary() is False
         misc.get_script_path = lambda: "/test/"
         assert misc.running_from_installed_binary() is False
-        misc.get_script_path = lambda: os.path.join("/test/test/", Constants.IQUAIL_ROOT_NAME, "test")
+        misc.get_script_path = lambda: os.path.join(
+            "/test/test/", Constants.IQUAIL_ROOT_NAME, "test")
         assert misc.running_from_installed_binary() is True
-
 
     def test_rerun_as_admin(self):
         global mock
@@ -56,4 +56,3 @@ class TestMisc(BaseTestCase):
         sys.argv = [os.path.abspath('./bin')]
         misc.rerun_as_admin(True, './bin')
         mock.assert_called_with('pkexec', ['pkexec', './dir/bin', '--iquail_install_polkit'])
-
