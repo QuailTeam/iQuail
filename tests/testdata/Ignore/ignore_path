@@ -1,2 +1,2 @@
-./conf/* # ignore all files in conf
+./conf/*
 !./conf/not_conf

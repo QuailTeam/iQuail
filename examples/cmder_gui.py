@@ -1,13 +1,6 @@
 #!/usr/bin/python3
-import os
+
 import iquail
-import logging
-
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename=os.path.join(os.path.dirname(__file__), '..', 'iquail.log'),
-)
 
 if not iquail.helper.OS_WINDOWS:
     raise AssertionError("This test solution is windows only")
@@ -28,9 +21,7 @@ class FrameSelectMiniOrFull(iquail.controller_tkinter.FrameBaseConfigure):
 
 
 iquail.run(
-    solution=iquail.SolutionGitHub(
-        iquail.ConfVar("zip_url", default_value="cmder_mini.zip"),
-        "https://github.com/cmderdev/cmder"),
+    solution=iquail.SolutionGitHub(iquail.ConfVar("zip_url"), "https://github.com/cmderdev/cmder"),
     installer=iquail.Installer(
         publisher='cmderdev',
         name='Cmder',
@@ -43,7 +34,6 @@ iquail.run(
         iquail.builder.CmdIcon('icon.ico'),
         iquail.builder.CmdNoconsole()
     ),
-    controller=iquail.ControllerTkinter(
-        install_custom_frame=FrameSelectMiniOrFull),
+    controller=iquail.ControllerTkinter(install_custom_frame=FrameSelectMiniOrFull),
     conf_ignore=["config/*"]
 )

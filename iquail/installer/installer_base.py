@@ -25,8 +25,7 @@ class InstallerBase(ABC):
                  binary_options='',
                  install_path=None,
                  requires_root=False,
-                 launch_with_quail=True,
-                 is_large_solution=False):
+                 launch_with_quail=True):
         self._install_systemwide = install_systemwide
         self._launch_with_quail = launch_with_quail
         self._binary_name = binary
@@ -36,28 +35,16 @@ class InstallerBase(ABC):
         self._icon = icon
         self._publisher = publisher
         self._console = console
-        self._install_path = self.build_install_path(
-        ) if install_path is None else install_path
+        self._install_path = self.build_install_path() if install_path is None else install_path
         self._solution_path = os.path.join(self._install_path, 'solution')
         self._launcher_name = "iquail_launcher"
         if self.requires_root:
             self._launcher_name = "setup_" + self._launcher_name
-        if is_large_solution:
-            # override tmp dir if the solution is too large
-            misc.set_override_tmpdir(
-                os.path.join(self.build_root_path(), "tmp-" + self.uid))
+
 
     def get_solution_icon(self):
         """Get solution's icon"""
         return self.get_solution_path(self._icon)
-
-    @property
-    def binary_name(self):
-        return self._binary_name
-
-    @property
-    def icon(self):
-        return self._icon
 
     @property
     def install_systemwide(self):

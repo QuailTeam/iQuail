@@ -1,9 +1,5 @@
 import os
-import logging
-from ..constants import Constants
 from .. import helper
-
-logger = logging.getLogger(__name__)
 
 
 class Builder:
@@ -11,18 +7,8 @@ class Builder:
     Takes BuildCmd as argument
     """
 
-    def __init__(self, *build_cmds, side_img_override=None):
-        self._side_img = helper.get_side_img_path()
-        if side_img_override is not None:
-            if os.path.basename(side_img_override) != Constants.SIDE_IMG_NAME:
-                raise AssertionError(
-                    "side_img must of named: %s" % Constants.SIDE_IMG_NAME)
-            self._side_img = side_img_override
+    def __init__(self, *build_cmds):
         self._build_cmds = list(build_cmds)
-
-    @property
-    def side_img(self):
-        return self._side_img
 
     def register(self, builder_action):
         """see builder_action for more information"""
@@ -31,9 +17,8 @@ class Builder:
     def default_build_params(self):
         params = [helper.get_script(),
                   "--onefile",
-                  '--add-data', self._side_img + os.path.pathsep + "iquail",
-                  "--exclude-module", "PyInstaller",
-                  "--exclude-module", "PIL"]
+                  '--add-data', helper.get_side_img_path() + os.path.pathsep + "iquail",
+                  "--exclude-module", "PyInstaller"]
         if helper.OS_WINDOWS:
             # upx slows down the launch time
             params.append("--noupx")

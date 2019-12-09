@@ -17,7 +17,6 @@ class InstallerLinux(InstallerBase):
                               'Icon': self.get_solution_icon(),
                               'Terminal': 'true' if self.console else 'false',
                               'Type': 'Application',
-                              'Path': self.get_solution_path(),
                               'Exec': self.launch_command + ' ' +
                                       linux_exec_flags}
         if linux_desktop_conf:
@@ -76,7 +75,8 @@ class InstallerLinux(InstallerBase):
                           Icon=self.get_solution_icon(),
                           Terminal='true' if self.console else 'false')
         if self._add_to_path:
-            self.add_to_path(self.iquail_binary, self._binary_name)
+            # TODO launch with self.launcher_binary?
+            self.add_to_path(self.binary, self._binary_name)
 
     def _unregister(self):
         self.delete_shortcut(self._launch_shortcut)

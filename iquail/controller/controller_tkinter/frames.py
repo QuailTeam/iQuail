@@ -114,8 +114,7 @@ class FrameBaseTwoChoice(FrameBase):
 class FrameBaseInProgress(FrameBase):
     def __init__(self, parent, controller, label_str):
         super().__init__(parent, controller)
-        self._label = tk.Label(self, text=label_str,
-                               font=controller.title_font)
+        self._label = tk.Label(self, text=label_str, font=controller.title_font)
         self._label.pack(side="top", fill="x", pady=10)
         self.progress_var = tk.IntVar()
         self._progress_bar = ttk.Progressbar(self,
