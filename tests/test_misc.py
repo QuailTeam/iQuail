@@ -49,10 +49,10 @@ class TestMisc(BaseTestCase):
         elif misc.OS_WINDOWS:
             ctypes.windll.shell32.ShellExecuteW = MagicMock()
             mock = ctypes.windll.shell32.ShellExecuteW
-            return  # TODO test disabled
-        sys.argv = ['./test.py']
+            return # TODO test disabled
+        sys.argv = [os.path.abspath('./test.py')]
         misc.rerun_as_admin(False)
-        mock.assert_called_with('sudo', ['sudo', './test.py'])
-        misc.rerun_as_admin(True, '/dir/', '/bin')
-        mock.assert_called_with(
-            'pkexec', ['pkexec', '/bin', '--iquail_path', '/dir/'])
+        mock.assert_called_with('sudo', ['sudo', os.path.abspath('./test.py')])
+        sys.argv = [os.path.abspath('./bin')]
+        misc.rerun_as_admin(True, './bin')
+        mock.assert_called_with('pkexec', ['pkexec', './dir/bin', '--iquail_install_polkit'])
