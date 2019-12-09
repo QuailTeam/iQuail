@@ -7,7 +7,7 @@ if not iquail.helper.OS_WINDOWS:
 
 iquail.run(
     solution=iquail.SolutionBitBucket(
-        "cmder_mini.zip", "https://bitbucket.org/artous/cmder"),
+        "cmder_mini.zip", "https://bitbucket.org/artous/cmder/downloads/"),
     installer=iquail.Installer(
         publisher='cmderdev',
         name='Cmder',
