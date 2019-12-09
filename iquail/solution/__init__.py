@@ -3,4 +3,3 @@ from .solution_ftp import SolutionFtp
 from .solution_zip import SolutionZip
 from .solution_packed import SolutionPacked
 from .solution_gitlab import SolutionGitLab
-from .solution_bitbucket import SolutionBitBucket

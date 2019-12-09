@@ -34,15 +34,15 @@ class SolutionGitLab(SolutionBase):
         (repo_owner, repo_name)
         """
         re1 = '.*?'  # Non-greedy match on filler
-        re2 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
+        re2 = '(?:[a-z][a-z]+)'  # Uninteresting: word
         re3 = '.*?'  # Non-greedy match on filler
-        re4 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
+        re4 = '(?:[a-z][a-z]+)'  # Uninteresting: word
         re5 = '.*?'  # Non-greedy match on filler
-        re6 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
+        re6 = '(?:[a-z][a-z]+)'  # Uninteresting: word
         re7 = '.*?'  # Non-greedy match on filler
-        re8 = '((?:[a-z][a-z0-9_]*))'  # Variable Name 1
+        re8 = '((?:[a-z][a-z]+))'  # Word 1
         re9 = '.*?'  # Non-greedy match on filler
-        re10 = '((?:[a-z][a-z0-9_]*))'  # Variable Name 2
+        re10 = '((?:[a-z][a-z0-9_]*))'  # Variable Name 1
 
         rg = re.compile(re1+re2+re3+re4+re5+re6+re7+re8 +
                         re9+re10, re.IGNORECASE | re.DOTALL)
@@ -61,7 +61,7 @@ class SolutionGitLab(SolutionBase):
         m = rg.search(release['description'])
         file_path = m.group(1)
         owner, repo_name = self._parse_gitlab_url()
-        return "https://gitlab.com/%s/%s/%s" % (owner, repo_name, file_path)
+        return "https://gitlab.com/" + owner + '/' + repo_name + '/' + file_path
 
     @cache_result
     def _get_releases(self):
@@ -114,3 +114,13 @@ class SolutionGitLab(SolutionBase):
 
     def retrieve_file(self, relative_path):
         return self._solution_zip.retrieve_file(relative_path)
+
+
+p = SolutionGitLab(
+    "cmder_mini.zip", "https://gitlab.com/Artous/quail_cmder_test", 14938606)
+url = p._get_release_url()
+print("release url : " + url)
+
+url = p._get_zip_url(p._get_last_release())
+print("zip url : " + url)
+
