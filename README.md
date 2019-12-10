@@ -1,5 +1,4 @@
 # iQuail Overview
-[![Build Status](https://travis-ci.org/QuailTeam/Quail.svg?branch=master)](https://travis-ci.org/QuailTeam/Quail)
 
 Easy to use cross-platform installer & updater
 
