@@ -116,22 +116,23 @@ class SolutionFileServer(SolutionBase):
                 if header == b'INSERT':
                     (off, _, length) = arg.split()
                     source.seek(int(off))
-                    target.write(source.read(int(length) + 1))
+                    target.write(source.read(int(length)))
                 elif header == b'COPY' and len(arg) > 1:
                     target.write(bytes([arg[1]]))
+                elif header == b'COPY':
+                    target.write(bytes([byte]))
                 buffer = b''
             else:
+                if buffer == b'\n':
+                    buffer = b''
                 buffer += bytes([byte])
         target.close()
         source.close()
 
     def _try_decompress(self, relpath):
         source_path = self.retrieve_current_file(relpath)
-        #print('Retreiving %s' % relpath)
         if source_path == None:
-            #print('  FAILED')
             return
-        #print('  SUCCESS')
         diff_path = self._get_tmp_path(relpath)
         target_path = diff_path
         diff_path = diff_path + '_diff'
@@ -145,8 +146,6 @@ class SolutionFileServer(SolutionBase):
         try:
             self._try_decompress(relpath)
         except Exception as e:
-            exc_type, exc_obj, exc_tb = sys.exc_info() #TODO: rm
-            print(e, exc_type, exc_tb.tb_lineno) #TODO: rm
             raise SolutionDecompressionError('Unexcpected error in decompression: ' + str(e))
         self._nbrFilesDownloaded += 1
         self._update_progress(percent=(100*self._nbrFilesDownloaded)/self._nbrFiles, status='downloading', log=relpath+'\n')

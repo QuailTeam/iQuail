@@ -21,7 +21,7 @@ class QuailFS:
     def connect(self, ip, port):
         args = ' '.join([self.client_bin_path, ip, port, self.dl_path])
         try:
-            self.pipe = pexpect.spawnu(args) #mystic bug: may block
+            self.pipe = pexpect.spawnu(args)
         except pexpect.exceptions.ExceptionPexpect:
             self.error = 'Cannot open pipe'
             return False
