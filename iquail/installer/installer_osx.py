@@ -11,7 +11,6 @@ class InstallerOsx(InstallerBase):
         super().__init__(*args, **kwargs)
         self._bundle_install_path = os.path.join(self._get_application_folder_path(), self.name + '.app')
 
-    """ We need to put a syslink into /usr/local/bin or into a local folder inside the user's home directory"""
     """ TODO: Add the icon to the bundle"""
     def _register(self):
         bundle = BundleTemplate(self.name, base_dir=self._get_application_folder_path())
