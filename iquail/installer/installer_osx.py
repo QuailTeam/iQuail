@@ -18,10 +18,9 @@ class InstallerOsx(InstallerBase):
         plist = PlistCreator(self.name, self._get_application_folder_path(), {})
         plist.build_tree_and_write_file()
         self._build_launcher()
-        #self.add_to_path(self.binary, self._binary_name)
 
     def _unregister(self):
-        self.__remove_from_path(self.binary)
+        shutil.rmtree(self._bundle_install_path)
 
     def _registered(self):
         if not os.path.exists(self.build_folder_path(self.binary)):
@@ -30,9 +29,6 @@ class InstallerOsx(InstallerBase):
 
     def __add_to_path(self, binary, name):
         os.symlink(binary, self.build_folder_path(name))
-
-    def __remove_from_path(self, name):
-        shutil.rmtree(self._bundle_install_path)
 
     def _get_application_folder_path(self):
         if self.install_systemwide:
@@ -46,7 +42,7 @@ class InstallerOsx(InstallerBase):
     def _build_launcher(self):
         with open(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher'), 'w') as f:
             shebang = '#!/usr/bin/env bash\n'
-            content = '/usr/bin/env python3 ~/.iquail/' + self.uid + '/iquail_launcher.py'
+            content = '/usr/bin/env python3 ' + self.launcher_binary
             f.write(shebang)
             f.write(content)
         st = os.stat(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher'))
