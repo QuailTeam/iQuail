@@ -14,6 +14,7 @@ class InstallerOsx(InstallerBase):
     """ TODO: Add the icon to the bundle"""
     def _register(self):
         bundle = BundleTemplate(self.name, base_dir=self._get_application_folder_path())
+        icon = self.get_install_path(self._icon)
         bundle.make()
         plist = PlistCreator(self.name, self._get_application_folder_path(), {})
         plist.build_tree_and_write_file()
