@@ -1,4 +1,5 @@
 import os
+import shutil
 
 
 class BundleTemplate:
@@ -10,6 +11,13 @@ class BundleTemplate:
                     os.path.join(self.full_path, 'Contents/MacOS'),
                     os.path.join(self.full_path, 'Contents/Resources')
         ]
+    def installIcon(self, icon_file_name, icon_quail_path):
+        dest_path = os.path.join(self.full_path, 'Contents/Resources', icon_file_name)
+        try:
+            shutil.copy(icon_quail_path, dest_path)
+        except FileNotFoundError as e:
+            print("Error icon file {} was not found when installing".format(icon_quail_path))
+
 
     def make(self):
         for path in self.names:

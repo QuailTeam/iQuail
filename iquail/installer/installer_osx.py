@@ -14,9 +14,10 @@ class InstallerOsx(InstallerBase):
     """ TODO: Add the icon to the bundle"""
     def _register(self):
         bundle = BundleTemplate(self.name, base_dir=self._get_application_folder_path())
-        icon = self.get_install_path(self._icon)
+        icon_quail_path = self.get_solution_icon()
         bundle.make()
-        plist = PlistCreator(self.name, self._get_application_folder_path(), {})
+        bundle.installIcon(self._icon, icon_quail_path)
+        plist = PlistCreator(self.name, self._get_application_folder_path(), {'CFBundleIconFile': self._icon})
         plist.build_tree_and_write_file()
         self._build_launcher()
 

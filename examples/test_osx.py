@@ -9,7 +9,7 @@ if iquail.helper.OS_OSX:
         iquail.Installer(
                 name='MacCalc',
                 publisher='test',
-                icon='icon.jpeg',
+                icon='icon.icns',
                 binary='maccalc',
                 console=True,
         ),
