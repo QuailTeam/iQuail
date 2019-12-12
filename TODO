@@ -1,4 +1,4 @@
-dont mkdtemp
+validate if binary needs to be run as root (invalid argument thing)
 
 KeyboardInterrupt err
 tmp size?
