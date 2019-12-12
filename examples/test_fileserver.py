@@ -7,7 +7,8 @@ if not iquail.helper.OS_LINUX:
 
 iquail.run(
     solution=iquail.SolutionFileServer('localhost', '4242',
-                                       '../iQuailFileServer', './build_fs'),
+                                       './build_fs', '../iQuailFileServer'),
+    #solution=iquail.SolutionFileServer('localhost', '4242', '../iQuailFileServer/build'),
     installer=iquail.Installer(
         name='Allum1',
         publisher='alies',

@@ -7,7 +7,7 @@ if not iquail.helper.OS_LINUX:
 
 iquail.run(
     solution=iquail.SolutionFileServer('localhost', '4242',
-                                       '../iQuailFileServer', './build_fs'),
+                                       './build_fs', '../iQuailFileServer'),
     installer=iquail.Installer(
         name='Xonotic',
         publisher='OHM',

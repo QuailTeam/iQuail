@@ -11,13 +11,14 @@ from ..errors import SolutionDecompressionError
 from ..helper import misc
 
 class SolutionFileServer(SolutionBase):
-    def __init__(self, host, port, fileserver_path, build_path):
+    def __init__(self, host, port, build_path, fileserver_path=None):
         super().__init__()
         self._binary_name = 'iQuailClient'
         self._host = host
         self._port = port
         self._fileserver_path = fileserver_path
-        self._fileserver_path = os.path.abspath(self._fileserver_path)
+        if fileserver_path:
+            self._fileserver_path = os.path.abspath(self._fileserver_path)
         self._build_path = build_path
         self._build_path = os.path.abspath(self._build_path)
         if misc.running_from_script():
@@ -153,5 +154,5 @@ class SolutionFileServer(SolutionBase):
 
     def builder_cmds(self):
         cmds = super().builder_cmds() + [CmdFileserverClient(
-            self._fileserver_path, self._build_path, self._binary_name)]
+            self._build_path, self._fileserver_path, self._binary_name)]
         return cmds

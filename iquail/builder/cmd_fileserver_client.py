@@ -11,11 +11,13 @@ class CmdFileserverClient(CmdBase):
     """ Compile a Fileserver Client and add it to the executable
     """
 
-    def __init__(self, fileserver_path, build_path, binary_name):
+    def __init__(self, build_path, fileserver_path, binary_name):
         super().__init__()
         self._binary_name = binary_name
         self._fileserver_path = fileserver_path
-        self._fileserver_path = os.path.abspath(self._fileserver_path)
+        if fileserver_path: # Build client
+            self._fileserver_path = os.path.abspath(self._fileserver_path)
+        # else: Client has already been built
         self._build_path = build_path
         self._build_path = os.path.abspath(self._build_path)
         self._client_path = os.path.join(self._build_path, self._binary_name)
@@ -36,6 +38,8 @@ class CmdFileserverClient(CmdBase):
             raise BuilderError('CmdFileserverClient: Make failed')
 
     def pre_build(self):
+        if self._fileserver_path == None:
+            return
         logger.info("Calling CMake:")
         self._run_cmake()
         logger.info("Calling Make:")
