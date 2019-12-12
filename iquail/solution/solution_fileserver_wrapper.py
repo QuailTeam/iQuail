@@ -1,4 +1,5 @@
 import pexpect
+import pexpect.popen_spawn
 
 class QuailFS:
     def __init__(self, client_bin_path, dl_path):
@@ -10,7 +11,8 @@ class QuailFS:
     def _send_cmd(self, cmd):
         self.pipe.sendline(cmd)
         self.pipe.expect('> ')
-        return list(self.pipe.before.splitlines())[1:]
+        blist = list(self.pipe.before.splitlines())
+        return [item.decode('utf-8') for item in blist]
 
     def _parse_error(self, lines, start='ERROR:'):
         if len(lines) > 0 and lines[0].startswith(start):
@@ -21,7 +23,7 @@ class QuailFS:
     def connect(self, ip, port):
         args = ' '.join([self.client_bin_path, ip, port, self.dl_path])
         try:
-            self.pipe = pexpect.spawnu(args)
+            self.pipe = pexpect.popen_spawn.PopenSpawn(args)
         except pexpect.exceptions.ExceptionPexpect:
             self.error = 'Cannot open pipe'
             return False
@@ -70,5 +72,4 @@ class QuailFS:
     def disconnect(self):
         self.pipe.sendline('EXIT')
         self.pipe.expect(pexpect.EOF)
-        self.pipe.close()
         self.pipe = None

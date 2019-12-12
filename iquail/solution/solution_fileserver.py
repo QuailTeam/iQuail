@@ -9,11 +9,14 @@ from ..errors import SolutionFileNotFoundError
 from ..errors import SolutionVersionNotFoundError
 from ..errors import SolutionDecompressionError
 from ..helper import misc
+from ..helper import OS_WINDOWS
 
 class SolutionFileServer(SolutionBase):
     def __init__(self, host, port, build_path, fileserver_path=None):
         super().__init__()
         self._binary_name = 'iQuailClient'
+        if OS_WINDOWS:
+            self._binary_name += '.exe'
         self._host = host
         self._port = port
         self._fileserver_path = fileserver_path
@@ -142,7 +145,7 @@ class SolutionFileServer(SolutionBase):
         os.remove(diff_path)
 
     def retrieve_file(self, relpath):
-        if not self._serv.get_file(relpath):
+        if not self._serv.get_file(relpath.replace(os.path.sep, '/')):
             raise SolutionFileNotFoundError('FileServer.get_file() failed')
         try:
             self._try_decompress(relpath)
