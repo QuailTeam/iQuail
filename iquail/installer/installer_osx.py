@@ -13,6 +13,9 @@ class InstallerOsx(InstallerBase):
 
     """ TODO: Add the icon to the bundle"""
     def _register(self):
+        if (self._should_register_as_pkg()):
+            self._register_as_pkg()
+            return
         bundle = BundleTemplate(self.name, base_dir=self._get_application_folder_path())
         icon_quail_path = self.get_solution_icon()
         bundle.make()
@@ -22,6 +25,9 @@ class InstallerOsx(InstallerBase):
         self._build_launcher()
 
     def _unregister(self):
+        if (self._should_register_as_pkg()):
+            #self._register_as_pkg()
+            return
         shutil.rmtree(self._bundle_install_path)
 
     def _registered(self):
@@ -36,6 +42,18 @@ class InstallerOsx(InstallerBase):
         if self.install_systemwide:
             return os.path.join(os.sep, 'Applications')
         return os.path.join(str(pathlib.Path.home()), 'Applications')
+
+    def _should_register_as_pkg(self):
+        if (self.binary.lower().endswith(".pkg")):
+            return True
+        return False
+
+    def _register_as_pkg(self):
+        path = os.path.join(self._solution_path, self.binary)
+        pkg_installation = "installer -pkg " + path + " -target /"
+        print(path)
+        print(pkg_installation)
+        os.system("/usr/bin/osascript -e 'do shell script \"" + pkg_installation + "\" with administrator privileges'")
 
     def build_folder_path(self, name):
         final_folder = os.path.join(self._get_application_folder_path(), self._name + '.app', 'Contents', 'MacOS')
