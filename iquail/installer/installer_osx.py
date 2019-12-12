@@ -7,19 +7,28 @@ from ..helper import BundleTemplate, PlistCreator
 
 class InstallerOsx(InstallerBase):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, full_app, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._bundle_install_path = os.path.join(self._get_application_folder_path(), self.name + '.app')
+        self.is_full_app = full_app
 
     """ TODO: Add the icon to the bundle"""
     def _register(self):
-        bundle = BundleTemplate(self.name, base_dir=self._get_application_folder_path())
-        icon_quail_path = self.get_solution_icon()
-        bundle.make()
-        bundle.installIcon(self._icon, icon_quail_path)
-        plist = PlistCreator(self.name, self._get_application_folder_path(), {'CFBundleIconFile': self._icon})
-        plist.build_tree_and_write_file()
-        self._build_launcher()
+        if self.is_full_app:
+            shutil.copytree(self.binary, os.path.join(self._get_application_folder_path(), self._binary_name))
+            launcher_path = os.path.join(self._bundle_install_path, 'Contents', 'MacOS', self.name)
+            st = os.stat(launcher_path)
+            os.chmod(launcher_path, st.st_mode | stat.S_IEXEC)
+            return
+        else:
+            bundle = BundleTemplate(self.name, base_dir=self._get_application_folder_path())
+            icon_quail_path = self.get_solution_icon()
+            bundle.make()
+            if self._icon:
+                bundle.installIcon(self._icon, icon_quail_path)
+            plist = PlistCreator(self.name, self._get_application_folder_path(), {'CFBundleIconFile': self._icon})
+            plist.build_tree_and_write_file()
+            self._build_launcher()
 
     def _unregister(self):
         shutil.rmtree(self._bundle_install_path)
