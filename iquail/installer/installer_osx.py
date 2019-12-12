@@ -9,45 +9,42 @@ class InstallerOsx(InstallerBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._bundle_install_path = os.path.join(os.sep, 'Applications', self.name + '.app')
+        self._bundle_install_path = os.path.join(self._get_application_folder_path(), self.name + '.app')
 
-    """ We need to put a syslink into /usr/local/bin or into a local folder inside the user's home directory"""
     """ TODO: Add the icon to the bundle"""
     def _register(self):
-        bundle = BundleTemplate(self.name)
+        bundle = BundleTemplate(self.name, base_dir=self._get_application_folder_path())
+        icon_quail_path = self.get_solution_icon()
         bundle.make()
-        plist = PlistCreator(self.name, '/Applications', {})
+        bundle.installIcon(self._icon, icon_quail_path)
+        plist = PlistCreator(self.name, self._get_application_folder_path(), {'CFBundleIconFile': self._icon})
         plist.build_tree_and_write_file()
         self._build_launcher()
-        #self.add_to_path(self.binary, self._binary_name)
 
     def _unregister(self):
-        self.__remove_from_path(self.binary)
+        shutil.rmtree(self._bundle_install_path)
 
     def _registered(self):
-        if not os.path.exists(self.build_symlink_path(self.binary)):
+        if not os.path.exists(self.build_folder_path(self.binary)):
             return False
         return True
 
     def __add_to_path(self, binary, name):
-        os.symlink(binary, self.build_symlink_path(name))
+        os.symlink(binary, self.build_folder_path(name))
 
-    def __remove_from_path(self, name):
-        shutil.rmtree(self._bundle_install_path)
-
-    def build_symlink_path(self, name):
+    def _get_application_folder_path(self):
         if self.install_systemwide:
-            #TODO setup local installation
-            #final_folder = '/Applications'
-            final_folder = os.path.join(str(pathlib.Path.home()), 'Applications', self._name + '.app', 'Contents', 'MacOS')
-        else:
-            final_folder = os.path.join(str(pathlib.Path.home()), 'Applications', self._name + '.app', 'Contents', 'MacOS')
+            return os.path.join(os.sep, 'Applications')
+        return os.path.join(str(pathlib.Path.home()), 'Applications')
+
+    def build_folder_path(self, name):
+        final_folder = os.path.join(self._get_application_folder_path(), self._name + '.app', 'Contents', 'MacOS')
         return os.path.join(final_folder, name)
 
     def _build_launcher(self):
         with open(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher'), 'w') as f:
-            content = '/usr/local/bin/python3 ~/.iquail/' + self.uid + '/iquail_launcher.py'
-            shebang = '#!/bin/bash\n'
+            shebang = '#!/usr/bin/env bash\n'
+            content = '/usr/bin/env python3 ' + self.launcher_binary
             f.write(shebang)
             f.write(content)
         st = os.stat(os.path.join(self._bundle_install_path, 'Contents', 'MacOS', 'launcher'))
