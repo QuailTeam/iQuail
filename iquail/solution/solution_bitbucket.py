@@ -32,23 +32,8 @@ class SolutionBitBucket(SolutionBase):
         """Parse bitbucket url, returns tuple:
         (repo_owner, repo_name)
         """
-        re1 = '.*?'  # Non-greedy match on filler
-        re2 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
-        re3 = '.*?'  # Non-greedy match on filler
-        re4 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
-        re5 = '.*?'  # Non-greedy match on filler
-        re6 = '(?:[a-z][a-z0-9_]*)'  # Uninteresting: var
-        re7 = '.*?'  # Non-greedy match on filler
-        re8 = '((?:[a-z][a-z0-9_]*))'  # Variable Name 1
-        re9 = '.*?'  # Non-greedy match on filler
-        re10 = '((?:[a-z][a-z0-9_]*))'  # Variable Name 2
-
-        rg = re.compile(re1+re2+re3+re4+re5+re6+re7+re8 +
-                        re9+re10, re.IGNORECASE | re.DOTALL)
-        m = rg.search(self._repo_url)
-        owner = m.group(1)
-        repo_name = m.group(2)
-        return (owner, repo_name)
+        owner, repo_name = re.findall(r"bitbucket\.org/(.*?)/(.*?)$", self._repo_url)
+        return owner, repo_name
 
     def _get_zip_url(self):
         return "%s/downloads/%s" % (self._repo_url, self._zip_name)
