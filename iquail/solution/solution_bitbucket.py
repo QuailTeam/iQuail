@@ -32,7 +32,7 @@ class SolutionBitBucket(SolutionBase):
         """Parse bitbucket url, returns tuple:
         (repo_owner, repo_name)
         """
-        owner, repo_name = re.findall(r"bitbucket\.org/(.*?)/(.*?)$", self._repo_url)
+        [(owner, repo_name)] = re.findall(r"bitbucket\.org/(.*?)/(.*?)$", self._repo_url)
         return owner, repo_name
 
     def _get_zip_url(self):

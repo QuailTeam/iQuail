@@ -33,7 +33,7 @@ class SolutionGitLab(SolutionBase):
         """Parse gitlab url, returns tuple:
         (repo_owner, repo_name)
         """
-        owner, repo_name = re.findall(r"gitlab\.com/(.*?)/(.*?)$", self._repo_url)
+        [(owner, repo_name)] = re.findall(r"gitlab\.com/(.*?)/(.*?)$", self._repo_url)
         return owner, repo_name
 
     def _get_release_url(self):
