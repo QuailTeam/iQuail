@@ -1,0 +1,3 @@
+[submodule "iQuailFileServer"]
+	path = iQuailFileServer
+	url = https://github.com/QuailTeam/iQuailFileServer
