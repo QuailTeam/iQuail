@@ -1,3 +1,8 @@
+import sys
+
 from .controller_base import ControllerBase
-from .controller_tkinter import ControllerTkinter
+try:
+    from .controller_tkinter import ControllerTkinter
+except ImportError as e:
+    print(f"Tkinter not found....", file=sys.stderr)
 from .controller_console import ControllerConsole

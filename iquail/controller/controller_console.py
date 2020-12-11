@@ -74,7 +74,7 @@ class ControllerConsole(ControllerBase):
                 self.manager.uninstall()
                 print("[*] %s successfully removed!" % self.manager.get_name())
                 self.press_to_exit()
-            except:
+            except Exception as e:
                 print(
                     "[*] Unknown error while uninstalling %s" % self.manager.get_name())
                 self.press_to_exit()

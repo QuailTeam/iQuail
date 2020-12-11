@@ -8,4 +8,6 @@ elif OS_WINDOWS:
     from .installer_windows import InstallerWindows
     Installer = InstallerWindows
 else:
-    raise NotImplementedError
+    from .installer_osx import InstallerOsx
+    Installer = InstallerOsx
+

@@ -109,3 +109,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+#Don't add mac's dsstore
+*.DS_Store*

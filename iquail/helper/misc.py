@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 OS_LINUX = platform.system() == 'Linux'
 OS_WINDOWS = platform.system() == 'Windows'
+OS_OSX = platform.system() == 'Darwin'
 
 _OVERRIDE_TMP_DIR = None
 
