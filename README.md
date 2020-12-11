@@ -34,7 +34,7 @@ https://www.python.org/downloads/release/python-360/
 
 
 ## Using iQuail
-Currently everything is subject to change, this is the main reason why there is no documentation yet,
+Currently everything is subject to change,
 
 You can still begin learning by [examples](examples)
 
